@@ -111,7 +111,7 @@ class PembayaranService
 }
 
         // buat order baru
-        $order_id = 'KASRT-'.$iuran->id.'-'.time();
+        $order_id = 'KASRT'.$iuran->id.'-'.time();
 
         $params = [
             'transaction_details' => [
