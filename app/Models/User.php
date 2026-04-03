@@ -20,8 +20,10 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'username',
-        'password',
+        'nomor_rumah',
         'role',
+        'status_aktif',
+        'password'
     ];
 
     public function iuran()
