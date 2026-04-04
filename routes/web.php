@@ -31,6 +31,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('users', UserController::class);
     Route::get('/users/{id}/reset-password', [UserController::class, 'resetPassword']);
+    Route::resource('pemasukan', \App\Http\Controllers\PemasukanController::class);
+    Route::resource('pengeluaran', \App\Http\Controllers\PengeluaranController::class);
 
 });
 
