@@ -50,27 +50,33 @@ class User extends Authenticatable
     {
         static::created(function ($user) {
 
-                if ($user->role !== 'warga') {
-                return;
-            }
+        if ($user->role !== 'warga') {
+            return;
+        }
+
+        $tahun = date('Y');
+
+        for ($i = 1; $i <= 12; $i++) {
 
             $nominal = \DB::table('setnominal')
-                ->where('tahun', date('Y'))
+                ->where('tahun', $tahun)
+                ->where('bulan', '<=', $i)
+                ->orderBy('bulan', 'desc')
                 ->value('nominal');
 
-            for ($i = 1; $i <= 12; $i++) {
-
-                \App\Models\Iuran::create([
-                    'user_id' => $user->id,
-                    'periode_bulan' => $i,
-                    'periode_tahun' => date('Y'),
-                    'nominal' => $nominal,
-                    'status' => 'pending'
-                ]);
-
+            if (!$nominal) {
+                throw new \Exception("Nominal belum diset dari awal tahun");
             }
 
-        });
+            \App\Models\Iuran::create([
+                'user_id' => $user->id,
+                'periode_bulan' => $i,
+                'periode_tahun' => $tahun,
+                'nominal' => $nominal,
+                'status' => 'pending'
+            ]);
+        }
+    });
     }
 
     /**

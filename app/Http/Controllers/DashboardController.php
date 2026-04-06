@@ -8,7 +8,11 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalPemasukan = DB::table('pemasukan')->sum('nominal');
+        $totalPembayaran = DB::table('pembayaran')
+        ->where('status', 'success')
+        ->sum('amount');
+
+        $totalPemasukan = $totalPembayaran + DB::table('pemasukan')->sum('nominal');
         $totalPengeluaran = DB::table('pengeluaran')->sum('nominal');
         $saldo = $totalPemasukan - $totalPengeluaran;
 

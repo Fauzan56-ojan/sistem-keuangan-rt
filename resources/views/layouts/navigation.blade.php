@@ -16,7 +16,7 @@
                         Dashboard
                     </x-nav-link>
 
-                    <x-nav-link :href="url('/iuran')" :active="request()->is('iuran')">
+                    <x-nav-link :href="url('/iuran-warga')" :active="request()->is('iuran')">
                         Iuran warga
                     </x-nav-link>
 

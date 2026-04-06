@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Iuran;
+use App\Models\User;
 
 class IuranController extends Controller
 {
@@ -19,6 +20,16 @@ class IuranController extends Controller
 
         return view('iuran.index', compact('iuran'));
     }
+
+    public function wargaList()
+    {
+        $users = User::where('status_aktif', 1)
+            ->select('id', 'name', 'nomor_rumah')
+            ->orderBy('name')
+            ->get();
+
+        return view('iuran.warga_list', compact('users'));
+    }
     
     public function warga($id)
     {
@@ -31,6 +42,7 @@ class IuranController extends Controller
 
         return view('iuran.warga', compact('iuran','tahun'));
     }
+
 
     /**
      * Show the form for creating a new resource.
