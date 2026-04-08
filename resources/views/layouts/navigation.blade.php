@@ -35,6 +35,10 @@
                     <x-nav-link :href="url('/users')" :active="request()->is('users')">
                         User
                     </x-nav-link>
+
+                    <x-nav-link :href="route('nominal.index')" :active="request()->routeIs('nominal.index')">
+                        Kelola Iuran
+                    </x-nav-link>
                 </div>
             </div>
 

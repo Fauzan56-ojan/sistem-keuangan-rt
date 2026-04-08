@@ -30,7 +30,7 @@ class PembayaranService
             'amount' => $iuran->nominal,
             'metode' => 'tunai',
             'status' => 'success',
-            'paid_at' => now()
+            'paid_at' => request('tanggal') ?? now()
         ]);
 
         $iuran->update([

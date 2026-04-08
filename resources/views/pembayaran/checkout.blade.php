@@ -4,6 +4,11 @@
 <p>Rumah: {{ $iuran->user->nomor_rumah }}</p>
 <p>Bulan: {{ \Carbon\Carbon::create()->month($iuran->periode_bulan)->translatedFormat('F') }}</p>
 <p>Nominal: Rp {{ number_format($iuran->nominal,0,',','.') }}</p>
+@if($metode == 'tunai')
+    <label>Tanggal Bayar</label>
+    <input type="date" id="tanggal" value="{{ date('Y-m-d') }}">
+    <br><br>
+@endif
 
 <button id="pay-button">Bayar Sekarang</button>
 <script>let metode = "{{$metode}}";</script>
@@ -46,11 +51,18 @@ alert("Pembayaran gagal");
 
 }else{
 
+let tanggalInput = document.getElementById('tanggal');
+let tanggal = tanggalInput ? tanggalInput.value : null;
+
 fetch("/bayar-tunai/{{ $iuran->id }}", {
 method: "POST",
 headers: {
-"X-CSRF-TOKEN": "{{ csrf_token() }}"
-}
+"X-CSRF-TOKEN": "{{ csrf_token() }}",
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+tanggal: tanggal
+})
 })
 .then(() => {
 
@@ -63,40 +75,3 @@ location.href="/warga/{{ $iuran->user->id }}/iuran";
 
 };
 </script>
-{{-- 
-
-// document.getElementById('pay-button').onclick = function(){
-
-// fetch("/get-snap-token/{{ $iuran->id }}", {
-// method: "POST",
-// headers: {
-// "X-CSRF-TOKEN": "{{ csrf_token() }}",
-// "Content-Type": "application/json"
-// }
-// })
-// .then(response => response.json())
-// .then(data => {
-
-// snap.pay(data.token, {
-
-// onSuccess: function(result){
-// alert("Pembayaran berhasil");
-// location.href="/warga/{{ $iuran->user->id }}/iuran";
-// },
-
-// onPending: function(result){
-// alert("Menunggu pembayaran");
-// location.href="/warga/{{ $iuran->user->id }}/iuran";
-// },
-
-// onError: function(result){
-// alert("Pembayaran gagal");
-// },
-
-// });
-
-// });
-
-// };
-
-// </sc>ript> --}}

@@ -6,6 +6,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IuranController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NominalController;
+
 
 Route::get('/', function () {
     return redirect('/login');
@@ -33,6 +35,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/{id}/reset-password', [UserController::class, 'resetPassword']);
     Route::resource('pemasukan', \App\Http\Controllers\PemasukanController::class);
     Route::resource('pengeluaran', \App\Http\Controllers\PengeluaranController::class);
+    Route::get('/nominal', [NominalController::class, 'index'])->name('nominal.index');
+    Route::post('/nominal', [NominalController::class, 'store'])->name('nominal.store');
+    Route::post('/iuran/generate', [IuranController::class, 'generate'])->name('iuran.generate');
+
+
+
 
 });
 

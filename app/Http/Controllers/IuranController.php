@@ -28,7 +28,7 @@ class IuranController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('iuran.warga_list', compact('users'));
+        return view('iuran.warga-list', compact('users'));
     }
     
     public function warga($id)
@@ -43,6 +43,42 @@ class IuranController extends Controller
         return view('iuran.warga', compact('iuran','tahun'));
     }
 
+    public function generate(Request $request)
+    {
+        $tahun = $request->tahun;
+
+        // cek apakah sudah pernah generate
+        $cek = \DB::table('iuran')
+            ->where('periode_tahun', $tahun)
+            ->exists();
+
+        if ($cek) {
+            return back()->with('error', 'Iuran tahun ini sudah digenerate');
+        }
+
+        $users = \App\Models\User::where('status_aktif', 1)->get();
+
+        foreach ($users as $user) {
+
+            for ($bulan = 1; $bulan <= 12; $bulan++) {
+
+                // ambil nominal terakhir 
+                $nominal = \DB::table('setnominal')
+                    ->orderBy('created_at', 'desc')
+                    ->value('nominal');
+
+                \App\Models\Iuran::create([
+                    'user_id' => $user->id,
+                    'periode_bulan' => $bulan,
+                    'periode_tahun' => $tahun,
+                    'nominal' => $nominal,
+                    'status' => 'pending'
+                ]);
+            }
+        }
+
+        return back()->with('success', 'Iuran berhasil digenerate');
+    }
 
     /**
      * Show the form for creating a new resource.
