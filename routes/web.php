@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\NominalController;
 use App\Http\Controllers\PemasukanController;
 use App\Http\Controllers\PengeluaranController;
+use App\Http\Controllers\LaporanController;
 
 
 Route::get('/', function () {
@@ -45,6 +46,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/settings/migrasi', [IuranController::class, 'migrasi'])->name('settings.migrasi.proses');
     Route::get('/settings/nominal', [NominalController::class, 'index'])->name('settings.nominal');
     Route::get('/settings/generate', function () {return view('settings.generate');})->name('settings.generate');
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+
 
 
 
