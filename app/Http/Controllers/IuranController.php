@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Iuran;
 use App\Models\User;
 
@@ -47,8 +48,7 @@ class IuranController extends Controller
     {
         $tahun = $request->tahun;
 
-        // cek apakah sudah pernah generate
-        $cek = \DB::table('iuran')
+        $cek = DB::table('iuran')
             ->where('periode_tahun', $tahun)
             ->exists();
 
@@ -56,18 +56,49 @@ class IuranController extends Controller
             return back()->with('error', 'Iuran tahun ini sudah digenerate');
         }
 
-        $users = \App\Models\User::where('status_aktif', 1)->get();
+        $cekNominal = DB::table('setnominal')
+            ->where('tahun', $tahun)
+            ->exists();
+
+        if (!$cekNominal) {
+
+            $nominalTerakhir = DB::table('setnominal')
+                ->orderBy('created_at', 'desc')
+                ->value('nominal');
+
+            if (!$nominalTerakhir) {
+                return back()->with('error', 'Nominal sebelumnya belum ada');
+            }
+
+            DB::table('setnominal')->insert([
+                'tahun' => $tahun,
+                'bulan' => 1,
+                'nominal' => $nominalTerakhir,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+
+        $users = User::where('status_aktif', 1)
+            ->where('role', 'warga')
+            ->get();
 
         foreach ($users as $user) {
 
             for ($bulan = 1; $bulan <= 12; $bulan++) {
 
-                // ambil nominal terakhir 
-                $nominal = \DB::table('setnominal')
-                    ->orderBy('created_at', 'desc')
+                // ambil nominal sesuai bulan
+                $nominal = DB::table('setnominal')
+                    ->where('tahun', $tahun)
+                    ->where('bulan', '<=', $bulan)
+                    ->orderBy('bulan', 'desc')
                     ->value('nominal');
 
-                \App\Models\Iuran::create([
+                if (!$nominal) {
+                    return back()->with('error', "Nominal belum diset sampai bulan $bulan");
+                }
+
+                Iuran::create([
                     'user_id' => $user->id,
                     'periode_bulan' => $bulan,
                     'periode_tahun' => $tahun,
@@ -78,6 +109,56 @@ class IuranController extends Controller
         }
 
         return back()->with('success', 'Iuran berhasil digenerate');
+    }
+
+    public function migrasi(Request $request)
+    {
+        $tahun = $request->tahun;
+        $bulanAkhir = $request->bulan;
+
+        // ambil semua user aktif
+        $users = User::where('status_aktif', 1)
+                ->where('role', 'warga')
+                ->get();
+
+        foreach ($users as $user) {
+
+            // loop bulan dari Jan sampai bulan yg dipilih
+            for ($i = 1; $i <= $bulanAkhir; $i++) {
+
+                // CEK: apakah iuran sudah ada
+                $cek = Iuran::where('user_id', $user->id)
+                    ->where('periode_tahun', $tahun)
+                    ->where('periode_bulan', $i)
+                    ->exists();
+
+                if ($cek) {
+                    continue; 
+                }
+
+                //  ambil nominal 
+                $nominal = \DB::table('setnominal')
+                    ->where('tahun', $tahun)
+                    ->where('bulan', '<=', $i)
+                    ->orderBy('bulan', 'desc')
+                    ->value('nominal');
+
+                if (!$nominal) {
+                    return back()->with('error', "Nominal belum diset sampai bulan $i");
+                }
+
+                // insert iuran
+                Iuran::create([
+                    'user_id' => $user->id,
+                    'periode_bulan' => $i,
+                    'periode_tahun' => $tahun,
+                    'nominal' => $nominal,
+                    'status' => 'pending'
+                ]);
+            }
+        }
+
+        return back()->with('success', 'Migrasi berhasil');
     }
 
     /**

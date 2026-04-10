@@ -36,8 +36,8 @@
                         User
                     </x-nav-link>
 
-                    <x-nav-link :href="route('nominal.index')" :active="request()->routeIs('nominal.index')">
-                        Kelola Iuran
+                    <x-nav-link :href="route('settings.index')" :active="request()->routeIs('settings.index')">
+                        Setting
                     </x-nav-link>
                 </div>
             </div>

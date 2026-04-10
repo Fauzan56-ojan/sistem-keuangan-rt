@@ -55,8 +55,9 @@ class User extends Authenticatable
         }
 
         $tahun = date('Y');
+        $bulanSekarang = date('n');
 
-        for ($i = 1; $i <= 12; $i++) {
+        for ($i = $bulanSekarang; $i <= 12; $i++) {
 
             $nominal = \DB::table('setnominal')
                 ->where('tahun', $tahun)

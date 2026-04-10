@@ -13,7 +13,7 @@ class NominalController extends Controller
             ->orderBy('bulan', 'desc')
             ->get();
 
-        return view('nominal.index', compact('data'));
+        return view('settings.nominal', compact('data'));
     }
 
     public function store(Request $request)
@@ -25,13 +25,27 @@ class NominalController extends Controller
         $tahun = date('Y');
         $bulan = date('n');
 
-        \DB::table('setnominal')->insert([
-            'tahun' => $tahun,
-            'bulan' => $bulan,
-            'nominal' => $request->nominal,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
+        $cek = \DB::table('setnominal')
+            ->where('tahun', $tahun)
+            ->where('bulan', $bulan)
+            ->first();
+
+        if ($cek) {
+            \DB::table('setnominal')
+                ->where('id', $cek->id)
+                ->update([
+                    'nominal' => $request->nominal,
+                    'updated_at' => now()
+                ]);
+        } else {
+            \DB::table('setnominal')->insert([
+                'tahun' => $tahun,
+                'bulan' => $bulan,
+                'nominal' => $request->nominal,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
 
         \DB::table('iuran')
             ->where('periode_tahun', $tahun)
@@ -41,7 +55,7 @@ class NominalController extends Controller
                 'nominal' => $request->nominal
             ]);
 
-        return redirect()->route('nominal.index')
+        return redirect()->route('settings.generate')
             ->with('success', 'Nominal berhasil ditambahkan & iuran diperbarui');
     }
 }

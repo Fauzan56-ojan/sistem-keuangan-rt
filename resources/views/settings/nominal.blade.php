@@ -4,11 +4,9 @@
     </x-slot>
 
     <form action="{{ route('nominal.store') }}" method="POST">
-    @csrf
-
-    <input type="number" name="nominal" placeholder="Masukkan nominal" required>
-
-    <button type="submit">Simpan</button>
+        @csrf
+        <input type="number" name="nominal" placeholder="Masukkan nominal" required>
+        <button type="submit">Simpan</button>
     </form>
 
     <br>
@@ -28,10 +26,4 @@
         </tr>
         @endforeach
     </table>
-
-    <form action="{{ route('iuran.generate') }}" method="POST">
-        @csrf
-        <input type="number" name="tahun" value="{{ date('Y') + 1 }}" required>
-        <button type="submit">Generate Iuran</button>
-    </form>
 </x-app-layout>

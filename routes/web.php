@@ -7,6 +7,8 @@ use App\Http\Controllers\IuranController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NominalController;
+use App\Http\Controllers\PemasukanController;
+use App\Http\Controllers\PengeluaranController;
 
 
 Route::get('/', function () {
@@ -33,12 +35,16 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('users', UserController::class);
     Route::get('/users/{id}/reset-password', [UserController::class, 'resetPassword']);
-    Route::resource('pemasukan', \App\Http\Controllers\PemasukanController::class);
-    Route::resource('pengeluaran', \App\Http\Controllers\PengeluaranController::class);
-    Route::get('/nominal', [NominalController::class, 'index'])->name('nominal.index');
+    Route::resource('pemasukan', PemasukanController::class);
+    Route::resource('pengeluaran', PengeluaranController::class);
+    
     Route::post('/nominal', [NominalController::class, 'store'])->name('nominal.store');
     Route::post('/iuran/generate', [IuranController::class, 'generate'])->name('iuran.generate');
-
+    Route::get('/settings', function () {return view('settings.index');})->name('settings.index');
+    Route::get('/settings/migrasi', function () {return view('settings.migrasi');})->name('settings.migrasi');
+    Route::post('/settings/migrasi', [IuranController::class, 'migrasi'])->name('settings.migrasi.proses');
+    Route::get('/settings/nominal', [NominalController::class, 'index'])->name('settings.nominal');
+    Route::get('/settings/generate', function () {return view('settings.generate');})->name('settings.generate');
 
 
 
