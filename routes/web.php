@@ -47,7 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings/nominal', [NominalController::class, 'index'])->name('settings.nominal');
     Route::get('/settings/generate', function () {return view('settings.generate');})->name('settings.generate');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-
+    Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
 
 
 
