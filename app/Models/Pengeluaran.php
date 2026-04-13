@@ -14,6 +14,7 @@ class Pengeluaran extends Model
         'jumlah',
         'keterangan',
         'created_by',
+        'bukti_file'
     ];
 
     public function user()

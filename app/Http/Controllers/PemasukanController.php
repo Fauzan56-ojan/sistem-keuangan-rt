@@ -22,11 +22,16 @@ class PemasukanController extends Controller
 
     public function store(Request $request)
     {
+        $bukti = null;
+        if ($request->hasFile('bukti_file')) {
+            $bukti = $request->file('bukti_file')->store('bukti', 'public');
+        }
         Pemasukan::create([
             'tanggal' => $request->tanggal,
             'nominal' => $request->nominal,
             'keterangan' => $request->keterangan,
-            'created_by' => auth()->id()
+            'created_by' => auth()->id(),
+            'bukti_file' => $bukti
         ]);
 
         return redirect('/pemasukan');
@@ -41,11 +46,16 @@ class PemasukanController extends Controller
     public function update(Request $request, $id)
     {
         $data = Pemasukan::findOrFail($id);
+        $bukti = $data->bukti_file; 
+        if ($request->hasFile('bukti_file')) {
+            $bukti = $request->file('bukti_file')->store('bukti', 'public');
+        }
 
         $data->update([
             'tanggal' => $request->tanggal,
             'nominal' => $request->nominal,
             'keterangan' => $request->keterangan,
+            'bukti_file' => $bukti
         ]);
 
         return redirect('/pemasukan');

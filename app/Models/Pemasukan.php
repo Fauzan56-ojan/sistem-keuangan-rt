@@ -12,7 +12,8 @@ class Pemasukan extends Model
         'tanggal',
         'nominal',
         'keterangan',
-        'created_by'
+        'created_by',
+        'bukti_file'
     ];
 
         public function user()

@@ -7,6 +7,7 @@ use App\Models\Pembayaran;
 use App\Models\Pemasukan;
 use App\Models\Pengeluaran;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\LaporanService;
 
 class LaporanController extends Controller
 {
@@ -22,105 +23,20 @@ class LaporanController extends Controller
             ...Pembayaran::selectRaw('YEAR(paid_at) as tahun')->pluck('tahun'),
         ])->filter()->unique()->sortDesc()->values();
 
-        $pemasukanManual = Pemasukan::sum('nominal');
-        $pemasukanIuran = Pembayaran::where('status', 'success')->sum('amount');
-        $totalPemasukan = $pemasukanManual + $pemasukanIuran;
-        $totalPengeluaran = Pengeluaran::sum('nominal');
-        $saldo = $totalPemasukan - $totalPengeluaran;
+        $transaksi = LaporanService::getTransaksi($jenis, $bulan, $tahun);
 
-        $pemasukanQuery = Pemasukan::whereYear('tanggal', $tahun);
+        $summary = LaporanService::getSummary($jenis, $transaksi);
 
-        if ($bulan != 'all') {
-            $pemasukanQuery->whereMonth('tanggal', $bulan);
-        }
-
-        $pemasukan = $pemasukanQuery->get()->map(function ($item) {
-            return [
-                'tanggal' => $item->tanggal,
-                'jenis' => 'pemasukan',
-                'keterangan' => $item->keterangan,
-                'masuk' => $item->nominal,
-                'keluar' => 0,
-            ];
-        });
-
-        $pembayaranQuery = Pembayaran::with('user')
-            ->where('status', 'success')
-            ->whereYear('paid_at', $tahun);
-
-        if ($bulan != 'all') {
-            $pembayaranQuery->whereMonth('paid_at', $bulan);
-        }
-
-        $pembayaran = $pembayaranQuery->get()->map(function ($item) {
-            return [
-                'tanggal' => $item->paid_at,
-                'jenis' => 'iuran',
-                'keterangan' => 'Iuran ' . $item->user->name,
-                'masuk' => $item->amount,
-                'keluar' => 0,
-            ];
-        });
-
-        $pengeluaranQuery = Pengeluaran::whereYear('tanggal', $tahun);
-
-        if ($bulan != 'all') {
-            $pengeluaranQuery->whereMonth('tanggal', $bulan);
-        }
-
-        $pengeluaran = $pengeluaranQuery->get()->map(function ($item) {
-            return [
-                'tanggal' => $item->tanggal,
-                'jenis' => 'pengeluaran',
-                'keterangan' => $item->keterangan,
-                'masuk' => 0,
-                'keluar' => $item->nominal,
-            ];
-        });
-
-        $transaksi = $pemasukan
-            ->concat($pembayaran)
-            ->concat($pengeluaran)
-            ->sortBy('tanggal')
-            ->values();
-
-        if ($jenis !== 'all') {
-            $transaksi = $transaksi->where('jenis', $jenis)->values();
-        }
-
-        if ($jenis == 'iuran') {
-            $totalPemasukan = $transaksi->sum('masuk');
-            $totalPengeluaran = 0;
-        }
-
-        if ($jenis == 'pemasukan') {
-            $totalPemasukan = $transaksi->sum('masuk');
-            $totalPengeluaran = 0;
-        }
-
-        if ($jenis == 'pengeluaran') {
-            $totalPemasukan = 0;
-            $totalPengeluaran = $transaksi->sum('keluar');
-        }
-
-        $saldoBerjalan = 0;
-
-        $transaksi = $transaksi->map(function ($item) use (&$saldoBerjalan) {
-            $saldoBerjalan += $item['masuk'] - $item['keluar'];
-            $item['saldo'] = $saldoBerjalan;
-            return $item;
-        });
-
-        return view('laporan.index', compact(
-            'totalPemasukan',
-            'totalPengeluaran',
-            'saldo',
-            'transaksi',
-            'jenis',
-            'bulan',
-            'tahun',
-            'tahunList'
-        ));
+        return view('laporan.index', [
+            'totalPemasukan' => $summary['totalPemasukan'],
+            'totalPengeluaran' => $summary['totalPengeluaran'],
+            'saldo' => $summary['saldo'],
+            'transaksi' => $transaksi,
+            'jenis' => $jenis,
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'tahunList' => $tahunList
+        ]);
     }
 
     public function exportPdf()
@@ -129,89 +45,15 @@ class LaporanController extends Controller
         $bulan = request('bulan', 'all');
         $tahun = request('tahun', date('Y'));
 
-        $pemasukanManual = Pemasukan::sum('nominal');
-        $pemasukanIuran = Pembayaran::where('status', 'success')->sum('amount');
+        $transaksi = LaporanService::getTransaksi($jenis, $bulan, $tahun);
 
-        $totalPemasukan = $pemasukanManual + $pemasukanIuran;
-
-        $totalPengeluaran = Pengeluaran::sum('nominal');
-
-        $saldo = $totalPemasukan - $totalPengeluaran;
-
-        $pemasukanQuery = Pemasukan::whereYear('tanggal', $tahun);
-        if ($bulan != 'all') {
-            $pemasukanQuery->whereMonth('tanggal', $bulan);
-        }
-
-        $pemasukan = $pemasukanQuery->get()->map(function ($item) {
-            return [
-                'tanggal' => $item->tanggal,
-                'jenis' => 'pemasukan',
-                'keterangan' => $item->keterangan,
-                'masuk' => $item->nominal,
-                'keluar' => 0,
-            ];
-        });
-
-        $pembayaranQuery = Pembayaran::with('user')
-            ->where('status', 'success')
-            ->whereYear('paid_at', $tahun);
-
-        if ($bulan != 'all') {
-            $pembayaranQuery->whereMonth('paid_at', $bulan);
-        }
-
-        $pembayaran = $pembayaranQuery->get()->map(function ($item) {
-            return [
-                'tanggal' => $item->paid_at ?? $item->created_at,
-                'jenis' => 'iuran',
-                'keterangan' => 'Iuran ' . $item->user->name,
-                'masuk' => $item->amount,
-                'keluar' => 0,
-            ];
-        });
-
-        $pengeluaranQuery = Pengeluaran::whereYear('tanggal', $tahun);
-        if ($bulan != 'all') {
-            $pengeluaranQuery->whereMonth('tanggal', $bulan);
-        }
-
-        $pengeluaran = $pengeluaranQuery->get()->map(function ($item) {
-            return [
-                'tanggal' => $item->tanggal,
-                'jenis' => 'pengeluaran',
-                'keterangan' => $item->keterangan,
-                'masuk' => 0,
-                'keluar' => $item->nominal,
-            ];
-        });
-
-        $transaksi = $pemasukan
-            ->concat($pembayaran)
-            ->concat($pengeluaran)
-            ->sortBy('tanggal')
-            ->values();
-
-        if ($jenis !== 'all') {
-            $transaksi = $transaksi->where('jenis', $jenis)->values();
-        }
-
-        $saldoBerjalan = 0;
-
-        $transaksi = $transaksi->map(function ($item) use (&$saldoBerjalan) {
-            $saldoBerjalan += $item['masuk'] - $item['keluar'];
-            $item['saldo'] = $saldoBerjalan;
-            return $item;
-        });
-
-        $totalMasuk = $transaksi->sum('masuk');
-        $totalKeluar = $transaksi->sum('keluar');
+        $summary = LaporanService::getSummary($jenis, $transaksi);
 
         $pdf = Pdf::loadView('laporan.pdf', [
             'transaksi' => $transaksi,
-            'totalPemasukan' => $totalPemasukan,
-            'totalPengeluaran' => $totalPengeluaran,
-            'saldo' => $saldo,
+            'totalPemasukan' => $summary['totalPemasukan'],
+            'totalPengeluaran' => $summary['totalPengeluaran'],
+            'saldo' => $summary['saldo'],
             'jenis' => $jenis,
             'bulan' => $bulan,
             'tahun' => $tahun

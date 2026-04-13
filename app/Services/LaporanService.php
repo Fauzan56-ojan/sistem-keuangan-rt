@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\Pemasukan;
@@ -74,5 +75,33 @@ class LaporanService
             $item['saldo'] = $saldoBerjalan;
             return $item;
         });
+    }
+
+    public static function getSummary($jenis, $transaksi)
+    {
+        $pemasukanManual = Pemasukan::sum('nominal');
+        $pemasukanIuran = Pembayaran::where('status', 'success')->sum('amount');
+
+        $totalPemasukan = $pemasukanManual + $pemasukanIuran;
+
+        $totalPengeluaran = Pengeluaran::sum('nominal');
+
+        $saldo = $totalPemasukan - $totalPengeluaran;
+
+        if ($jenis == 'iuran' || $jenis == 'pemasukan') {
+            $totalPemasukan = $transaksi->sum('masuk');
+            $totalPengeluaran = 0;
+        }
+
+        if ($jenis == 'pengeluaran') {
+            $totalPemasukan = 0;
+            $totalPengeluaran = $transaksi->sum('keluar');
+        }
+
+        return [
+            'totalPemasukan' => $totalPemasukan,
+            'totalPengeluaran' => $totalPengeluaran,
+            'saldo' => $saldo
+        ];
     }
 }

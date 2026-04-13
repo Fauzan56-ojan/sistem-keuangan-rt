@@ -5,12 +5,13 @@
 
     <div class="p-6">
 
-        <form method="POST" action="/pengeluaran">
+        <form method="POST" action="/pengeluaran" enctype="multipart/form-data">
             @csrf
 
             <input type="date" name="tanggal">
             <input type="number" name="nominal">
             <input type="text" name="keterangan">
+            <input type="file" name="bukti_file">
 
             <button type="submit">Simpan</button>
 

@@ -13,6 +13,7 @@
                 <th>Nominal</th>
                 <th>Keterangan</th>
                 <th>Aksi</th>
+                <th>Bukti File</th>
             </tr>
 
             @foreach($data as $item)
@@ -28,6 +29,15 @@
                         @method('DELETE')
                         <button type="submit">Hapus</button>
                     </form>
+                </td>
+                <td>
+                    @if ($item->bukti_file)
+                        <a href="{{ asset('storage/' . $item->bukti_file) }}" target="_blank">
+                            Lihat
+                        </a>
+                    @else
+                        -
+                    @endif
                 </td>
             </tr>
             @endforeach

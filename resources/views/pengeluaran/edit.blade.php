@@ -5,13 +5,14 @@
 
     <div class="p-6">
 
-        <form method="POST" action="/pengeluaran/{{ $data->id }}">
+        <form method="POST" action="/pengeluaran/{{ $data->id }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
             <input type="date" name="tanggal" value="{{ $data->tanggal }}">
             <input type="number" name="nominal" value="{{ $data->nominal }}">
             <input type="text" name="keterangan" value="{{ $data->keterangan }}">
+            <input type="file" name="bukti_file">
 
             <button type="submit">Update</button>
 
