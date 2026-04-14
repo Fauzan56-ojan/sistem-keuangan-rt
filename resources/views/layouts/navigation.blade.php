@@ -20,6 +20,10 @@
                         Iuran warga
                     </x-nav-link>
 
+                    <x-nav-link :href="route('tunggakan.index')" :active="request()->is('tunggakan')">
+                        Tunggakan
+                    </x-nav-link>
+
                     <x-nav-link :href="url('/pemasukan')" :active="request()->is('pemasukan')">
                         Pemasukan
                     </x-nav-link>

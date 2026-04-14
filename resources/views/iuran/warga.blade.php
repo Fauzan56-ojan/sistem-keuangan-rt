@@ -5,7 +5,15 @@
 alert("{{ session('error') }}");
 </script>
 @endif
-
+<form method="GET">
+    <select name="tahun" onchange="this.form.submit()">
+        @foreach ($tahunList as $th)
+            <option value="{{ $th }}" {{ $tahun == $th ? 'selected' : '' }}>
+                {{ $th }}
+            </option>
+        @endforeach
+    </select>
+</form>
 <table border="1" cellpadding="5">
 
 <tr>

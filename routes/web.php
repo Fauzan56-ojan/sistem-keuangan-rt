@@ -48,8 +48,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings/generate', function () {return view('settings.generate');})->name('settings.generate');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
-
-
+    Route::get('/tunggakan', [IuranController::class, 'tunggakan'])->name('tunggakan.index');
+    Route::get('/tunggakan/{id}', [IuranController::class, 'tunggakanDetail']);
 
 });
 

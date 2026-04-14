@@ -31,14 +31,20 @@ class IuranController extends Controller
     
     public function warga($id)
     {
-        $tahun = date('Y');
+        $tahun = request('tahun', date('Y'));
 
         $iuran = Iuran::where('user_id', $id)
             ->where('periode_tahun', $tahun)
             ->orderBy('periode_bulan')
             ->get();
+        
+        $tahunList = Iuran::where('user_id', $id)
+            ->select('periode_tahun')
+            ->distinct()
+            ->orderByDesc('periode_tahun')
+            ->pluck('periode_tahun');
 
-        return view('iuran.warga', compact('iuran','tahun'));
+        return view('iuran.warga', compact('iuran','tahun', 'tahunList'));
     }
 
     public function generate(Request $request)
@@ -150,6 +156,53 @@ class IuranController extends Controller
         }
 
         return back()->with('success', 'Migrasi berhasil');
+    }
+
+    public function tunggakan()
+    {
+        $bulanSekarang = date('m');
+        $tahunSekarang = date('Y');
+
+        $iuran = Iuran::with('user')
+            ->where('periode_tahun', $tahunSekarang)
+            ->where('periode_bulan', '<', $bulanSekarang)
+            ->where('status', 'pending')
+            ->get();
+
+        $data = $iuran->groupBy('user_id')->map(function ($items) {
+            return [
+                'nama' => $items->first()->user->name,
+                'jumlah_bulan' => $items->count(),
+                'total' => $items->sum('nominal'),
+                'user_id' => $items->first()->user_id
+            ];
+        })->values(); 
+
+        return view('tunggakan.index', compact('data'));
+    }
+
+    public function tunggakanDetail($id)
+    {
+        $nowYear = now()->year;
+        $nowMonth = now()->month;
+
+        $iuran = Iuran::where('user_id', $id)
+            ->where('status', 'pending')
+            ->where(function ($q) use ($nowYear, $nowMonth) {
+
+                $q->where('periode_tahun', '<', $nowYear)
+
+                ->orWhere(function ($q2) use ($nowYear, $nowMonth) {
+                    $q2->where('periode_tahun', $nowYear)
+                        ->where('periode_bulan', '<', $nowMonth);
+                });
+
+            })
+            ->orderBy('periode_tahun')
+            ->orderBy('periode_bulan')
+            ->get();
+
+        return view('tunggakan.detail', compact('iuran'));
     }
 
     /**
