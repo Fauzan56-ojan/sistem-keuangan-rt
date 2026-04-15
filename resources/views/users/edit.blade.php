@@ -20,6 +20,11 @@
             </div>
 
             <div>
+                Telepon
+                <input type="text" name="telp" value="{{ $user->telp }}">
+            </div>
+
+            <div>
                 Rumah
                 <input type="text" name="nomor_rumah" value="{{ $user->nomor_rumah }}">
             </div>

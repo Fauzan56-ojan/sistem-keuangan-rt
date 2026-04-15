@@ -12,6 +12,7 @@
                 <th>Nama</th>
                 <th>Username</th>
                 <th>Rumah</th>
+                <th>telepon</th>
                 <th>Role</th>
                 <th>Aksi</th>
             </tr>
@@ -21,6 +22,7 @@
                 <td>{{ $u->name }}</td>
                 <td>{{ $u->username }}</td>
                 <td>{{ $u->nomor_rumah }}</td>
+                <td>{{ $u->telp }}</td>
                 <td>{{ $u->role }}</td>
                 <td>
                     <a href="/users/{{ $u->id }}/edit">Edit</a> |

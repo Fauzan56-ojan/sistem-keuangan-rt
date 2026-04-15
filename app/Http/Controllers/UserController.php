@@ -24,6 +24,7 @@ class UserController extends Controller
         User::create([
             'name' => $request->name,
             'username' => $request->username,
+            'telp' => $request->telp,
             'nomor_rumah' => $request->nomor_rumah,
             'role' => $request->role,
             'status_aktif' => 1,
@@ -46,6 +47,7 @@ class UserController extends Controller
         $user->update([
             'name' => $request->name,
             'username' => $request->username,
+            'telp' => $request->telp,
             'nomor_rumah' => $request->nomor_rumah,
             'role' => $request->role,
         ]);
@@ -66,7 +68,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        $user->password = \Hash::make('123456');
+        $user->password = \Hash::make('123');
         $user->save();
 
         return redirect('/users')->with('success', 'Password direset ke 123456');

@@ -24,6 +24,31 @@
         </div>
 
         <div>
+            <x-input-label value="Username" />
+            <x-text-input type="text"
+                        class="mt-1 block w-full bg-gray-100"
+                        :value="$user->username"
+                        readonly />
+        </div>
+
+        <div>
+            <x-input-label value="Nomor Rumah" />
+            <x-text-input type="text"
+                        class="mt-1 block w-full bg-gray-100"
+                        :value="$user->nomor_rumah"
+                        readonly />
+        </div>
+
+        <div>
+            <x-input-label for="telp" value="Nomor Telepon" />
+            <x-text-input id="telp"
+                        name="telp"
+                        type="text"
+                        class="mt-1 block w-full"
+                        :value="old('telp', $user->telp)" />
+        </div>
+
+        {{-- <div>
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
@@ -45,7 +70,7 @@
                     @endif
                 </div>
             @endif
-        </div>
+        </div> --}}
 
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>

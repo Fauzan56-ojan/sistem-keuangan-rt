@@ -19,6 +19,10 @@
             </div>
 
             <div>
+                Telepon
+                <input type="text" name="telp">
+            <div>
+                
                 Rumah
                 <input type="text" name="nomor_rumah">
             </div>
