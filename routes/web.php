@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/iuran-warga', [IuranController::class, 'wargaList']);
     Route::resource('iuran', IuranController::class);
@@ -50,6 +50,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
     Route::get('/tunggakan', [IuranController::class, 'tunggakan'])->name('tunggakan.index');
     Route::get('/tunggakan/{id}', [IuranController::class, 'tunggakanDetail']);
+    Route::get('/riwayat', [PembayaranController::class, 'riwayat']);
+    Route::delete('/pembayaran/{id}/batal', [PembayaranController::class, 'batal']);
+
 
 });
 

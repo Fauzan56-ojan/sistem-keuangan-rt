@@ -42,21 +42,50 @@ class PembayaranController extends Controller
     }
 
     public function checkout($id,$metode)
-{
-    try {
+    {
+        try {
 
-        $iuran = Iuran::with('user')->findOrFail($id);
+            $iuran = Iuran::with('user')->findOrFail($id);
 
-        PembayaranService::checkUrutan($iuran);
+            PembayaranService::checkUrutan($iuran);
 
-        return view('pembayaran.checkout', compact('iuran','metode'));
+            return view('pembayaran.checkout', compact('iuran','metode'));
 
-    } catch (\Exception $e) {
+        } catch (\Exception $e) {
 
-        return back()->with('error',$e->getMessage());
+            return back()->with('error',$e->getMessage());
 
+        }
     }
-}
 
+    public function riwayat()
+    {
+        if (auth()->user()->role == 'warga') {
+            $data = Pembayaran::where('user_id', auth()->id())
+                ->latest()
+                ->get();
+        } else {
+            $data = Pembayaran::latest()->get();
+        }
+
+        return view('pembayaran.riwayat', compact('data'));
+    }
+
+    
+
+    public function batal($id)
+    {
+        $data = Pembayaran::findOrFail($id);
+
+        if ($data->user_id != auth()->id()) {
+            abort(403);
+        }
+
+        if ($data->status == 'pending') {
+            $data->delete();
+        }
+
+        return back();
+    }
 
 }
