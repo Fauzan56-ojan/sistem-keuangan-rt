@@ -1,5 +1,10 @@
-<h2>Daftar Iuran Tahun {{ $tahun }}</h2>
-
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Daftar Iuran Tahun {{ $tahun }}
+        </h2>
+    </x-slot>
+<div class="p-6">
 @if(session('error'))
 <script>
 alert("{{ session('error') }}");
@@ -48,21 +53,12 @@ Rp {{ number_format($row->nominal,0,',','.') }}
 
 @if($row->status == 'pending')
 
-{{-- <form action="/bayar-tunai/{{ $row->id }}" method="POST" style="display:inline;">
-@csrf
-<button type="submit">Tunai</button>
-</form> --}}
-
 <a href="/checkout/{{ $row->id }}/tunai">
 <button>Tunai</button>
 </a>
 <a href="/checkout/{{ $row->id }}/online">
 <button>Online</button>
 </a>
-
-{{-- <a href="/checkout/{{ $row->id }}">
-<button>Online</button>
-</a> --}}
 
 @else
 Lunas
@@ -75,3 +71,5 @@ Lunas
 @endforeach
 
 </table>
+    </div>
+</x-app-layout>

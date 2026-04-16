@@ -1,4 +1,10 @@
-<h2>Konfirmasi Pembayaran</h2>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Konfirmasi Pembayaran
+        </h2>
+    </x-slot>
+
 
 <p>Nama: {{ $iuran->user->name }}</p>
 <p>Rumah: {{ $iuran->user->nomor_rumah }}</p>
@@ -11,6 +17,7 @@
 @endif
 
 <button id="pay-button">Bayar Sekarang</button>
+</x-app-layout>
 <script>let metode = "{{$metode}}";</script>
 <script src="https://app.sandbox.midtrans.com/snap/snap.js"
 data-client-key="{{ config('midtrans.client_key') }}"></script>

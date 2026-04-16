@@ -22,6 +22,7 @@ class IuranController extends Controller
     public function wargaList()
     {
         $users = User::where('status_aktif', 1)
+            ->where('role', 'warga')
             ->select('id', 'name', 'nomor_rumah')
             ->orderBy('name')
             ->get();
