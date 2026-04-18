@@ -22,35 +22,56 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile', function () {return redirect()->route('settings.profile');});
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/iuran-warga', [IuranController::class, 'wargaList']);
-    Route::resource('iuran', IuranController::class);
+    Route::get('/iuran-warga', [IuranController::class, 'wargaList'])
+        ->middleware('role:admin,bendahara,ketua_rt');
     Route::get('/warga/{id}/iuran', [IuranController::class, 'warga']);
 
-    Route::post('/bayar-tunai/{id}', [PembayaranController::class,'tunai']);
+    Route::post('/bayar-tunai/{id}', [PembayaranController::class,'tunai'])
+        ->middleware('role:admin,bendahara');
     Route::post('/get-snap-token/{id}', [PembayaranController::class,'getSnapToken']);
     Route::get('/checkout/{id}/{metode}', [PembayaranController::class,'checkout']);
 
-    Route::resource('users', UserController::class);
-    Route::get('/users/{id}/reset-password', [UserController::class, 'resetPassword']);
+    Route::resource('users', UserController::class)
+        ->middleware('role:admin');
+
+    Route::get('/users/{id}/reset-password', [UserController::class, 'resetPassword'])
+        ->middleware('role:admin');
+
     Route::resource('pemasukan', PemasukanController::class);
     Route::resource('pengeluaran', PengeluaranController::class);
+
+    Route::get('/settings', function () {return view('settings.index');})
+        ->middleware('role:admin')->name('settings.index');
+    Route::get('/settings/profile', [ProfileController::class, 'edit'])->name('settings.profile');
+    Route::post('/settings/migrasi', [IuranController::class, 'migrasi'])
+        ->middleware('role:admin')->name('settings.migrasi.proses');
+    Route::get('/settings/nominal', [NominalController::class, 'index'])
+        ->middleware('role:admin')->name('settings.nominal');
+    Route::get('/settings/generate', function () {return view('settings.generate');})
+        ->middleware('role:admin')->name('settings.generate');
+    Route::post('/nominal', [NominalController::class, 'store'])
+        ->middleware('role:admin')->name('nominal.store');
+    Route::post('/iuran/generate', [IuranController::class, 'generate'])
+        ->middleware('role:admin')->name('iuran.generate');
+    Route::get('/settings/migrasi', function () {return view('settings.migrasi');})
+        ->middleware('role:admin')->name('settings.migrasi');
     
-    Route::post('/nominal', [NominalController::class, 'store'])->name('nominal.store');
-    Route::post('/iuran/generate', [IuranController::class, 'generate'])->name('iuran.generate');
-    Route::get('/settings', function () {return view('settings.index');})->name('settings.index');
-    Route::get('/settings/migrasi', function () {return view('settings.migrasi');})->name('settings.migrasi');
-    Route::post('/settings/migrasi', [IuranController::class, 'migrasi'])->name('settings.migrasi.proses');
-    Route::get('/settings/nominal', [NominalController::class, 'index'])->name('settings.nominal');
-    Route::get('/settings/generate', function () {return view('settings.generate');})->name('settings.generate');
-    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-    Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
-    Route::get('/tunggakan', [IuranController::class, 'tunggakan'])->name('tunggakan.index');
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index')
+        ->middleware('role:admin,bendahara,ketua_rt');
+
+    Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf')
+        ->middleware('role:admin,bendahara,ketua_rt');
+
     Route::get('/tunggakan/{id}', [IuranController::class, 'tunggakanDetail']);
-    Route::get('/riwayat', [PembayaranController::class, 'riwayat']);
+    Route::get('/tunggakan', [IuranController::class, 'tunggakan'])
+        ->middleware('role:admin,bendahara,ketua_rt')->name('tunggakan.index');
+    
+    Route::get('/riwayat', [PembayaranController::class, 'riwayat'])
+        ->middleware('role:admin,bendahara,warga');
     Route::delete('/pembayaran/{id}/batal', [PembayaranController::class, 'batal']);
 
 

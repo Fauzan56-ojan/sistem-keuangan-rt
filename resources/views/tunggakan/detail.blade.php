@@ -11,7 +11,9 @@
                     <th>Bulan</th>
                     <th>Tahun</th>
                     <th>Nominal</th>
-                    <th>Aksi</th>
+                    @if(auth()->user()->role !== 'ketua_rt')
+                        <th>Aksi</th>
+                    @endif
                 </tr>
             </thead>
 
@@ -25,9 +27,16 @@
                         <td>Rp {{ number_format($row->nominal) }}</td>
 
                         <td>
-                            <a href="/checkout/{{ $row->id }}/tunai">Tunai</a>
-                            |
-                            <a href="/checkout/{{ $row->id }}/online">Online</a>
+
+                            @if(in_array(auth()->user()->role, ['admin','bendahara']))
+                                <a href="/checkout/{{ $row->id }}/tunai">Tunai</a>
+                                |
+                            @endif
+
+                            @if(in_array(auth()->user()->role, ['admin','bendahara','warga']))
+                                <a href="/checkout/{{ $row->id }}/online">Online</a>
+                            @endif
+
                         </td>
                     </tr>
                 @empty

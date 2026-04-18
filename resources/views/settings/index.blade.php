@@ -5,6 +5,11 @@
 
     <div class="p-4 space-y-2">
 
+        <a href="{{ route('settings.profile') }}">
+            Profile
+        </a>
+        <br>
+
         <a href="{{ route('settings.migrasi') }}">
             Migrasi
         </a>

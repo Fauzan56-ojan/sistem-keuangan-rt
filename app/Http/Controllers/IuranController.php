@@ -32,6 +32,9 @@ class IuranController extends Controller
     
     public function warga($id)
     {
+        if (auth()->user()->role === 'warga' && auth()->id() != $id) {
+            abort(403);
+        }
         $tahun = request('tahun', date('Y'));
 
         $iuran = Iuran::where('user_id', $id)
@@ -184,6 +187,9 @@ class IuranController extends Controller
 
     public function tunggakanDetail($id)
     {
+        if (auth()->user()->role === 'warga' && auth()->id() != $id) {
+            abort(403);
+        }
         $nowYear = now()->year;
         $nowMonth = now()->month;
 

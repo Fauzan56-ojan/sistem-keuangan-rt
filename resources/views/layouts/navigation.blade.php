@@ -16,15 +16,27 @@
                         Dashboard
                     </x-nav-link>
 
-                    <x-nav-link :href="url('/iuran-warga')" :active="request()->is('iuran')">
+                    <x-nav-link 
+                        :href="in_array(auth()->user()->role, ['admin','bendahara','ketua_rt']) 
+                            ? url('/iuran-warga') 
+                            : url('/warga/' . auth()->id() . '/iuran')" 
+                        :active="request()->is('iuran*')"
+                    >
                         Iuran warga
                     </x-nav-link>
 
-                    <x-nav-link :href="url('/riwayat')" :active="request()->is('riwayat')">
-                        Riwayat
-                    </x-nav-link>
+                    @if(auth()->user()->role !== 'ketua_rt')
+                        <x-nav-link :href="url('/riwayat')" :active="request()->is('riwayat')">
+                            Riwayat
+                        </x-nav-link>
+                    @endif
 
-                    <x-nav-link :href="route('tunggakan.index')" :active="request()->is('tunggakan')">
+                    <x-nav-link 
+                        :href="in_array(auth()->user()->role, ['admin','bendahara','ketua_rt']) 
+                            ? route('tunggakan.index') 
+                            : url('/tunggakan/' . auth()->id())"
+                        :active="request()->is('tunggakan*')"
+                    >
                         Tunggakan
                     </x-nav-link>
 
@@ -36,15 +48,24 @@
                         Pengeluaran
                     </x-nav-link>
 
+                    @if(in_array(auth()->user()->role, ['admin','bendahara','ketua_rt']))
                     <x-nav-link :href="url('/laporan')" :active="request()->is('laporan')">
                         Laporan
                     </x-nav-link>
+                    @endif
 
+                    @if(auth()->user()->role == 'admin')
                     <x-nav-link :href="url('/users')" :active="request()->is('users')">
                         User
                     </x-nav-link>
+                    @endif
 
-                    <x-nav-link :href="route('settings.index')" :active="request()->routeIs('settings.index')">
+                    <x-nav-link 
+                        :href="auth()->user()->role === 'admin' 
+                            ? route('settings.index') 
+                            : route('settings.profile')" 
+                        :active="request()->routeIs('settings.*')"
+                    >
                         Setting
                     </x-nav-link>
                 </div>
@@ -66,9 +87,6 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
@@ -113,9 +131,6 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">

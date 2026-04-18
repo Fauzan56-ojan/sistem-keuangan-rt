@@ -17,11 +17,13 @@ class PemasukanController extends Controller
 
     public function create()
     {
+        $this->authorizeAdminBendahara();
         return view('pemasukan.create');
     }
 
     public function store(Request $request)
     {
+        $this->authorizeAdminBendahara();
         $bukti = null;
         if ($request->hasFile('bukti_file')) {
             $bukti = $request->file('bukti_file')->store('bukti', 'public');
@@ -37,14 +39,16 @@ class PemasukanController extends Controller
         return redirect('/pemasukan');
     }
 
-        public function edit($id)
+    public function edit($id)
     {
+        $this->authorizeAdminBendahara();
         $data = Pemasukan::findOrFail($id);
         return view('pemasukan.edit', compact('data'));
     }
 
     public function update(Request $request, $id)
     {
+        $this->authorizeAdminBendahara();
         $data = Pemasukan::findOrFail($id);
         $bukti = $data->bukti_file; 
         if ($request->hasFile('bukti_file')) {
@@ -63,8 +67,9 @@ class PemasukanController extends Controller
 
     public function destroy($id)
     {
+        $this->authorizeAdminBendahara();
         $data = Pemasukan::findOrFail($id);
-        $data->delete(); // sementara hard delete
+        $data->delete(); 
 
         return redirect('/pemasukan');
     }

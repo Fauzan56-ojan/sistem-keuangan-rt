@@ -15,11 +15,13 @@ class PengeluaranController extends Controller
 
     public function create()
     {
+        $this->authorizeAdminBendahara();
         return view('pengeluaran.create');
     }
 
     public function store(Request $request)
     {
+        $this->authorizeAdminBendahara();
         $bukti = null;
         if ($request->hasFile('bukti_file')) {
             $bukti = $request->file('bukti_file')->store('bukti', 'public');
@@ -37,12 +39,14 @@ class PengeluaranController extends Controller
 
     public function edit($id)
     {
+        $this->authorizeAdminBendahara();
         $data = Pengeluaran::findOrFail($id);
         return view('pengeluaran.edit', compact('data'));
     }
 
     public function update(Request $request, $id)
     {
+        $this->authorizeAdminBendahara();
         $data = Pengeluaran::findOrFail($id);
         $bukti = $data->bukti_file; 
         if ($request->hasFile('bukti_file')) {
@@ -61,6 +65,7 @@ class PengeluaranController extends Controller
 
     public function destroy($id)
     {
+        $this->authorizeAdminBendahara();
         $data = Pengeluaran::findOrFail($id);
         $data->delete();
 

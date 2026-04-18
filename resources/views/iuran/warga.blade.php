@@ -53,15 +53,20 @@ Rp {{ number_format($row->nominal,0,',','.') }}
 
 @if($row->status == 'pending')
 
-<a href="/checkout/{{ $row->id }}/tunai">
-<button>Tunai</button>
-</a>
-<a href="/checkout/{{ $row->id }}/online">
-<button>Online</button>
-</a>
+    @if(in_array(auth()->user()->role, ['admin','bendahara']))
+        <a href="/checkout/{{ $row->id }}/tunai">
+            <button>Tunai</button>
+        </a>
+    @endif
+
+    @if(in_array(auth()->user()->role, ['admin','bendahara','warga']))
+        <a href="/checkout/{{ $row->id }}/online">
+            <button>Online</button>
+        </a>
+    @endif
 
 @else
-Lunas
+    -
 @endif
 
 </td>
