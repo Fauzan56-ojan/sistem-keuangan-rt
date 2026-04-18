@@ -1,6 +1,20 @@
 <x-app-layout>
     <h2 class="text-xl font-bold mb-4">Iuran Warga</h2>
 
+    <form method="GET" class="mb-4">
+        <input 
+            type="text" 
+            name="search" 
+            placeholder="Cari nama / nomor rumah..."
+            value="{{ request('search') }}"
+            class="border px-2 py-1 rounded"
+        >
+
+        <button class="bg-gray-500 text-white px-3 py-1 rounded">
+            Cari
+        </button>
+    </form>
+
     <table class="w-full border">
         <thead>
             <tr>

@@ -5,6 +5,29 @@
 
     <div class="p-4">
 
+        <form method="GET" class="mb-4">
+
+            @if(in_array(auth()->user()->role, ['admin','bendahara']))
+                <input 
+                    type="text" 
+                    name="search"
+                    placeholder="Cari nama / nomor rumah..."
+                    value="{{ request('search') }}"
+                >
+            @endif
+
+            <select name="tahun">
+                @foreach($tahunList as $th)
+                    <option value="{{ $th }}" {{ request('tahun', now()->year) == $th ? 'selected' : '' }}>
+                        {{ $th }}
+                    </option>
+                @endforeach
+            </select>
+
+            <button type="submit">Filter</button>
+
+        </form>
+
         <table border="1" cellpadding="5">
             <tr>
                 <th>Tanggal</th>

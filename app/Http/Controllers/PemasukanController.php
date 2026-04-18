@@ -11,8 +11,27 @@ class PemasukanController extends Controller
 {
     public function index()
     {
-        $data = Pemasukan::latest()->get();
-        return view('pemasukan.index', compact('data'));
+        $bulan = request('bulan', now()->month);
+        $tahun = request('tahun', now()->year);
+        $allowedSort = ['tanggal', 'nominal'];
+
+        $sortBy = in_array(request('sort_by'), $allowedSort)
+            ? request('sort_by')
+            : 'tanggal';
+
+        $order = request('order') === 'asc' ? 'asc' : 'desc';
+
+        $data = Pemasukan::whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->orderBy($sortBy, $order)
+            ->get();
+
+        $tahunList = Pemasukan::selectRaw('YEAR(tanggal) as tahun')
+            ->distinct()
+            ->orderByDesc('tahun')
+            ->pluck('tahun');
+
+        return view('pemasukan.index', compact('data', 'tahunList'));
     }
 
     public function create()

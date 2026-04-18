@@ -11,11 +11,47 @@
         @endif
 
         <br><br>
+        <form method="GET">
 
+            {{-- BULAN --}}
+            <select name="bulan">
+                @for($i = 1; $i <= 12; $i++)
+                    <option value="{{ $i }}" {{ request('bulan', now()->month) == $i ? 'selected' : '' }}>
+                        {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
+                    </option>
+                @endfor
+            </select>
+
+            {{-- TAHUN --}}
+            <select name="tahun">
+                @foreach($tahunList as $th)
+                    <option value="{{ $th }}" {{ request('tahun', now()->year) == $th ? 'selected' : '' }}>
+                        {{ $th }}
+                    </option>
+                @endforeach
+            </select>
+
+            <button type="submit">Filter</button>
+
+        </form>
         <table border="1">
             <tr>
-                <th>Tanggal</th>
-                <th>Nominal</th>
+                <th>
+                    <a href="?bulan={{ request('bulan') }}&tahun={{ request('tahun') }}&sort_by=tanggal&order={{ request('order') == 'asc' ? 'desc' : 'asc' }}">
+                        Tanggal
+                        @if(request('sort_by') == 'tanggal')
+                            {{ request('order') == 'asc' ? '↑' : '↓' }}
+                        @endif
+                    </a>
+                </th>
+                <th>
+                    <a href="?bulan={{ request('bulan') }}&tahun={{ request('tahun') }}&sort_by=nominal&order={{ request('order') == 'asc' ? 'desc' : 'asc' }}">
+                        Nominal
+                        @if(request('sort_by') == 'nominal')
+                            {{ request('order') == 'asc' ? '↑' : '↓' }}
+                        @endif
+                    </a>
+                </th>
                 <th>Keterangan</th>
                 @if(in_array(auth()->user()->role, ['admin','bendahara']))
                     <th>Aksi</th>

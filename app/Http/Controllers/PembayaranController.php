@@ -77,16 +77,37 @@ class PembayaranController extends Controller
 
     public function riwayat()
     {
+        $tahun = request('tahun', now()->year);
         if (auth()->user()->role == 'warga') {
             $data = Pembayaran::where('user_id', auth()->id())
-                ->latest()
+                ->whereYear('paid_at', $tahun)
+                ->orderByRaw('COALESCE(paid_at, created_at) DESC')
                 ->get();
         } else {
-            $data = Pembayaran::latest()->get();
-        }
+            $query = Pembayaran::with('user');
 
-        return view('pembayaran.riwayat', compact('data'));
+            if (request('search')) {
+                $search = request('search');
+
+                $query->whereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%$search%")
+                    ->orWhere('nomor_rumah', 'like', "%$search%");
+                });
+        }
+        $data = $query
+            ->whereYear('paid_at', $tahun)
+            ->orderByRaw('COALESCE(paid_at, created_at) DESC')
+            ->get();
+        }
+        $tahunList = Pembayaran::selectRaw('YEAR(paid_at) as tahun')
+            ->whereNotNull('paid_at')
+            ->distinct()
+            ->orderByDesc('tahun')
+            ->pluck('tahun');
+ 
+        return view('pembayaran.riwayat', compact('data', 'tahunList'));
     }
+
 
     
 

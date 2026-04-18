@@ -21,11 +21,20 @@ class IuranController extends Controller
 
     public function wargaList()
     {
-        $users = User::where('status_aktif', 1)
+        $query = User::where('status_aktif', 1)
             ->where('role', 'warga')
-            ->select('id', 'name', 'nomor_rumah')
-            ->orderBy('name')
-            ->get();
+            ->select('id', 'name', 'nomor_rumah');
+
+        if (request('search')) {
+            $search = request('search');
+
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                ->orWhere('nomor_rumah', 'like', "%$search%");
+            });
+        }
+
+        $users = $query->orderBy('name')->get();
 
         return view('iuran.warga-list', compact('users'));
     }

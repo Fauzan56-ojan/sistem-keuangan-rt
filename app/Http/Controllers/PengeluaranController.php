@@ -9,9 +9,29 @@ class PengeluaranController extends Controller
 {
     public function index()
     {
-        $data = Pengeluaran::latest()->get();
-        return view('pengeluaran.index', compact('data'));
+        $bulan = request('bulan', now()->month);
+        $tahun = request('tahun', now()->year);
+        $allowedSort = ['tanggal', 'nominal'];
+
+        $sortBy = in_array(request('sort_by'), $allowedSort)
+            ? request('sort_by')
+            : 'tanggal';
+
+        $order = request('order') === 'asc' ? 'asc' : 'desc';
+
+        $data = \App\Models\Pengeluaran::whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->orderBy($sortBy, $order)
+            ->get();
+        
+        $tahunList = Pengeluaran::selectRaw('YEAR(tanggal) as tahun')
+            ->distinct()
+            ->orderByDesc('tahun')
+            ->pluck('tahun');
+
+        return view('pengeluaran.index', compact('data', 'tahunList'));
     }
+    
 
     public function create()
     {
