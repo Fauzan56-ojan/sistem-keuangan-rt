@@ -8,10 +8,10 @@
         <form method="POST" action="/pemasukan" enctype="multipart/form-data">
             @csrf
 
-            <input type="date" name="tanggal">
-            <input type="number" name="nominal">
-            <input type="text" name="keterangan">
-            <input type="file" name="bukti_file">
+            <input type="date" name="tanggal"><br>
+            <input type="number" name="nominal"><br>
+            <input type="text" name="keterangan"><br>
+            <input type="file" name="bukti_file"><br>
 
             <button type="submit">Simpan</button>
 
