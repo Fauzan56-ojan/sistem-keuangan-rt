@@ -150,6 +150,7 @@ class PembayaranService
 
             $order_id = $notification->order_id;
             $status = $notification->transaction_status;
+            $paymentType = $notification->payment_type;
 
             $pembayaran = Pembayaran::where('order_id', $order_id)->first();
 
@@ -159,9 +160,23 @@ class PembayaranService
 
             if ($status == 'settlement' || $status == 'capture') {
 
+                $metode = 'online'; 
+
+                if ($paymentType == 'bank_transfer') {
+                    $va = $notification->va_numbers[0] ?? null;
+                    if ($va) {
+                        $metode = $va->bank ?? 'bank_transfer';
+                    }
+                } elseif ($paymentType == 'cstore') {
+                    $metode = $notification->store ?? 'cstore';
+                } else {
+                    $metode = $paymentType; 
+                }
+
                 $pembayaran->update([
                     'status' => 'success',
-                    'paid_at' => now()
+                    'paid_at' => now(),
+                    'metode' => $metode
                 ]);
 
                 $iuran = Iuran::find($pembayaran->iuran_id);

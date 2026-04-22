@@ -80,10 +80,16 @@ class PembayaranController extends Controller
         $tahun = request('tahun', now()->year);
         if (auth()->user()->role == 'warga') {
             $data = Pembayaran::where('user_id', auth()->id())
-                ->whereYear('paid_at', $tahun)
+                ->where(function ($q) use ($tahun) {
+                    $q->whereYear('paid_at', $tahun)
+                    ->orWhere(function ($q2) use ($tahun) {
+                        $q2->whereNull('paid_at')
+                            ->whereYear('created_at', $tahun);
+                    });
+                })
                 ->orderByRaw('COALESCE(paid_at, created_at) DESC')
                 ->get();
-        } else {
+        } else { 
             $query = Pembayaran::with('user');
 
             if (request('search')) {
@@ -95,7 +101,13 @@ class PembayaranController extends Controller
                 });
         }
         $data = $query
-            ->whereYear('paid_at', $tahun)
+            ->where(function ($q) use ($tahun) {
+                $q->whereYear('paid_at', $tahun)
+                ->orWhere(function ($q2) use ($tahun) {
+                    $q2->whereNull('paid_at')
+                        ->whereYear('created_at', $tahun);
+                });
+            })
             ->orderByRaw('COALESCE(paid_at, created_at) DESC')
             ->get();
         }

@@ -10,10 +10,15 @@ use App\Http\Controllers\NominalController;
 use App\Http\Controllers\PemasukanController;
 use App\Http\Controllers\PengeluaranController;
 use App\Http\Controllers\LaporanController;
+use App\Services\PembayaranService;
 
 
 Route::get('/', function () {
     return redirect('/login');
+});
+
+Route::post('/midtrans/webhook', function () {
+    return PembayaranService::handleWebhook();
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
