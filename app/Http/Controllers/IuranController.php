@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Iuran;
 use App\Models\User;
+use App\Models\Pembayaran;
 
 class IuranController extends Controller
 {
@@ -45,11 +46,21 @@ class IuranController extends Controller
             abort(403);
         }
         $tahun = request('tahun', date('Y'));
+        $warga = User::findOrFail($id);
 
         $iuran = Iuran::where('user_id', $id)
             ->where('periode_tahun', $tahun)
             ->orderBy('periode_bulan')
             ->get();
+
+        $pembayaran = Pembayaran::whereIn('iuran_id', $iuran->pluck('id'))
+            ->latest('paid_at')
+            ->get()
+            ->keyBy('iuran_id');
+            $iuran = $iuran->map(function($item) use ($pembayaran) {
+            $item->pembayaran = $pembayaran[$item->id] ?? null;
+            return $item;   
+        });
         
         $tahunList = Iuran::where('user_id', $id)
             ->select('periode_tahun')
@@ -57,7 +68,12 @@ class IuranController extends Controller
             ->orderByDesc('periode_tahun')
             ->pluck('periode_tahun');
 
-        return view('iuran.warga', compact('iuran','tahun', 'tahunList'));
+        $lastPaid = $iuran
+            ->where('status', 'paid')
+            ->sortByDesc('periode_bulan')
+            ->first();
+
+        return view('iuran.warga', compact('iuran','tahun', 'tahunList', 'lastPaid', 'warga'));
     }
 
     public function generate(Request $request)

@@ -1,19 +1,87 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2>Pengeluaran</h2>
+        <h2 class="font-semibold text-lg">Pengeluaran</h2>
     </x-slot>
 
-    <div class="p-6">
-        @if(in_array(auth()->user()->role, ['admin','bendahara']))
-            <a href="/pengeluaran/create" class="bg-blue-500 text-white px-3 py-1 rounded">
-                + Tambah
-            </a>
-        @endif
+    <div class="px-8 py-10 max-w-7xl mx-auto">
 
-        <br><br>
-        <form method="GET">
+        <!-- HEADER -->
+        <div x-data="{ open: false }" class="flex flex-col md:flex-row justify-between gap-6 mb-10">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Pengeluaran</h1>
+                <p class="text-gray-500">Kelola dan pantau pengeluaran kas</p>
+            </div>
 
-            <select name="bulan">
+            @if(in_array(auth()->user()->role, ['admin','bendahara']))
+                <button @click="open = true"
+                class="bg-red-500 text-white px-2 py-1 rounded-md text-xs font-medium inline-flex items-center gap-1 hover:bg-red-600 transition">
+                    <span class="material-symbols-outlined text-[14px]">add</span>
+                    Tambah
+                </button>
+            @endif
+            <!-- MODAL TAMBAH -->
+            <div x-cloak x-show="open" x-transition
+                class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+                <div @click.away="open = false"
+                    class="bg-white w-full max-w-md rounded-xl shadow-lg p-6">
+
+                    <h2 class="text-lg font-semibold mb-4">Tambah Pengeluaran</h2>
+
+                    <form method="POST" action="/pengeluaran" enctype="multipart/form-data">
+                        @csrf
+
+                        <div class="space-y-3">
+
+                            <input type="date" name="tanggal"
+                                class="w-full border rounded px-3 py-2">
+
+                            <input type="number" name="nominal"
+                                placeholder="Nominal"
+                                class="w-full border rounded px-3 py-2">
+
+                            <input type="text" name="keterangan"
+                                placeholder="Keterangan"
+                                class="w-full border rounded px-3 py-2">
+
+                            <input type="file" name="bukti_file"
+                                class="w-full text-sm">
+
+                        </div>
+
+                        <div class="mt-4 flex justify-end gap-2">
+                            <button type="button" @click="open = false"
+                                class="px-3 py-1 bg-gray-200 rounded text-sm">
+                                Batal
+                            </button>
+
+                            <button type="submit"
+                                class="px-3 py-1 bg-red-500 text-white rounded text-sm">
+                                Simpan
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- FILTER -->
+        <form method="GET" class="bg-white p-5 rounded-xl shadow-sm mb-8 flex flex-wrap gap-4 items-center">
+
+            <!-- Search -->
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    search
+                </span>
+                <input type="text" name="search" value="{{ request('search') }}"
+                    placeholder="Cari keterangan..."
+                    class="pl-10 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-red-200">
+            </div>
+
+            <!-- Bulan -->
+            <select name="bulan" class="border rounded-lg px-3 py-2 text-sm">
                 @for($i = 1; $i <= 12; $i++)
                     <option value="{{ $i }}" {{ request('bulan', now()->month) == $i ? 'selected' : '' }}>
                         {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
@@ -21,7 +89,8 @@
                 @endfor
             </select>
 
-            <select name="tahun">
+            <!-- Tahun -->
+            <select name="tahun" class="border rounded-lg px-3 py-2 text-sm">
                 @foreach($tahunList as $th)
                     <option value="{{ $th }}" {{ request('tahun', now()->year) == $th ? 'selected' : '' }}>
                         {{ $th }}
@@ -29,68 +98,177 @@
                 @endforeach
             </select>
 
-            <button type="submit">Filter</button>
-
+            <button class="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm">
+                Filter
+            </button>
         </form>
 
-        <br>
+        <!-- TABLE -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
 
-        <table border="1">
-            <tr>
-                <th>
-                    <a href="?bulan={{ request('bulan') }}&tahun={{ request('tahun') }}&sort_by=tanggal&order={{ request('order') == 'asc' ? 'desc' : 'asc' }}">
-                        Tanggal
-                        @if(request('sort_by') == 'tanggal')
-                            {{ request('order') == 'asc' ? '↑' : '↓' }}
-                        @endif
-                    </a>
-                </th>
-                <th>
-                    <a href="?bulan={{ request('bulan') }}&tahun={{ request('tahun') }}&sort_by=nominal&order={{ request('order') == 'asc' ? 'desc' : 'asc' }}">
-                        Nominal
-                        @if(request('sort_by') == 'nominal')
-                            {{ request('order') == 'asc' ? '↑' : '↓' }}
-                        @endif
-                    </a>
-                </th>
-                <th>Keterangan</th>
-                @if(in_array(auth()->user()->role, ['admin','bendahara']))
-                    <th>Aksi</th>
-                @endif
-                <th>Bukti File</th>
-            </tr>
+                <table class="w-full text-sm">
 
-            @foreach($data as $item)
-            <tr>
-                <td>{{ $item->tanggal }}</td>
-                <td>{{ $item->nominal }}</td>
-                <td>{{ $item->keterangan }}</td>
+                    <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
+                        <tr>
+                            <th class="px-6 py-4">
+                                <a href="?bulan={{ request('bulan') }}&tahun={{ request('tahun') }}&sort_by=tanggal&order={{ request('order') == 'asc' ? 'desc' : 'asc' }}">
+                                    Tanggal
+                                </a>
+                            </th>
 
-                @if(in_array(auth()->user()->role, ['admin','bendahara']))
-                <td>
-                    <a href="/pengeluaran/{{ $item->id }}/edit">Edit</a>
+                            <th class="px-6 py-4">Keterangan</th>
 
-                    <form action="/pengeluaran/{{ $item->id }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit">Hapus</button>
-                    </form>
-                </td>
-                @endif
+                            <th class="px-6 py-4">
+                                <a href="?bulan={{ request('bulan') }}&tahun={{ request('tahun') }}&sort_by=nominal&order={{ request('order') == 'asc' ? 'desc' : 'asc' }}">
+                                    Nominal
+                                </a>
+                            </th>
 
-                <td>
-                    @if ($item->bukti_file)
-                        <a href="{{ asset('storage/' . $item->bukti_file) }}" target="_blank">
-                            Lihat
-                        </a>
-                    @else
-                        -
-                    @endif
-                </td>
-            </tr>
-            @endforeach
+                            <th class="px-6 py-4 text-center">Bukti</th>
+                            <th class="px-6 py-4">Dibuat Oleh</th>
 
-        </table>
+                            @if(in_array(auth()->user()->role, ['admin','bendahara']))
+                                <th class="px-6 py-4 text-center">Aksi</th>
+                            @endif
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y">
+
+                        @foreach($data as $item)
+
+                        @php
+                            $name = $item->user->name ?? 'User';
+                            $words = explode(' ', $name);
+                            $initials = strtoupper(substr($words[0],0,1) . (isset($words[1]) ? substr($words[1],0,1) : ''));
+                        @endphp
+
+                        <tr x-data="{ openEdit: false }" class="hover:bg-gray-50 group transition">
+
+                            <!-- Tanggal -->
+                            <td class="px-6 py-4">
+                                <div class="flex flex-col">
+                                    <span class="font-semibold">
+                                        {{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}
+                                    </span>
+                                </div>
+                            </td>
+
+                            <!-- Keterangan -->
+                            <td class="px-6 py-4">
+                                {{ $item->keterangan }}
+                            </td>
+
+                            <!-- Nominal -->
+                            <td class="px-6 py-4 text-red-600 font-bold">
+                                Rp {{ number_format($item->nominal, 0, ',', '.') }}
+                            </td>
+
+                            <!-- Bukti -->
+                            <td class="px-6 py-4 text-center">
+                                @if($item->bukti_file)
+                                    <a href="{{ asset('storage/' . $item->bukti_file) }}" target="_blank"
+                                       class="text-red-600 hover:underline text-xs">
+                                        Lihat
+                                    </a>
+                                @else
+                                    <span class="text-gray-400 text-xs">-</span>
+                                @endif
+                            </td>
+
+                            <!-- User -->
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs font-bold">
+                                        {{ $initials }}
+                                    </div>
+                                    <span class="text-xs font-semibold">
+                                        {{ $name }}
+                                    </span>
+                                </div>
+                            </td>
+
+                            <!-- Aksi -->
+                            @if(in_array(auth()->user()->role, ['admin','bendahara']))
+                            <td class="px-6 py-4">
+                                <div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
+
+                                    <button @click="openEdit = true"
+                                    class="text-gray-500 hover:text-red-600">
+                                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                                    </button>
+
+                                    <form action="/pengeluaran/{{ $item->id }}" method="POST"
+                                          onsubmit="return confirm('Yakin hapus data?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="text-gray-500 hover:text-red-600">
+                                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                                        </button>
+                                    </form>
+
+                                </div>
+                                <!-- MODAL EDIT -->
+                                <div x-cloak x-show="openEdit" x-transition
+                                    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+                                    <div @click.away="openEdit = false"
+                                        class="bg-white w-full max-w-md rounded-xl shadow-lg p-6">
+
+                                        <h2 class="text-lg font-semibold mb-4">Edit Pengeluaran</h2>
+
+                                        <form method="POST" action="/pengeluaran/{{ $item->id }}" enctype="multipart/form-data">
+                                            @csrf
+                                            @method('PUT')
+
+                                            <div class="space-y-3">
+
+                                                <input type="date" name="tanggal"
+                                                    value="{{ $item->tanggal }}"
+                                                    class="w-full border rounded px-3 py-2">
+
+                                                <input type="number" name="nominal"
+                                                    value="{{ $item->nominal }}"
+                                                    class="w-full border rounded px-3 py-2">
+
+                                                <input type="text" name="keterangan"
+                                                    value="{{ $item->keterangan }}"
+                                                    class="w-full border rounded px-3 py-2">
+
+                                                <input type="file" name="bukti_file"
+                                                    class="w-full text-sm">
+
+                                            </div>
+
+                                            <div class="mt-4 flex justify-end gap-2">
+                                                <button type="button" @click="openEdit = false"
+                                                    class="px-3 py-1 bg-gray-200 rounded text-sm">
+                                                    Batal
+                                                </button>
+
+                                                <button type="submit"
+                                                    class="px-3 py-1 bg-red-500 text-white rounded text-sm">
+                                                    Update
+                                                </button>
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </td>
+                            @endif
+
+                        </tr>
+                        @endforeach
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
 
     </div>
 </x-app-layout>
