@@ -7,16 +7,12 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Iuran;
 use App\Models\User;
 use App\Models\Pembayaran;
+use App\Services\IuranService;
 
 class IuranController extends Controller
 {
-    public function index()
+    public function index() //tidak kepakai
     {
-        $iuran = Iuran::with('user')
-            ->orderBy('periode_tahun','desc')
-            ->orderBy('periode_bulan')
-            ->get();
-
         return view('iuran.index', compact('iuran'));
     }
 
@@ -40,248 +36,63 @@ class IuranController extends Controller
         return view('iuran.warga-list', compact('users'));
     }
     
-    public function warga($id)
+    public function warga($id, IuranService $service)
     {
         if (auth()->user()->role === 'warga' && auth()->id() != $id) {
             abort(403);
         }
+
         $tahun = request('tahun', date('Y'));
         $warga = User::findOrFail($id);
 
-        $iuran = Iuran::where('user_id', $id)
-            ->where('periode_tahun', $tahun)
-            ->orderBy('periode_bulan')
-            ->get();
+        $data = $service->getDataWarga($id, $tahun);
 
-        $pembayaran = Pembayaran::whereIn('iuran_id', $iuran->pluck('id'))
-            ->latest('paid_at')
-            ->get()
-            ->keyBy('iuran_id');
-            $iuran = $iuran->map(function($item) use ($pembayaran) {
-            $item->pembayaran = $pembayaran[$item->id] ?? null;
-            return $item;   
-        });
-        
-        $tahunList = Iuran::where('user_id', $id)
-            ->select('periode_tahun')
-            ->distinct()
-            ->orderByDesc('periode_tahun')
-            ->pluck('periode_tahun');
+        $iuran = $data['iuran'];
+        $tahunList = $data['tahunList'];
+        $lastPaid = $data['lastPaid'];
 
-        $lastPaid = $iuran
-            ->where('status', 'paid')
-            ->sortByDesc('periode_bulan')
-            ->first();
-
-        return view('iuran.warga', compact('iuran','tahun', 'tahunList', 'lastPaid', 'warga'));
+        return view('iuran.warga', compact('iuran', 'tahun', 'tahunList', 'lastPaid', 'warga'));
     }
 
-    public function generate(Request $request)
+    public function generate(Request $request, IuranService $service)
     {
-        $tahun = $request->tahun;
+        $result = $service->generate($request->tahun);
 
-        $cek = DB::table('iuran')
-            ->where('periode_tahun', $tahun)
-            ->exists();
-
-        if ($cek) {
-            return back()->with('error', 'Iuran tahun ini sudah digenerate');
+        if (isset($result['error'])) {
+            return back()->with('error', $result['error']);
         }
 
-        $cekNominal = DB::table('setnominal')
-            ->where('tahun', $tahun)
-            ->exists();
-
-        if (!$cekNominal) {
-
-            $nominalTerakhir = DB::table('setnominal')
-                ->orderBy('created_at', 'desc')
-                ->value('nominal');
-
-            if (!$nominalTerakhir) {
-                return back()->with('error', 'Nominal sebelumnya belum ada');
-            }
-
-            DB::table('setnominal')->insert([
-                'tahun' => $tahun,
-                'bulan' => 1,
-                'nominal' => $nominalTerakhir,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-        }
-
-        $users = User::where('status_aktif', 1)
-            ->where('role', 'warga')
-            ->get();
-
-        foreach ($users as $user) {
-
-            for ($bulan = 1; $bulan <= 12; $bulan++) {
-
-                $nominal = DB::table('setnominal')
-                    ->where('tahun', $tahun)
-                    ->where('bulan', '<=', $bulan)
-                    ->orderBy('bulan', 'desc')
-                    ->value('nominal');
-
-                if (!$nominal) {
-                    return back()->with('error', "Nominal belum diset sampai bulan $bulan");
-                }
-
-                Iuran::create([
-                    'user_id' => $user->id,
-                    'periode_bulan' => $bulan,
-                    'periode_tahun' => $tahun,
-                    'nominal' => $nominal,
-                    'status' => 'pending'
-                ]);
-            }
-        }
-
-        return back()->with('success', 'Iuran berhasil digenerate');
+        return back()->with('success', $result['success']);
     }
 
-    public function migrasi(Request $request)
+    public function migrasi(Request $request, IuranService $service)
     {
-        $tahun = $request->tahun;
-        $bulanAkhir = $request->bulan;
+        $result = $service->migrasi($request->tahun, $request->bulan);
 
-        $users = User::where('status_aktif', 1)
-                ->where('role', 'warga')
-                ->get();
-
-        foreach ($users as $user) {
-
-            for ($i = 1; $i <= $bulanAkhir; $i++) {
-
-                $cek = Iuran::where('user_id', $user->id)
-                    ->where('periode_tahun', $tahun)
-                    ->where('periode_bulan', $i)
-                    ->exists();
-
-                if ($cek) {
-                    continue; 
-                }
-
-                $nominal = \DB::table('setnominal')
-                    ->where('tahun', $tahun)
-                    ->where('bulan', '<=', $i)
-                    ->orderBy('bulan', 'desc')
-                    ->value('nominal');
-
-                if (!$nominal) {
-                    return back()->with('error', "Nominal belum diset sampai bulan $i");
-                }
-
-                Iuran::create([
-                    'user_id' => $user->id,
-                    'periode_bulan' => $i,
-                    'periode_tahun' => $tahun,
-                    'nominal' => $nominal,
-                    'status' => 'pending'
-                ]);
-            }
+        if (isset($result['error'])) {
+            return back()->with('error', $result['error']);
         }
 
-        return back()->with('success', 'Migrasi berhasil');
+        return back()->with('success', $result['success']);
     }
 
-    public function tunggakan()
+    public function tunggakan(IuranService $service)
     {
-        $bulanSekarang = date('m');
-        $tahunSekarang = date('Y');
-
-        $iuran = Iuran::with('user')
-            ->where('periode_tahun', $tahunSekarang)
-            ->where('periode_bulan', '<', $bulanSekarang)
-            ->where('status', 'pending')
-            ->get();
-
-        $data = $iuran->groupBy('user_id')->map(function ($items) {
-            return [
-                'nama' => $items->first()->user->name,
-                'jumlah_bulan' => $items->count(),
-                'total' => $items->sum('nominal'),
-                'user_id' => $items->first()->user_id
-            ];
-        })->values(); 
+        $data = $service->getTunggakan();
 
         return view('tunggakan.index', compact('data'));
     }
 
-    public function tunggakanDetail($id)
+    public function tunggakanDetail($id, IuranService $service)
     {
         if (auth()->user()->role === 'warga' && auth()->id() != $id) {
             abort(403);
         }
-        $nowYear = now()->year;
-        $nowMonth = now()->month;
 
-        $iuran = Iuran::where('user_id', $id)
-            ->where('status', 'pending')
-            ->where(function ($q) use ($nowYear, $nowMonth) {
+        $warga = User::findOrFail($id);
+        $iuran = $service->getTunggakanDetail($id);
 
-                $q->where('periode_tahun', '<', $nowYear)
-
-                ->orWhere(function ($q2) use ($nowYear, $nowMonth) {
-                    $q2->where('periode_tahun', $nowYear)
-                        ->where('periode_bulan', '<', $nowMonth);
-                });
-
-            })
-            ->orderBy('periode_tahun')
-            ->orderBy('periode_bulan')
-            ->get();
-
-        return view('tunggakan.detail', compact('iuran'));
+        return view('tunggakan.detail', compact('iuran', 'warga'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

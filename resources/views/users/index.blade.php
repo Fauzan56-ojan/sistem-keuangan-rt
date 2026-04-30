@@ -68,7 +68,7 @@
                                             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg">alternate_email</span>
                                             <input name="username" type="text" required
                                                 class="w-full pl-12 pr-4 py-2.5 bg-slate-50 border-none rounded-lg text-black focus:ring-2 focus:ring-emerald-500/20 transition-all placeholder:text-slate-300 text-sm" 
-                                                placeholder="adi" />
+                                                placeholder="budi" />
                                         </div>
                                     </div>
 
@@ -79,7 +79,7 @@
                                                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg">home</span>
                                                 <input name="nomor_rumah" type="text" required
                                                     class="w-full pl-11 pr-3 py-2.5 bg-slate-50 border-none rounded-lg text-black focus:ring-2 focus:ring-emerald-500/20 transition-all placeholder:text-slate-300 text-sm" 
-                                                    placeholder="A-12" />
+                                                    placeholder="ET-5" />
                                             </div>
                                         </div>
                                         <div>
@@ -94,7 +94,7 @@
                                     </div>
 
                                     <div>
-                                        <label class="block text-[10px] font-bold text-black uppercase tracking-widest mb-1.5 ml-1">Role / Jabatan</label>
+                                        <label class="block text-[10px] font-bold text-black uppercase tracking-widest mb-1.5 ml-1">Role</label>
                                         <div class="relative">
                                             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg pointer-events-none">badge</span>
                                             <select name="role" required
@@ -104,7 +104,7 @@
                                                 <option value="bendahara">Bendahara</option>
                                                 <option value="admin">Admin</option>
                                             </select>
-                                            <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-black text-lg pointer-events-none">expand_more</span>
+                                            
                                         </div>
                                     </div>
 
@@ -271,7 +271,7 @@
                                                         <label class="block text-[10px] font-bold text-black uppercase tracking-widest mb-1.5 ml-1">Nomor Rumah</label>
                                                         <div class="relative">
                                                             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg">home</span>
-                                                            <input name="nomor_rumah" type="text" value="{{ $u->nomor_rumah }}" required
+                                                            <input name="nomor_rumah" type="text" value="{{ $u->nomor_rumah }}" 
                                                                 class="w-full pl-11 pr-3 py-2.5 bg-slate-50 border-none rounded-lg text-black focus:ring-2 focus:ring-emerald-500/20 transition-all placeholder:text-slate-300 text-sm" 
                                                                 placeholder="A-12" />
                                                         </div>
@@ -288,7 +288,7 @@
                                                 </div>
 
                                                 <div>
-                                                    <label class="block text-[10px] font-bold text-black uppercase tracking-widest mb-1.5 ml-1">Role / Jabatan</label>
+                                                    <label class="block text-[10px] font-bold text-black uppercase tracking-widest mb-1.5 ml-1">Role</label>
                                                     <div class="relative">
                                                         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg pointer-events-none">badge</span>
                                                         <select name="role" required

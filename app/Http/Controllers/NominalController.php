@@ -9,6 +9,8 @@ class NominalController extends Controller
     public function index()
     {
         $data = \DB::table('setnominal')
+            ->leftJoin('users', 'users.id', '=', 'setnominal.created_by')
+            ->select('setnominal.*', 'users.name as user_name')
             ->orderBy('tahun', 'desc')
             ->orderBy('bulan', 'desc')
             ->get();
@@ -42,6 +44,7 @@ class NominalController extends Controller
                 'tahun' => $tahun,
                 'bulan' => $bulan,
                 'nominal' => $request->nominal,
+                'created_by' => auth()->id(),
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -55,7 +58,7 @@ class NominalController extends Controller
                 'nominal' => $request->nominal
             ]);
 
-        return redirect()->route('settings.generate')
+        return redirect()->route('settings.nominal')
             ->with('success', 'Nominal berhasil ditambahkan & iuran diperbarui');
     }
 }

@@ -25,6 +25,11 @@
                     <p>Rp {{ number_format($saldo) }}</p>
                 </div>
 
+                <div class="bg-white p-4 shadow rounded">
+                    <h4>Total Tunggakan</h4>
+                    <p>Rp {{ number_format($totalTunggakan, 0, ',', '.') }}</p>
+                </div>
+
             </div>
 
         </div>

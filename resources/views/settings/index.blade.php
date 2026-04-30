@@ -46,10 +46,10 @@
 
                 <div class="ml-4 flex-1">
                     <h3 class="font-semibold text-lg text-gray-800 group-hover:text-emerald-600">
-                        Migrasi
+                        Buat Tagihan Lama
                     </h3>
                     <p class="text-sm text-gray-500">
-                        Manajemen data sistem
+                        Migrasi data iuran
                     </p>
                 </div>
 
@@ -68,10 +68,10 @@
 
                 <div class="ml-4 flex-1">
                     <h3 class="font-semibold text-lg text-gray-800 group-hover:text-emerald-600">
-                        Kelola Iuran
+                        Kelola Nominal
                     </h3>
                     <p class="text-sm text-gray-500">
-                        Atur nominal iuran
+                        Atur Nominal Iuran
                     </p>
                 </div>
 
@@ -90,10 +90,10 @@
 
                 <div class="ml-4 flex-1">
                     <h3 class="font-semibold text-lg text-gray-800 group-hover:text-emerald-600">
-                        Generate Iuran
+                        Buat Tagihan Tahunan
                     </h3>
                     <p class="text-sm text-gray-500">
-                        Buat iuran otomatis
+                        Tagihan Iuran 1 Tahun
                     </p>
                 </div>
 
