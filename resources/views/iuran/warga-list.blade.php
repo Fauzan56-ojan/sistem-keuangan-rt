@@ -45,6 +45,29 @@
                         <h3 class="text-2xl font-bold text-gray-900 leading-none">{{ count($users) }}</h3>
                     </div>
                 </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                    <div class="p-3 bg-green-50 rounded-lg">
+                        <span class="material-symbols-outlined text-green-600">check_circle</span>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">Sudah Bayar ({{ now()->translatedFormat('M') }})</p>
+                        <h3 class="text-2xl font-bold text-green-600">{{ $sudahBayar }}</h3>
+                    </div>
+                </div>
+
+                <a href="{{ route('belum.bayar') }}"
+                class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:bg-red-50 transition">
+
+                    <div class="p-3 bg-red-50 rounded-lg">
+                        <span class="material-symbols-outlined text-red-600">warning</span>
+                    </div>
+
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">Belum Bayar ({{ now()->translatedFormat('M') }})</p>
+                        <h3 class="text-2xl font-bold text-red-600">{{ $belumBayar }}</h3>
+                    </div>
+                </a>
             </div>
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">

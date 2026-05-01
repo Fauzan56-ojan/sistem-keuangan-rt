@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/iuran-warga', [IuranController::class, 'wargaList'])
         ->middleware('role:admin,bendahara,ketua_rt');
     Route::get('/warga/{id}/iuran', [IuranController::class, 'warga']);
+    Route::get('/belum-bayar', [IuranController::class, 'belumBayar'])->name('belum.bayar');
 
     Route::post('/bayar-tunai/{id}', [PembayaranController::class,'tunai'])
         ->middleware('role:admin,bendahara');

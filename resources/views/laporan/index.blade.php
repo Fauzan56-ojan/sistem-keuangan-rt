@@ -55,7 +55,10 @@
                 <div class="flex flex-col">
                     <label class="text-[10px] uppercase font-extrabold text-slate-400 tracking-widest mb-2 ml-1">Bulan</label>
                     <select name="bulan" onchange="this.form.submit()" class="bg-slate-50 border-none rounded-xl py-2.5 pl-4 pr-10 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500/20 cursor-pointer transition-all">
-                        <option value="all" {{ $bulan == 'all' ? 'selected' : '' }}>Semua Bulan</option>
+                        <option value="all" {{ $bulan == 'all' ? 'selected' : '' }}>
+                            Semua Bulan
+                        </option>
+
                         @for ($i = 1; $i <= 12; $i++)
                             <option value="{{ $i }}" {{ $bulan == $i ? 'selected' : '' }}>
                                 {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
@@ -67,12 +70,27 @@
                 <div class="flex flex-col">
                     <label class="text-[10px] uppercase font-extrabold text-slate-400 tracking-widest mb-2 ml-1">Tahun</label>
                     <select name="tahun" onchange="this.form.submit()" class="bg-slate-50 border-none rounded-xl py-2.5 pl-4 pr-10 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500/20 cursor-pointer transition-all">
+                        <option value="all" {{ $tahun == 'all' ? 'selected' : '' }}>
+                            Semua Tahun
+                        </option>
+
                         @foreach ($tahunList as $th)
-                            <option value="{{ $th }}" {{ $tahun == $th ? 'selected' : '' }}>{{ $th }}</option>
+                            <option value="{{ $th }}" {{ $tahun == $th ? 'selected' : '' }}>
+                                {{ $th }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
             </form>
+
+            <a href="{{ route('laporan.index', [
+                'jenis' => 'all',
+                'bulan' => date('n'),
+                'tahun' => date('Y')
+            ]) }}"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold hover:bg-gray-300 transition">
+                Reset
+            </a>
 
             <a href="{{ route('laporan.pdf', request()->all()) }}" target="_blank" class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-200">
                 <span class="material-symbols-outlined text-xl">picture_as_pdf</span>
@@ -156,7 +174,7 @@
 
             @if ($jenis != 'all')
             <div class="px-8 py-4 bg-slate-50/80 border-t border-slate-100 flex justify-end items-center gap-4">
-                <span class="text-xs font-bold text-slate-400 uppercase">Ringkasan Filter:</span>
+                <span class="text-xs font-bold text-slate-400 uppercase">Total:</span>
                 <span class="text-lg font-black text-slate-900">
                     Rp {{ number_format($jenis == 'pengeluaran' ? $totalPengeluaran : $totalPemasukan, 0, ',', '.') }}
                 </span>

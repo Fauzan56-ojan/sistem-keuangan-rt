@@ -14,7 +14,7 @@ class LaporanController extends Controller
     public function index()
     {
         $jenis = request('jenis', 'all');
-        $bulan = request('bulan', 'all');
+        $bulan = request('bulan', date('n'));
         $tahun = request('tahun', date('Y'));
 
         $tahunList = collect([
@@ -42,7 +42,7 @@ class LaporanController extends Controller
     public function exportPdf()
     {
         $jenis = request('jenis', 'all');
-        $bulan = request('bulan', 'all');
+        $bulan = request('bulan', date('n'));
         $tahun = request('tahun', date('Y'));
 
         $transaksi = LaporanService::getTransaksi($jenis, $bulan, $tahun);

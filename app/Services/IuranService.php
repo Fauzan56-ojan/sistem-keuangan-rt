@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Iuran;
+use App\Models\Pembayaran;
 
 class IuranService
 {
@@ -22,11 +23,14 @@ class IuranService
         return $iuran->groupBy('user_id')->map(function ($items) {
             return [
                 'nama' => $items->first()->user->name,
+                'nomor_rumah' => $items->first()->user->nomor_rumah,
                 'jumlah_bulan' => $items->count(),
                 'total' => $items->sum('nominal'),
                 'user_id' => $items->first()->user_id
             ];
-        })->values();
+        })
+        ->sortByDesc('jumlah_bulan')
+        ->values();
     }
 
     public function getTunggakanDetail($id)
@@ -187,5 +191,28 @@ class IuranService
 
         return ['iuran' => $iuran, 'tahunList' => $tahunList, 'lastPaid' => $lastPaid
         ];
+    }
+
+    public function getSummaryBulanIni()
+    {
+        $bulan = now()->month;
+        $tahun = now()->year;
+        $totalWarga = User::where('role', 'warga')->count();
+
+        $sudahBayar = Iuran::where('periode_bulan', now()->month)
+            ->where('periode_tahun', now()->year)
+            ->where('status', 'paid')
+            ->count();
+
+        $belumBayar = Iuran::where('periode_bulan', now()->month)
+            ->where('periode_tahun', now()->year)
+            ->where('status', 'pending')
+            ->count();
+
+        $persen = $totalWarga > 0
+            ? round(($sudahBayar / $totalWarga) * 100)
+            : 0;
+
+        return compact('totalWarga','sudahBayar','belumBayar','persen');
     }
 }

@@ -16,7 +16,7 @@ class IuranController extends Controller
         return view('iuran.index', compact('iuran'));
     }
 
-    public function wargaList()
+    public function wargaList(IuranService $service)
     {
         $query = User::where('status_aktif', 1)
             ->where('role', 'warga')
@@ -32,8 +32,9 @@ class IuranController extends Controller
         }
 
         $users = $query->orderBy('name')->get();
+        $summary = $service->getSummaryBulanIni();
 
-        return view('iuran.warga-list', compact('users'));
+        return view('iuran.warga-list', compact('users') + $summary);
     }
     
     public function warga($id, IuranService $service)
@@ -52,6 +53,17 @@ class IuranController extends Controller
         $lastPaid = $data['lastPaid'];
 
         return view('iuran.warga', compact('iuran', 'tahun', 'tahunList', 'lastPaid', 'warga'));
+    }
+
+    public function belumBayar()
+    {
+        $data = Iuran::with('user')
+            ->where('periode_bulan', now()->month)
+            ->where('periode_tahun', now()->year)
+            ->where('status', 'pending')
+            ->get();
+
+        return view('iuran.belum-bayar', compact('data'));
     }
 
     public function generate(Request $request, IuranService $service)
