@@ -10,7 +10,17 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::where('status_aktif', 1)->get();
+        $query = User::where('status_aktif', 1);
+
+        if (request('search')) {
+            $search = trim(request('search'));
+
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                ->orWhere('nomor_rumah', 'like', "%$search%");
+            });
+        }
+        $users = $query->get();
         return view('users.index', compact('users'));
     }
 

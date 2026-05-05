@@ -1,6 +1,13 @@
 <x-app-layout>
     <div class="p-6 max-w-7xl mx-auto space-y-8">
-        
+        @if(session('error'))
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-r-xl shadow-sm">
+                <div class="flex items-center">
+                    <span class="material-symbols-outlined text-red-500 mr-3">error</span>
+                    <p class="text-sm text-red-700 font-medium">{{ session('error') }}</p>
+                </div>
+            </div>
+        @endif
         {{-- Header Section --}}
         <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="md:col-span-2 bg-white rounded-2xl p-8 border border-gray-200 shadow-sm flex items-start justify-between relative overflow-hidden">
@@ -33,7 +40,7 @@
                 </div>
                 <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-red-50/50 rounded-full"></div>
             </div>
-        </section>
+        </section> 
 
         {{-- Title Section --}}
         <section class="flex flex-col md:flex-row md:items-center justify-between gap-4">

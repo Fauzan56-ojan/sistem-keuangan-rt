@@ -31,10 +31,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/iuran-warga', [IuranController::class, 'wargaList'])
+    Route::get('/iuran-warga', [IuranController::class, 'wargaList'])->name('iuran.warga')
         ->middleware('role:admin,bendahara,ketua_rt');
     Route::get('/warga/{id}/iuran', [IuranController::class, 'warga']);
-    Route::get('/belum-bayar', [IuranController::class, 'belumBayar'])->name('belum.bayar');
+    Route::get('/belum-bayar', [IuranController::class, 'belumBayar'])->name('belum.bayar')
+    ->middleware('role:admin,bendahara,ketua_rt');
 
     Route::post('/bayar-tunai/{id}', [PembayaranController::class,'tunai'])
         ->middleware('role:admin,bendahara');

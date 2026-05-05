@@ -107,12 +107,72 @@
         </div>
     </div>
 
+    <div id="loading" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div class="bg-white px-6 py-5 rounded-2xl shadow-lg text-center">
+            <div class="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p class="text-sm font-semibold text-gray-700">Memproses pembayaran...</p>
+        </div>
+    </div>
+
+    <div id="success-modal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-2xl shadow-lg text-center w-72">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-100 flex items-center justify-center">
+                <svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                    <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <h3 class="font-bold text-lg text-gray-800">Pembayaran Berhasil</h3>
+            <p class="text-sm text-gray-500 mt-1 mb-4">Transaksi berhasil diproses</p>
+
+            <button id="ok-btn"
+                class="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <div id="pending-modal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-2xl shadow-lg text-center w-72">
+            
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-yellow-100 flex items-center justify-center">
+    <span class="material-symbols-outlined text-yellow-600 text-3xl">info</span>
+</div>
+
+            <h3 class="font-bold text-lg text-gray-800">Menunggu Pembayaran</h3>
+            <p class="text-sm text-gray-500 mt-1 mb-4">Silakan selesaikan pembayaran Anda</p>
+
+            <button id="pending-ok"
+                class="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <div id="error-modal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-2xl shadow-lg text-center w-72">
+            
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
+                <span class="text-red-600 text-3xl">✕</span>
+            </div>
+
+            <h3 class="font-bold text-lg text-gray-800">Pembayaran Gagal</h3>
+            <p class="text-sm text-gray-500 mt-1 mb-4">Silakan coba lagi</p>
+
+            <button id="error-ok"
+                class="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600">
+                OK
+            </button>
+        </div>
+    </div>
+
 
     <script>let metode = "{{$metode}}";</script>
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
     
     <script>
         document.getElementById('pay-button').onclick = function() {
+            showLoading();
             if (metode == "online") {
                 fetch("/get-snap-token/{{ $iuran->id }}", {
                         method: "POST",
@@ -123,19 +183,27 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        setTimeout(() => {
+                             hideLoading();  
                         snap.pay(data.token, {
                             onSuccess: function(result) {
-                                alert("Pembayaran berhasil");
-                                location.href = "/warga/{{ $iuran->user->id }}/iuran";
+                                document.getElementById('success-modal').classList.remove('hidden');
                             },
+
                             onPending: function(result) {
-                                alert("Menunggu pembayaran");
-                                location.href = "/warga/{{ $iuran->user->id }}/iuran";
+                                document.getElementById('pending-modal').classList.remove('hidden');
                             },
+
                             onError: function(result) {
-                                alert("Pembayaran gagal");
+                                hideLoading();
+                                document.getElementById('error-modal').classList.remove('hidden');
                             },
+
+                            onClose: function() {
+                                hideLoading();
+                            }
                         });
+                        }, 1500);
                     });
             } else {
                 let tanggalInput = document.getElementById('tanggal');
@@ -152,10 +220,32 @@
                         })
                     })
                     .then(() => {
-                        alert("Pembayaran tunai berhasil");
-                        location.href = "/warga/{{ $iuran->user->id }}/iuran";
+                        document.getElementById('success-modal').classList.remove('hidden');
                     });
             }
+        };
+
+        function showLoading() {
+            document.getElementById('loading').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.add('hidden');
+        }
+
+        // sukses
+        document.getElementById('ok-btn').onclick = function() {
+            location.href = "/warga/{{ $iuran->user->id }}/iuran";
+        };
+
+        // pending
+        document.getElementById('pending-ok').onclick = function() {
+            location.href = "/riwayat";
+        };
+
+        // error
+        document.getElementById('error-ok').onclick = function() {
+            document.getElementById('error-modal').classList.add('hidden');
         };
     </script>
 </x-app-layout>

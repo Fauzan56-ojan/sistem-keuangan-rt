@@ -11,19 +11,34 @@ class PengeluaranController extends Controller
     {
         $bulan = request('bulan', now()->month);
         $tahun = request('tahun', now()->year);
-        $allowedSort = ['tanggal', 'nominal'];
 
-        $sortBy = in_array(request('sort_by'), $allowedSort)
-            ? request('sort_by')
-            : 'tanggal';
+        $sort = request('sort', 'tanggal_desc');
 
-        $order = request('order') === 'asc' ? 'asc' : 'desc';
+        $sortMap = [
+            'tanggal_desc' => ['tanggal', 'desc'],
+            'tanggal_asc' => ['tanggal', 'asc'],
+            'nominal_desc' => ['nominal', 'desc'],
+            'nominal_asc' => ['nominal', 'asc'],
+        ];
 
-        $data = \App\Models\Pengeluaran::whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->orderBy($sortBy, $order)
-            ->get();
-        
+        [$sortBy, $order] = $sortMap[$sort] ?? ['tanggal', 'desc'];
+
+        $query = Pengeluaran::query();
+
+        if ($bulan !== 'all') {
+            $query->whereMonth('tanggal', $bulan);
+        }
+
+        if ($tahun !== 'all') {
+            $query->whereYear('tanggal', $tahun);
+        }
+
+        if ($search = trim(request('search'))) {
+            $query->where('keterangan', 'like', "%$search%");
+        }
+
+        $data = $query->orderBy($sortBy, $order)->get();
+
         $tahunList = Pengeluaran::selectRaw('YEAR(tanggal) as tahun')
             ->distinct()
             ->orderByDesc('tahun')

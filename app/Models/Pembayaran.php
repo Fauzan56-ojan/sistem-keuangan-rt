@@ -14,6 +14,7 @@ class Pembayaran extends Model
         'amount',
         'metode',
         'order_id',
+        'kode_transaksi',
         'snap_token',
         'paid_at',
         'status'

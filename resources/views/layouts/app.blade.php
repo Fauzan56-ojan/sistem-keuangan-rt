@@ -6,6 +6,8 @@
 
     <title>{{ config('app.name') }}</title>
 
+    <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- font -->

@@ -27,9 +27,9 @@
         <a href="{{ in_array(auth()->user()->role, ['admin','bendahara','ketua_rt']) 
                     ? url('/iuran-warga') 
                     : url('/warga/' . auth()->id() . '/iuran') }}"
-           class="nav-item {{ request()->is('iuran*') ? 'nav-active' : 'text-slate-600' }}">
+           class="nav-item {{ request()->is('iuran*') || request()->is('warga/*/iuran*') ? 'nav-active' : 'text-slate-600' }}">
             <span class="material-symbols-outlined">payments</span>
-            Iuran Warga
+            {{ auth()->user()->role === 'warga' ? 'Iuran Saya' : 'Iuran Warga' }}
         </a>
 
         {{-- Riwayat --}}
@@ -99,7 +99,7 @@
         @csrf
 
         <button type="submit"
-            class="nav-item w-full text-left text-slate-600 hover:text-red-600 hover:bg-red-50 flex items-center gap-3 px-4 py-2.5 rounded-xl transition">
+            class="nav-item w-full text-left text-red-600 hover:text-red-700 hover:bg-red-50 flex items-center gap-3 px-4 py-2.5 rounded-xl transition">
 
             <span class="material-symbols-outlined">logout</span>
             Logout

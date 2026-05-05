@@ -17,53 +17,40 @@
             $pending = collect($data)->where('status','pending')->sum('amount');
         @endphp
 
-        <!-- SUMMARY -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-
-            <div class="bg-white p-6 rounded-xl shadow-sm border">
-                <p class="text-sm text-gray-500">Total Transaksi</p>
-                <h3 class="text-2xl font-bold text-gray-800">{{ $total }}</h3>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-l-4 border-emerald-500">
-                <p class="text-sm text-gray-500">Pembayaran Berhasil</p>
-                <h3 class="text-2xl font-bold text-emerald-600">
-                    Rp {{ number_format($success,0,',','.') }}
-                </h3>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-l-4 border-amber-400">
-                <p class="text-sm text-gray-500">Total Pending</p>
-                <h3 class="text-2xl font-bold text-amber-500">
-                    Rp {{ number_format($pending,0,',','.') }}
-                </h3>
-            </div>
-
-        </div>
-
         <!-- FILTER -->
         <form method="GET" class="bg-white p-5 rounded-xl shadow-sm mb-8 flex flex-wrap gap-4 items-center">
 
-            @if(in_array(auth()->user()->role, ['admin','bendahara']))
+        <!-- SEARCH -->
+        @if(in_array(auth()->user()->role, ['admin','bendahara']))
+        <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                search
+            </span>
             <input type="text" name="search"
                 value="{{ request('search') }}"
-                placeholder="Cari nama / rumah..."
-                class="border px-3 py-2 rounded-lg text-sm">
-            @endif
+                placeholder="Cari nama atau alamat..."
+                class="pl-10 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-200">
+        </div>
+        @endif
 
-            <select name="tahun" class="border px-3 py-2 rounded-lg text-sm">
-                @foreach($tahunList as $th)
-                    <option value="{{ $th }}" {{ request('tahun', now()->year) == $th ? 'selected' : '' }}>
-                        {{ $th }}
-                    </option>
-                @endforeach
-            </select>
+        <!-- biar state filter tetap kebawa -->
+        <input type="hidden" name="bulan" value="{{ request('bulan') }}">
+        <input type="hidden" name="tahun" value="{{ request('tahun') }}">
+        <input type="hidden" name="sort" value="{{ request('sort') }}">
 
-            <button class="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm">
-                Filter
-            </button>
+        <!-- tombol cari -->
+        <button type="submit"
+            class="px-4 py-2 bg-emerald-500 text-white rounded-lg text-sm">
+            Cari
+        </button>
 
-        </form>
+        <!-- tombol buka modal -->
+        <button type="button" onclick="openFilterModal()"
+            class="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm">
+            Filter & Urutkan
+        </button>
+
+    </form>
 
         <!-- TABLE -->
         <div class="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -137,14 +124,14 @@
                             <!-- Metode -->
                             <td class="px-6 py-4">
                                 <span class="px-2 py-1 text-xs rounded-full bg-gray-100">
-                                    {{ ucfirst($row->metode) }}
+                                    {{ strtoupper($row->metode) }}
                                 </span>
                             </td>
 
                             <!-- Status -->
                             <td class="px-6 py-4">
                                 @if($row->status == 'success')
-                                    <span class="text-emerald-600 text-xs font-semibold">✔ Success</span>
+                                    <span class="text-emerald-600 text-xs font-semibold">● Success</span>
                                 @else
                                     <span class="text-amber-500 text-xs font-semibold">● Pending</span>
                                 @endif
@@ -172,7 +159,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button class="text-red-500 text-xs hover:underline">
-                                            Batal
+                                            Batalkan
                                         </button>
                                     </form>
 
@@ -195,4 +182,5 @@
         </div>
 
     </div>
+    <x-filter-modal :tahunList="$tahunList" :showNominal="false" />
 </x-app-layout>

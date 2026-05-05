@@ -71,36 +71,29 @@
         <form method="GET" class="bg-white p-5 rounded-xl shadow-sm mb-8 flex flex-wrap gap-4 items-center">
 
             <!-- Search -->
-            <div class="relative">
+             <div class="relative">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                     search
                 </span>
                 <input type="text" name="search" value="{{ request('search') }}"
                     placeholder="Cari keterangan..."
-                    class="pl-10 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-red-200">
+                    class="pl-10 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-200">
             </div>
 
-            <!-- Bulan -->
-            <select name="bulan" class="border rounded-lg px-3 py-2 text-sm">
-                @for($i = 1; $i <= 12; $i++)
-                    <option value="{{ $i }}" {{ request('bulan', now()->month) == $i ? 'selected' : '' }}>
-                        {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
-                    </option>
-                @endfor
-            </select>
+            <input type="hidden" name="bulan" value="{{ request('bulan') }}">
+            <input type="hidden" name="tahun" value="{{ request('tahun') }}">
+            <input type="hidden" name="sort" value="{{ request('sort') }}">
 
-            <!-- Tahun -->
-            <select name="tahun" class="border rounded-lg px-3 py-2 text-sm">
-                @foreach($tahunList as $th)
-                    <option value="{{ $th }}" {{ request('tahun', now()->year) == $th ? 'selected' : '' }}>
-                        {{ $th }}
-                    </option>
-                @endforeach
-            </select>
-
-            <button class="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm">
-                Filter
+            <button type="submit"
+                class="px-4 py-2 bg-emerald-500 text-white rounded-lg text-sm">
+                Cari
             </button>
+
+            <button type="button" onclick="openFilterModal()"
+                class="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm">
+                Filter & Urutkan
+            </button>
+
         </form>
 
         <!-- TABLE -->
@@ -271,4 +264,5 @@
         </div>
 
     </div>
+    <x-filter-modal :tahunList="$tahunList" />
 </x-app-layout>

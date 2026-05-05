@@ -29,6 +29,7 @@ class PembayaranService
             'iuran_id' => $iuran->id,
             'amount' => $iuran->nominal,
             'metode' => 'tunai',
+            'kode_transaksi' => $iuran->id . time() . rand(10,99),
             'status' => 'success',
             'paid_at' => now()
         ]);
@@ -56,7 +57,7 @@ class PembayaranService
         ->first();
 
     if($previous && $previous->status != 'paid'){
-        throw new \Exception('Harus bayar bulan sebelumnya dulu');
+        throw new \Exception('Masih ada tagihan bulan sebelumnya, Mohon diselesaikan terlebih dahulu.');
     }
 
     return true;
@@ -111,7 +112,7 @@ class PembayaranService
 }
 
         // buat order baru
-        $order_id = 'KASRT'.$iuran->id.'-'.time();
+        $order_id = $iuran->id . time() . rand(10,99);
 
         $params = [
             'transaction_details' => [
@@ -132,6 +133,7 @@ class PembayaranService
             'amount' => $iuran->nominal,
             'metode' => 'online',
             'order_id' => $order_id,
+            'kode_transaksi' => $iuran->id . time() . rand(10,99),
             'snap_token' => $snapToken,
             'status' => 'pending'
         ]);

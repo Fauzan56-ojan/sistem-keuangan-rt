@@ -107,7 +107,7 @@
                                 {{ $row->pembayaran?->paid_at ? \Carbon\Carbon::parse($row->pembayaran->paid_at)->translatedFormat('d M Y') : '-' }}
                             </td>
                             <td class="px-6 py-5 text-sm text-gray-600">
-                                {{ $row->pembayaran?->metode ? ucfirst($row->pembayaran->metode) : '-' }}
+                                {{ $row->pembayaran?->metode ? strtoupper($row->pembayaran->metode) : '-' }}
                             </td>
                             <td class="px-6 py-5">
                                 <div class="flex items-center justify-center gap-2">
@@ -124,13 +124,86 @@
                                             </a>
                                         @endif
                                     @else
-                                        <button class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Lihat Detail">
+                                        <button onclick="document.getElementById('modal{{ $row->id }}').classList.remove('hidden')"
+                                            class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+
                                             <span class="material-symbols-outlined">receipt_long</span>
                                         </button>
                                     @endif
                                 </div>
                             </td>
                         </tr>
+                        <!-- Modal Background -->
+                        <div id="modal{{ $row->id }}" 
+                            class="hidden fixed inset-0 bg-slate-900/60 flex items-center justify-center z-50 p-4">
+
+                            <!-- Modal Card -->
+                            <div id="bukti{{ $row->id }}" class="bg-white rounded-none shadow-2xl w-full max-w-sm overflow-hidden border border-slate-200">
+                                
+                                <!-- Header / Aksesori Visual -->
+                                <div class="bg-blue-600 p-4 text-white text-center">
+                                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <h2 class="font-bold text-lg uppercase tracking-wider">Bukti Pembayaran</h2>
+                                    <p class="text-xs text-blue-100 opacity-80">Terima kasih telah melakukan pembayaran</p>
+                                </div>
+
+                                <!-- Body Konteks Kwitansi -->
+                                <div class="p-6 space-y-4">
+                                    <!-- Info Utama (Nominal) -->
+                                    <div class="text-center py-2 border-b border-dashed border-slate-200 mb-4">
+                                        <span class="text-slate-500 text-xs uppercase block mb-1">Total Nominal</span>
+                                        <span class="text-2xl font-bold text-slate-800">Rp {{ number_format($row->nominal,0,',','.') }}</span>
+                                    </div>
+
+                                    <!-- Detail List -->
+                                    <div class="space-y-3 text-sm">
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-500">Nama Lengkap</span>
+                                            <span class="font-semibold text-slate-700 text-right">{{ $warga->name }}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-500">Periode</span>
+                                            <span class="font-semibold text-slate-700">{{ \Carbon\Carbon::create()->month($row->periode_bulan)->translatedFormat('F') }}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-slate-500">Status</span>
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $row->status == 'paid' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700' }}">
+                                                {{ strtoupper($row->status) }}
+                                            </span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-500">Metode</span>
+                                            <span class="font-semibold text-slate-700">{{ strtoupper($row->pembayaran?->metode ?? '-') }}</span>
+                                        </div>
+                                        <div class="pt-2 border-t border-slate-100">
+                                            <span class="text-slate-400 text-[10px] block uppercase mb-1">Kode Transaksi</span>
+                                            <span class="font-mono text-xs text-slate-600 break-all bg-slate-50 p-1 rounded block">
+                                                {{ $row->pembayaran?->kode_transaksi ?? $row->pembayaran?->order_id ?? '-' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <!-- Bagian Action Buttons di dalam Modal -->
+                                <div class="p-4 bg-slate-50 flex gap-2" data-html2canvas-ignore>
+                                    <button onclick="downloadStruk({{ $row->id }})" 
+                                            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
+                                        <span class="material-symbols-outlined text-sm">print</span>
+                                        Cetak Bukti
+                                    </button>
+
+                                    <button onclick="document.getElementById('modal{{ $row->id }}').classList.add('hidden')"
+                                            class="flex-1 border border-slate-300 hover:bg-slate-100 text-slate-600 font-medium py-2 px-4 rounded-lg transition-colors text-sm">
+                                        Tutup
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         @endforeach
                     </tbody>
                 </table>
@@ -144,4 +217,52 @@
             </div>
         </section>
     </div>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script>
+function downloadStruk(id) {
+    const element = document.getElementById('bukti' + id);
+    
+    const options = {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+        scrollX: 0,
+        scrollY: -window.scrollY,
+        onclone: (clonedDoc) => {
+            const card = clonedDoc.getElementById('bukti' + id);
+            const header = clonedDoc.getElementById('header-bukti-' + id);
+            
+            if (card) {
+                card.style.borderRadius = "0px";
+                card.style.boxShadow = "none";
+                card.style.border = "1px solid #e2e8f0";
+            }
+            if (header) {
+                header.style.borderRadius = "0px";
+            }
+        }
+    };
+
+    html2canvas(element, options).then(canvas => {
+        try {
+            const link = document.createElement('a');
+            const date = new Date().toISOString().slice(0,10);
+            
+            link.download = `Bukti-Pembayaran-${date}.png`;
+            link.href = canvas.toDataURL("image/png", 1.0);
+            link.click();
+        } catch (err) {
+            alert("Gagal mencetak bukti.");
+        }
+    });
+}
+</script>
+
+<style>
+    canvas {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+</style>
 </x-app-layout>

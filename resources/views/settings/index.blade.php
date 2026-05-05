@@ -41,7 +41,7 @@
                class="group flex items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition hover:-translate-y-1">
 
                 <div class="w-14 h-14 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition">
-                    <span class="material-symbols-outlined text-2xl">database</span>
+                    <span class="material-symbols-outlined text-2xl">sync_alt</span>
                 </div>
 
                 <div class="ml-4 flex-1">
@@ -63,7 +63,7 @@
                class="group flex items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition hover:-translate-y-1">
 
                 <div class="w-14 h-14 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition">
-                    <span class="material-symbols-outlined text-2xl">payments</span>
+                    <span class="material-symbols-outlined text-2xl">tune</span>
                 </div>
 
                 <div class="ml-4 flex-1">
@@ -80,12 +80,12 @@
                 </span>
             </a>
 
-            <!-- Generate Iuran -->
+            
             <a href="{{ route('settings.generate') }}"
                class="group flex items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition hover:-translate-y-1">
 
                 <div class="w-14 h-14 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition">
-                    <span class="material-symbols-outlined text-2xl">auto_fix_high</span>
+                    <span class="material-symbols-outlined text-2xl">calendar_month</span>
                 </div>
 
                 <div class="ml-4 flex-1">

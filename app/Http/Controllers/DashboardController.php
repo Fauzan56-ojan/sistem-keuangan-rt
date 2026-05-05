@@ -39,8 +39,9 @@ class DashboardController extends Controller
             ->whereMonth('tanggal', $bulan)
             ->whereYear('tanggal', $tahun)
             ->sum('nominal');
-        $dataTunggakan = $service->getTunggakan();
-        $totalTunggakan = collect($dataTunggakan)->sum('total');
+        $allTunggakan = $service->getTunggakan();
+
+$totalTunggakanNominal = $allTunggakan->sum('total'); // 🔥 uang (91.000, dst)
 
         //stats cashflow 6 bulan terakhir
         $cashflow = [];
@@ -80,7 +81,37 @@ class DashboardController extends Controller
 
 
         // tunggakan warga
-        $dataTunggakan = $service->getTunggakan()->take(5);
+        $sudahBayar = false;
+        $nominalBulanIni = 0;
+        $jumlahTunggakan = 0;
+        $detailTunggakan = collect();
+        $dataTunggakan = collect();
+        $totalTunggakanOrang = 0;
+
+        if (auth()->user()->role === 'warga') {
+
+            $userId = auth()->id();
+
+            // tunggakan (bulan sebelumnya)
+            $detailTunggakan = $service->getTunggakanDetail($userId);
+            $jumlahTunggakan = $detailTunggakan->count();
+
+            // status bulan ini
+            $iuranBulanIni = Iuran::where('user_id', $userId)
+                ->where('periode_bulan', now()->month)
+                ->where('periode_tahun', now()->year)
+                ->first();
+
+            $sudahBayar = $iuranBulanIni && $iuranBulanIni->status === 'Lunas';
+            $nominalBulanIni = $iuranBulanIni->nominal ?? 0;
+
+        } else {
+
+            $allTunggakan = $service->getTunggakan();
+
+            $dataTunggakan = $allTunggakan->take(5);
+            $totalTunggakanOrang = $allTunggakan->count();
+        }
 
         // transaksi terakhir
         $pembayaranTerakhir = Pembayaran::with('user')
@@ -96,14 +127,19 @@ class DashboardController extends Controller
             'totalPemasukan',
             'totalPengeluaran',
             'saldo',
-            'totalTunggakan',
+            'totalTunggakanNominal',
+            'totalTunggakanOrang',
             'pembayaranTerakhir',
             'pemasukanTerakhir',
             'pengeluaranTerakhir',
             'dataTunggakan',
             'totalPemasukanBulan',
             'totalPengeluaranBulan',
-            'cashflow'
+            'cashflow',
+            'jumlahTunggakan',
+            'detailTunggakan',
+            'sudahBayar',
+            'nominalBulanIni',
         ) + $summary);
     }
 }

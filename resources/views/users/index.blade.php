@@ -17,15 +17,20 @@
             <!-- Actions -->
             <div x-data="{ open: false }" class="p-5 flex flex-col sm:flex-row justify-between gap-4">
 
-                <!-- Search (optional, belum aktif backend) -->
-                <div class="relative w-full sm:w-80">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                        search
-                    </span>
-                    <input type="text"
-                        placeholder="Cari user..."
-                        class="w-full pl-10 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-200">
-                </div>
+                <!-- Search -->
+                <form method="GET">
+                    <div class="relative w-full sm:w-80">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                            search
+                        </span>
+
+                        <input type="text"
+                            name="search"
+                            value="{{ request('search') }}"
+                            placeholder="Cari nama atau alamat..."
+                            class="w-full pl-10 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-200">
+                    </div>
+                </form>
 
                 <!-- Button -->
                 <button @click="open = true"

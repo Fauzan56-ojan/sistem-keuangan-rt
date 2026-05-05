@@ -13,18 +13,32 @@ class PemasukanController extends Controller
     {
         $bulan = request('bulan', now()->month);
         $tahun = request('tahun', now()->year);
-        $allowedSort = ['tanggal', 'nominal'];
+        $sort = request('sort', 'tanggal_desc');
 
-        $sortBy = in_array(request('sort_by'), $allowedSort)
-            ? request('sort_by')
-            : 'tanggal';
+        $sortMap = [
+            'tanggal_desc' => ['tanggal', 'desc'],
+            'tanggal_asc' => ['tanggal', 'asc'],
+            'nominal_desc' => ['nominal', 'desc'],
+            'nominal_asc' => ['nominal', 'asc'],
+        ];
 
-        $order = request('order') === 'asc' ? 'asc' : 'desc';
+        [$sortBy, $order] = $sortMap[$sort] ?? ['tanggal', 'desc'];
 
-        $data = Pemasukan::whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->orderBy($sortBy, $order)
-            ->get();
+        $query = Pemasukan::query();
+
+        if ($bulan !== 'all') {
+            $query->whereMonth('tanggal', $bulan);
+        }
+
+        if ($tahun !== 'all') {
+            $query->whereYear('tanggal', $tahun);
+        }
+
+        if (request('search')) {
+            $query->where('keterangan', 'like', '%' . request('search') . '%');
+        }
+
+        $data = $query->orderBy($sortBy, $order)->get();
 
         $tahunList = Pemasukan::selectRaw('YEAR(tanggal) as tahun')
             ->distinct()

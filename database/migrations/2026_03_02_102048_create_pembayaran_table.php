@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('iuran_id')->constrained('iuran')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->enum('metode', ['tunai', 'online']);
+            $table->string('metode');
             $table->string('order_id')->nullable();
             $table->decimal('amount', 12, 0);
             $table->timestamp('paid_at')->nullable();

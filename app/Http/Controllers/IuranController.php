@@ -90,10 +90,13 @@ class IuranController extends Controller
 
     public function tunggakan(IuranService $service)
     {
-        $data = $service->getTunggakan();
+        $data = collect($service->getTunggakan())->map(function ($item) use ($service) {
+            $item['detail'] = $service->getTunggakanDetail($item['user_id']);
+            return $item;
+        });
 
         return view('tunggakan.index', compact('data'));
-    }
+    } 
 
     public function tunggakanDetail($id, IuranService $service)
     {
