@@ -24,7 +24,8 @@ class User extends Authenticatable
         'nomor_rumah',
         'role',
         'status_aktif',
-        'password'
+        'password',
+        'password_changed',
     ];
 
     public function iuran()

@@ -44,7 +44,8 @@ class IuranController extends Controller
         }
 
         $tahun = request('tahun', date('Y'));
-        $warga = User::findOrFail($id);
+        $warga = User::where('status_aktif', 1)
+            ->findOrFail($id);
 
         $data = $service->getDataWarga($id, $tahun);
 
@@ -58,6 +59,9 @@ class IuranController extends Controller
     public function belumBayar()
     {
         $data = Iuran::with('user')
+            ->whereHas('user', function ($q) {
+                $q->where('status_aktif', 1);
+            })
             ->where('periode_bulan', now()->month)
             ->where('periode_tahun', now()->year)
             ->where('status', 'pending')
@@ -104,7 +108,8 @@ class IuranController extends Controller
             abort(403);
         }
 
-        $warga = User::findOrFail($id);
+        $warga = User::where('status_aktif', 1)
+            ->findOrFail($id);
         $iuran = $service->getTunggakanDetail($id);
 
         return view('tunggakan.detail', compact('iuran', 'warga'));

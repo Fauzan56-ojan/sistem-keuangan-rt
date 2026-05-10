@@ -183,14 +183,16 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        setTimeout(() => {
-                             hideLoading();  
+                      
+                            
                         snap.pay(data.token, {
                             onSuccess: function(result) {
+                                hideLoading();
                                 document.getElementById('success-modal').classList.remove('hidden');
                             },
 
                             onPending: function(result) {
+                                hideLoading();
                                 document.getElementById('pending-modal').classList.remove('hidden');
                             },
 
@@ -203,7 +205,7 @@
                                 hideLoading();
                             }
                         });
-                        }, 1500);
+                        
                     });
             } else {
                 let tanggalInput = document.getElementById('tanggal');

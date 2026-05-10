@@ -41,7 +41,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect('/users');
+        return redirect('/users')->with('success', 'User berhasil ditambahkan');
     }
 
     public function edit($id)
@@ -62,7 +62,7 @@ class UserController extends Controller
             'role' => $request->role,
         ]);
 
-        return redirect('/users');
+        return redirect('/users')->with('success', 'Data berhasil diperbarui');
     }
 
     public function destroy($id)
@@ -71,7 +71,7 @@ class UserController extends Controller
         $user->status_aktif = 0;
         $user->save();
 
-        return redirect('/users');
+        return redirect('/users')->with('success', 'User berhasil dihapus');
     }
 
     public function resetPassword($id)
@@ -79,8 +79,9 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $user->password = \Hash::make('123');
+        $user->password_changed = false;
         $user->save();
 
-        return redirect('/users')->with('success', 'Password direset ke 123456');
+        return redirect('/users')->with('success', 'Password direset ke 123');
     }
 }

@@ -45,7 +45,7 @@
                         <!-- Alamat -->
                         <div>
                             <label class="text-xs font-bold uppercase">Alamat</label>
-                            <input type="text" value="{{ auth()->user()->alamat ?? '-' }}"
+                            <input type="text" value="{{ auth()->user()->nomor_rumah ?? '-' }}"
                                 class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 text-gray-400 text-sm" readonly>
                         </div>
 

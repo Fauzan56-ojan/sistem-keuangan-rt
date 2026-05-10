@@ -14,9 +14,13 @@
 
             @if(in_array(auth()->user()->role, ['admin','bendahara']))
                 <button @click="open = true"
-                class="bg-red-500 text-white px-2 py-1 rounded-md text-xs font-medium inline-flex items-center gap-1 hover:bg-red-600 transition">
-                    <span class="material-symbols-outlined text-[14px]">add</span>
-                    Tambah
+                    class="inline-flex items-center gap-2 bg-rose-500 hover:bg-rose-600 hover:shadow-lg hover:shadow-rose-200 active:scale-95 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out">
+                    
+                    <span class="material-symbols-outlined text-[18px]">
+                        add
+                    </span>
+                    
+                    <span>Tambah Pengeluaran</span>
                 </button>
             @endif
             <!-- MODAL TAMBAH -->
@@ -33,14 +37,14 @@
 
                         <div class="space-y-3">
 
-                            <input type="date" name="tanggal"
+                            <input type="date" name="tanggal" required
                                 class="w-full border rounded px-3 py-2">
 
-                            <input type="number" name="nominal"
+                            <input type="number" name="nominal" required
                                 placeholder="Nominal"
                                 class="w-full border rounded px-3 py-2">
 
-                            <input type="text" name="keterangan"
+                            <input type="text" name="keterangan" required
                                 placeholder="Keterangan"
                                 class="w-full border rounded px-3 py-2">
 
@@ -56,7 +60,7 @@
                             </button>
 
                             <button type="submit"
-                                class="px-3 py-1 bg-red-500 text-white rounded text-sm">
+                                class="px-3 py-1 bg-black text-white rounded text-sm">
                                 Simpan
                             </button>
                         </div>
@@ -85,7 +89,7 @@
             <input type="hidden" name="sort" value="{{ request('sort') }}">
 
             <button type="submit"
-                class="px-4 py-2 bg-emerald-500 text-white rounded-lg text-sm">
+                class="px-4 py-2 bg-white text-black border border-black rounded-lg text-sm">
                 Cari
             </button>
 
@@ -185,21 +189,14 @@
                             <!-- Aksi -->
                             @if(in_array(auth()->user()->role, ['admin','bendahara']))
                             <td class="px-6 py-4">
-                                <div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
+                                <div class="flex justify-center gap-2">
 
                                     <button @click="openEdit = true"
                                     class="text-gray-500 hover:text-red-600">
                                         <span class="material-symbols-outlined text-[18px]">edit</span>
                                     </button>
 
-                                    <form action="/pengeluaran/{{ $item->id }}" method="POST"
-                                          onsubmit="return confirm('Yakin hapus data?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="text-gray-500 hover:text-red-600">
-                                            <span class="material-symbols-outlined text-[18px]">delete</span>
-                                        </button>
-                                    </form>
+                                    <x-delete-modal action="/pengeluaran/{{ $item->id }}" />
 
                                 </div>
                                 <!-- MODAL EDIT -->
@@ -217,15 +214,15 @@
 
                                             <div class="space-y-3">
 
-                                                <input type="date" name="tanggal"
+                                                <input type="date" name="tanggal" required
                                                     value="{{ $item->tanggal }}"
                                                     class="w-full border rounded px-3 py-2">
 
-                                                <input type="number" name="nominal"
+                                                <input type="number" name="nominal" required
                                                     value="{{ $item->nominal }}"
                                                     class="w-full border rounded px-3 py-2">
 
-                                                <input type="text" name="keterangan"
+                                                <input type="text" name="keterangan" required
                                                     value="{{ $item->keterangan }}"
                                                     class="w-full border rounded px-3 py-2">
 
@@ -241,7 +238,7 @@
                                                 </button>
 
                                                 <button type="submit"
-                                                    class="px-3 py-1 bg-red-500 text-white rounded text-sm">
+                                                    class="px-3 py-1 bg-black text-white rounded text-sm">
                                                     Update
                                                 </button>
                                             </div>

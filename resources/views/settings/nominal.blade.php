@@ -118,7 +118,7 @@
                                 <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Nominal Lama</th>
                                 <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Nominal Baru</th>
                                 <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tanggal Update</th>
-                                <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Oleh Admin</th>
+                                
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
@@ -158,16 +158,7 @@
                                         <span class="text-[10px] block text-slate-400 font-normal">{{ \Carbon\Carbon::parse($item->created_at)->format('H:i') }} WIB</span>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-7 h-7 rounded-full bg-indigo-50 flex items-center justify-center text-[10px] font-bold text-indigo-600 border border-indigo-100 uppercase">
-                                            {{ substr($item->user_name ?? 'A', 0, 1) }}
-                                        </div>
-                                        <span class="text-xs font-bold text-slate-700">
-                                            {{ $item->user_name ?? 'System' }}
-                                        </span>
-                                    </div>
-                                </td>
+                                
                             </tr>
                             @endforeach
                         </tbody>

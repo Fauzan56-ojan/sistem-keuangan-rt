@@ -58,7 +58,6 @@ class NominalController extends Controller
                 'nominal' => $request->nominal
             ]);
 
-        return redirect()->route('settings.nominal')
-            ->with('success', 'Nominal berhasil ditambahkan & iuran diperbarui');
+        return redirect()->route('settings.nominal')->with('success', 'Nominal berhasil ditambahkan & iuran diperbarui');
     }
 }

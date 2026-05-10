@@ -9,7 +9,7 @@
             </button>
 
             <button type="button" onclick="switchTab('sort')" id="tab-sort"
-                class="w-1/2 py-3 text-gray-500">
+                class="w-1/2 py-3 border-b-2 border-emerald-500 text-emerald-600">
                 Urutkan
             </button>
         </div>
@@ -76,7 +76,7 @@
                 </button>
 
                 <button type="submit"
-                    class="px-4 py-2 text-sm bg-emerald-600 text-white rounded-lg">
+                    class="px-4 py-2 text-sm bg-black text-white rounded-lg">
                     Terapkan
                 </button>
             </div>

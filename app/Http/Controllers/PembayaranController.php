@@ -60,9 +60,13 @@ class PembayaranController extends Controller
         if ($metode === 'online' && auth()->user()->role === 'ketua_rt') {
             abort(403);
         }
-        try {
 
-            $iuran = Iuran::with('user')->findOrFail($id);
+        $iuran = Iuran::with('user')->findOrFail($id);
+
+        if ($iuran->user->status_aktif != 1) {
+            abort(403, 'Warga sudah tidak aktif');
+        }
+        try {
 
             PembayaranService::checkUrutan($iuran);
 

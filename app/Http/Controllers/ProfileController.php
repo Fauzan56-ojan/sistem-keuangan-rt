@@ -38,7 +38,7 @@ class ProfileController extends Controller
             'telp' => $request->telp,
         ]);
 
-        return Redirect::route('settings.profile')->with('status', 'profile-updated');
+        return Redirect::route('settings.profile')->with('success', 'Profile berhasil diperbarui');
     }
 
     /**

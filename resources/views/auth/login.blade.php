@@ -6,7 +6,7 @@
     <title>Login - Sistem Keuangan RT 01</title>
 
     @vite('resources/css/app.css', 'resources/js/app.js')
-    <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
+    <!-- <link rel="icon" type="image/png" href="{{ asset('logo.png') }}"> -->
     
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
@@ -84,6 +84,53 @@
     </main>
 
     <div class="absolute bottom-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-32 bg-emerald-500/10 rounded-[100%] blur-[100px] pointer-events-none"></div>
+<!-- FLOAT BUTTON -->
+<button
+    onclick="document.getElementById('helpModal').classList.remove('hidden')"
+    class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-emerald-700 text-white shadow-xl hover:scale-105 transition z-50">
 
+    <span class="material-symbols-outlined">
+        forum
+    </span>
+</button>
+
+<!-- MODAL -->
+<div id="helpModal"
+    class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+    <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl relative">
+
+        <button
+            onclick="document.getElementById('helpModal').classList.add('hidden')"
+            class="absolute top-4 right-4 text-slate-400 hover:text-black">
+
+            <span class="material-symbols-outlined">close</span>
+        </button>
+
+        <div class="text-center">
+
+            <h3 class="text-xl font-bold text-slate-800 mb-2">
+                Butuh Bantuan?
+            </h3>
+
+            <p class="text-sm text-slate-500 mb-6">
+                Jika mengalami kendala login atau lupa password,
+                silakan hubungi admin RT.
+            </p>
+
+            <a href="https://wa.me/6285212341234"
+                target="_blank"
+                class="inline-flex items-center gap-2 bg-emerald-700 text-white px-5 py-3 rounded-2xl font-semibold hover:bg-emerald-800 transition">
+
+                <span class="material-symbols-outlined text-[20px]">
+                    chat
+                </span>
+
+                Hubungi Admin
+            </a>
+
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -69,7 +69,7 @@ class PengeluaranController extends Controller
             'bukti_file' => $bukti
         ]);
 
-        return redirect('/pengeluaran');
+        return redirect('/pengeluaran')->with('success', 'Data berhasil ditambahkan');
     }
 
     public function edit($id)
@@ -95,7 +95,7 @@ class PengeluaranController extends Controller
             'bukti_file' => $bukti
         ]);
 
-        return redirect('/pengeluaran');
+        return redirect('/pengeluaran')->with('success', 'Data berhasil diperbarui');
     }
 
     public function destroy($id)
@@ -104,6 +104,6 @@ class PengeluaranController extends Controller
         $data = Pengeluaran::findOrFail($id);
         $data->delete();
 
-        return redirect('/pengeluaran');
+        return redirect('/pengeluaran')->with('success', 'Data berhasil dihapus');
     }
 }

@@ -38,11 +38,13 @@
         <input type="hidden" name="tahun" value="{{ request('tahun') }}">
         <input type="hidden" name="sort" value="{{ request('sort') }}">
 
+        @if(in_array(auth()->user()->role, ['admin','bendahara']))
         <!-- tombol cari -->
         <button type="submit"
             class="px-4 py-2 bg-emerald-500 text-white rounded-lg text-sm">
             Cari
         </button>
+        @endif
 
         <!-- tombol buka modal -->
         <button type="button" onclick="openFilterModal()"
@@ -148,20 +150,24 @@
 
                                 @if($row->status == 'pending')
 
-                                    <a href="/checkout/{{ $row->iuran_id }}/{{ $row->metode }}"
-                                       class="text-emerald-600 text-xs font-semibold hover:underline">
-                                        Bayar
-                                    </a>
+                                    <div class="flex items-center justify-center gap-2 text-xs">
 
-                                    |
+                                        <a href="/checkout/{{ $row->iuran_id }}/{{ $row->metode }}"
+                                            class="px-3 py-1 rounded-md bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition">
+                                            Bayar
+                                        </a>
 
-                                    <form action="/pembayaran/{{ $row->id }}/batal" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="text-red-500 text-xs hover:underline">
-                                            Batalkan
-                                        </button>
-                                    </form>
+                                        <form action="/pembayaran/{{ $row->id }}/batal" method="POST" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit"
+                                                class="px-3 py-1 rounded-md bg-red-100 text-red-600 font-medium hover:bg-red-200 transition">
+                                                Batalkan
+                                            </button>
+                                        </form>
+
+                                    </div>
 
                                 @else
                                     <span class="text-gray-400 text-xs">-</span>

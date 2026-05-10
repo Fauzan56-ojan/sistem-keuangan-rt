@@ -57,6 +57,12 @@ class PemasukanController extends Controller
     public function store(Request $request)
     {
         $this->authorizeAdminBendahara();
+
+        $request->validate([
+            'tanggal' => 'required|date',
+            'nominal' => 'required|numeric|min:1',
+            'keterangan' => 'required|string|max:255',
+        ]);
         $bukti = null;
         if ($request->hasFile('bukti_file')) {
             $bukti = $request->file('bukti_file')->store('bukti', 'public');
@@ -69,7 +75,7 @@ class PemasukanController extends Controller
             'bukti_file' => $bukti
         ]);
 
-        return redirect('/pemasukan');
+        return redirect('/pemasukan')->with('success', 'Data berhasil ditambahkan');
     }
 
     public function edit($id)
@@ -95,7 +101,7 @@ class PemasukanController extends Controller
             'bukti_file' => $bukti
         ]);
 
-        return redirect('/pemasukan');
+        return redirect('/pemasukan')->with('success', 'Data berhasil diperbarui');
     }
 
     public function destroy($id)
@@ -104,7 +110,7 @@ class PemasukanController extends Controller
         $data = Pemasukan::findOrFail($id);
         $data->delete(); 
 
-        return redirect('/pemasukan');
+        return redirect('/pemasukan')->with('success', 'Data berhasil dihapus');
     }
 
 }

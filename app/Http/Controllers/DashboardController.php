@@ -41,7 +41,7 @@ class DashboardController extends Controller
             ->sum('nominal');
         $allTunggakan = $service->getTunggakan();
 
-$totalTunggakanNominal = $allTunggakan->sum('total'); // 🔥 uang (91.000, dst)
+$totalTunggakanNominal = $allTunggakan->sum('total'); 
 
         //stats cashflow 6 bulan terakhir
         $cashflow = [];
@@ -81,7 +81,7 @@ $totalTunggakanNominal = $allTunggakan->sum('total'); // 🔥 uang (91.000, dst)
 
 
         // tunggakan warga
-        $sudahBayar = false;
+        $sudahBayarBulanIni = false;
         $nominalBulanIni = 0;
         $jumlahTunggakan = 0;
         $detailTunggakan = collect();
@@ -102,7 +102,7 @@ $totalTunggakanNominal = $allTunggakan->sum('total'); // 🔥 uang (91.000, dst)
                 ->where('periode_tahun', now()->year)
                 ->first();
 
-            $sudahBayar = $iuranBulanIni && $iuranBulanIni->status === 'Lunas';
+            $sudahBayarBulanIni = $iuranBulanIni && $iuranBulanIni->status === 'Lunas';
             $nominalBulanIni = $iuranBulanIni->nominal ?? 0;
 
         } else {
@@ -138,7 +138,7 @@ $totalTunggakanNominal = $allTunggakan->sum('total'); // 🔥 uang (91.000, dst)
             'cashflow',
             'jumlahTunggakan',
             'detailTunggakan',
-            'sudahBayar',
+            'sudahBayarBulanIni',
             'nominalBulanIni',
         ) + $summary);
     }

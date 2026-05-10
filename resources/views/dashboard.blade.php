@@ -219,7 +219,7 @@
                             </div>
                             @empty
                                 <div class="text-center py-6">
-                                    <p class="text-xs text-slate-400 italic">Tidak ada tunggakan bulan ini</p>
+                                    <p class="text-xs text-slate-400 italic">Tidak ada tunggakan</p>
                                 </div>
                             @endforelse
                         </div>
@@ -266,7 +266,7 @@
                             Status Bulan Ini
                         </h4>
 
-                        @if($sudahBayar ?? false)
+                        @if($sudahBayarBulanIni ?? false)
                             <p class="text-center text-emerald-600 font-bold text-sm">
                                 Sudah bayar ✔️
                             </p>

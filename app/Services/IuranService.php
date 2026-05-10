@@ -15,6 +15,9 @@ class IuranService
         $tahunSekarang = date('Y');
 
         $iuran = Iuran::with('user')
+            ->whereHas('user', function ($q) {
+                $q->where('status_aktif', 1);
+            })
             ->where('periode_tahun', $tahunSekarang)
             ->where('periode_bulan', '<', $bulanSekarang)
             ->where('status', 'pending')
@@ -197,14 +200,22 @@ class IuranService
     {
         $bulan = now()->month;
         $tahun = now()->year;
-        $totalWarga = User::where('role', 'warga')->count();
+        $totalWarga = User::where('role', 'warga')
+            ->where('status_aktif', 1)
+            ->count();
 
-        $sudahBayar = Iuran::where('periode_bulan', now()->month)
+       $sudahBayar = Iuran::whereHas('user', function ($q) {
+             $q->where('status_aktif', 1);
+            })
+            ->where('periode_bulan', now()->month)
             ->where('periode_tahun', now()->year)
             ->where('status', 'paid')
             ->count();
 
-        $belumBayar = Iuran::where('periode_bulan', now()->month)
+        $belumBayar = Iuran::whereHas('user', function ($q) {
+                $q->where('status_aktif', 1);
+            })
+            ->where('periode_bulan', now()->month)
             ->where('periode_tahun', now()->year)
             ->where('status', 'pending')
             ->count();
