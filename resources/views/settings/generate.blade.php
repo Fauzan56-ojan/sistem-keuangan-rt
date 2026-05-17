@@ -18,9 +18,11 @@
         </header>
 
         {{-- Notifikasi Error/Success --}}
-        @if(session('success'))
-            <div class="mb-6 p-4 bg-emerald-100 border-l-4 border-emerald-500 text-emerald-700 text-sm rounded-r-lg">
-                {{ session('success') }}
+
+        @if(session('error'))
+            <div class="flex items-center gap-3 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-r-xl">
+                <span class="material-symbols-outlined">error</span>
+                <p class="font-medium">{{ session('error') }}</p>
             </div>
         @endif
 

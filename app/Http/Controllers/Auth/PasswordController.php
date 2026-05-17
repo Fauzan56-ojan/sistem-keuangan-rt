@@ -25,6 +25,9 @@ class PasswordController extends Controller
             'password_changed' => true,
         ]);
 
-        return back()->with('success', 'Password berhasil diperbarui');
+        return redirect()
+            ->back()
+            ->with('success', 'Password berhasil diperbarui')
+            ->withFragment('password-section');
     }
 }

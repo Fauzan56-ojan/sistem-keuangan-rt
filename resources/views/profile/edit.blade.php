@@ -70,13 +70,13 @@
             <!-- ===================== -->
             <!-- PASSWORD -->
             <!-- ===================== -->
-            <section class="bg-white rounded-2xl border border-outline-variant/30 shadow-sm">
+            <section id="password-section" class="bg-white rounded-2xl border border-outline-variant/30 shadow-sm">
                 <div class="p-6 border-b flex items-center gap-3">
                     <span class="material-symbols-outlined text-orange-500">lock</span>
                     <h3 class="font-bold">Keamanan Password</h3>
                 </div>
 
-                <form method="post" action="{{ route('password.update') }}" class="p-8 space-y-5">
+                <form method="post" action="{{ route('password.update') }}#password-section" class="p-8 space-y-5">
                     @csrf
                     @method('put')
 
@@ -85,6 +85,11 @@
                         <label class="text-xs font-bold uppercase">Password Saat Ini</label>
                         <input name="current_password" type="password"
                             class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 focus:bg-white border border-transparent focus:border-primary text-sm">
+                            @if($errors->updatePassword->has('current_password'))
+                                <p class="text-red-500 text-sm mt-2">
+                                    {{ $errors->updatePassword->first('current_password') }}
+                                </p>
+                            @endif
                     </div>
 
                     <!-- New -->
@@ -92,6 +97,11 @@
                         <label class="text-xs font-bold uppercase">Password Baru</label>
                         <input name="password" type="password"
                             class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 focus:bg-white border border-transparent focus:border-primary text-sm">
+                            @if($errors->updatePassword->has('password'))
+                                <p class="text-red-500 text-sm mt-2">
+                                    {{ $errors->updatePassword->first('password') }}
+                                </p>
+                            @endif
                     </div>
 
                     <!-- Confirm -->
@@ -99,6 +109,11 @@
                         <label class="text-xs font-bold uppercase">Konfirmasi Password</label>
                         <input name="password_confirmation" type="password"
                             class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 focus:bg-white border border-transparent focus:border-primary text-sm">
+                            @if($errors->updatePassword->has('password_confirmation'))
+                                <p class="text-red-500 text-sm mt-2">
+                                    {{ $errors->updatePassword->first('password_confirmation') }}
+                                </p>
+                            @endif
                     </div>
 
                     <div class="flex justify-end">

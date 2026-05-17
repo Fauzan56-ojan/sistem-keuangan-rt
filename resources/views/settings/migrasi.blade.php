@@ -14,12 +14,6 @@
         {{-- Notifikasi --}}
         @if(session('success') || session('error'))
         <div class="mb-8 max-w-2xl">
-            @if(session('success'))
-                <div class="flex items-center gap-3 p-4 bg-emerald-100 border-l-4 border-emerald-500 text-emerald-700 rounded-r-xl">
-                    <span class="material-symbols-outlined">check_circle</span>
-                    <p class="font-medium">{{ session('success') }}</p>
-                </div>
-            @endif
 
             @if(session('error'))
                 <div class="flex items-center gap-3 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-r-xl">

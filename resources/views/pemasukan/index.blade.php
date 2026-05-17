@@ -44,9 +44,10 @@
                         <div class="space-y-3">
 
                             <input type="date" name="tanggal" required
+                            value="{{ date('Y-m-d') }}"
                                 class="w-full border rounded px-3 py-2">
 
-                            <input type="number" name="nominal" required
+                            <input type="text" inputmode="numeric" name="nominal" required
                                 placeholder="Nominal"
                                 class="w-full border rounded px-3 py-2">
 
@@ -227,9 +228,9 @@
                                                     value="{{ $item->tanggal }}"
                                                     class="w-full border rounded px-3 py-2">
 
-                                                <input type="number" name="nominal" required
-                                                    value="{{ $item->nominal }}"
-                                                    class="w-full border rounded px-3 py-2">
+                                                <input type="text" inputmode="numeric" name="nominal" required
+                                                    value="{{ number_format($item->nominal, 0, ',', '.') }}"
+                                                    class="w-full border rounded px-3 py-2 nominal-input">
 
                                                 <input type="text" name="keterangan" required
                                                     value="{{ $item->keterangan }}"
@@ -271,4 +272,20 @@
 
     </div>
     <x-filter-modal :tahunList="$tahunList" />
+<script>
+    document.querySelectorAll('input[name="nominal"]').forEach(input => {
+        input.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            e.target.value = new Intl.NumberFormat('id-ID').format(value);
+        });
+    });
+
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function() {
+            form.querySelectorAll('input[name="nominal"]').forEach(input => {
+                input.value = input.value.replace(/\./g, '');
+            });
+        }); 
+    });
+</script>
 </x-app-layout>

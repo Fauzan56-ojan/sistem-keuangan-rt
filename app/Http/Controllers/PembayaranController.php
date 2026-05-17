@@ -13,9 +13,9 @@ use Midtrans\Snap;
 
 class PembayaranController extends Controller
 {
-    public function tunai($id)
+    public function tunai(Request $request, $id)
     {
-        PembayaranService::createTunaiPayment($id);
+        PembayaranService::createTunaiPayment($id, $request->tanggal);
 
         return back();
     }
@@ -88,11 +88,11 @@ class PembayaranController extends Controller
 
         if (auth()->user()->role == 'warga') {
 
-            $query = Pembayaran::where('user_id', auth()->id());
+            $query = Pembayaran::with('iuran')->where('user_id', auth()->id());
 
         } else {
 
-            $query = Pembayaran::with('user');
+            $query = Pembayaran::with('user', 'iuran');
 
             if ($search) {
                 $query->whereHas('user', function ($q) use ($search) {
@@ -128,7 +128,7 @@ class PembayaranController extends Controller
             $query->orderByRaw('COALESCE(paid_at, created_at) DESC');
         }
 
-        $data = $query->get();
+        $data = $query->paginate(10)->withQueryString();
 
         $tahunList = Pembayaran::selectRaw('YEAR(paid_at) as tahun')
             ->whereNotNull('paid_at')

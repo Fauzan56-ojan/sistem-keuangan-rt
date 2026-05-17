@@ -201,7 +201,7 @@
                                     @elseif($u->role == 'ketua_rt') bg-purple-100 text-purple-600
                                     @else bg-gray-100 text-gray-600
                                     @endif">
-                                    {{ ucfirst($u->role) }}
+                                    {{ str_replace('_', ' ', $u->role) }}
                                 </span>
                             </td>
 

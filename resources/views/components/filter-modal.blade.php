@@ -30,12 +30,19 @@
                 </select>
 
                 <select name="tahun" class="w-full border px-3 py-2 rounded-lg text-sm mt-3">
-                    <option value="all">Semua Tahun</option>
+
+                    <option value="all"
+                        {{ request('tahun', now()->year) == 'all' ? 'selected' : '' }}>
+                        Semua Tahun
+                    </option>
+
                     @foreach($tahunList as $th)
-                        <option value="{{ $th }}" {{ request('tahun') == $th ? 'selected' : '' }}>
+                        <option value="{{ $th }}"
+                            {{ request('tahun', now()->year) == $th ? 'selected' : '' }}>
                             {{ $th }}
                         </option>
                     @endforeach
+
                 </select>
             </div>
 

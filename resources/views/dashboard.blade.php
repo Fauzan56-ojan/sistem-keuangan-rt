@@ -76,12 +76,24 @@
                         <p class="text-sm text-slate-400 mb-8">Status pembayaran bulan ini</p>
                         
                         <div class="relative flex justify-center items-center mb-8">
-                            <!-- Simple Progress Circle using Tailwind -->
-                            <div class="w-40 h-40 rounded-full border-[12px] border-slate-100 flex items-center justify-center relative">
-                                <div class="absolute inset-0 rounded-full border-[12px] border-emerald-500 border-t-transparent border-l-transparent" style="transform: rotate({{ ($persen/100)*360 }}deg)"></div>
-                                <div class="text-center">
-                                    <span class="text-3xl font-extrabold text-slate-900">{{ $persen }}%</span>
-                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Terbayar</p>
+                            <div 
+                                class="w-40 h-40 rounded-full flex items-center justify-center relative"
+                                style="
+                                    background:
+                                    conic-gradient(
+                                        #10b981 {{ $persen }}%,
+                                        #f1f5f9 {{ $persen }}%
+                                    );
+                                "
+                            >
+                                <div class="w-28 h-28 bg-white rounded-full flex flex-col items-center justify-center">
+                                    <span class="text-3xl font-extrabold text-slate-900">
+                                        {{ $persen }}%
+                                    </span>
+
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                                        Terbayar
+                                    </p>
                                 </div>
                             </div>
                         </div>

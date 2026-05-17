@@ -1,62 +1,167 @@
-<h2>Laporan Keuangan</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body{
+            font-family: sans-serif;
+            font-size: 12px;
+            color: #222;
+        }
 
-<p>Total Pemasukan: Rp {{ number_format($totalPemasukan) }}</p>
-<p>Total Pengeluaran: Rp {{ number_format($totalPengeluaran) }}</p>
-<p>Saldo: Rp {{ number_format($saldo) }}</p>
+        h2{
+            margin-bottom: 4px;
+        }
 
-<table width="100%" border="1" cellspacing="0" cellpadding="5">
-    <thead>
-        <tr>
-            <th>Tanggal</th>
-            <th>Jenis</th>
-            <th>Keterangan</th>
+        .info{
+            margin-bottom: 18px;
+            line-height: 1.6;
+        }
 
-            @if ($jenis != 'pengeluaran')
-                <th>Masuk</th>
-            @endif
+        .summary{
+            margin-bottom: 18px;
+        }
 
-            @if ($jenis != 'pemasukan' && $jenis != 'iuran')
-                <th>Keluar</th>
-            @endif
+        .summary p{
+            margin: 4px 0;
+        }
 
-            @if ($jenis == 'all')
-                <th>Saldo</th>
-            @endif
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($transaksi as $t)
-        <tr>
-            <td>{{ \Carbon\Carbon::parse($t['tanggal'])->format('d-m-Y') }}</td>
+        table{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
 
-            <td>{{ $t['jenis'] }}</td>
+        th{
+            background: #f3f4f6;
+        }
 
-            <td>{{ $t['keterangan'] }}</td>
+        th, td{
+            border: 1px solid #d1d5db;
+            padding: 8px;
+            font-size: 11px;
+        }
 
-            @if ($jenis != 'pengeluaran')
+        .text-right{
+            text-align: right;
+        }
+
+        .footer{
+            margin-top: 16px;
+            font-size: 11px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h2>Laporan Keuangan RT 01</h2>
+    @if($jenis != 'all')
+        <div class="info">
+            <strong>Kategori :</strong>
+            {{ ucfirst($jenis) }}
+        </div>
+    @endif
+
+    <div class="info">
+        <strong>Periode :</strong>
+        @if($bulan == 'all' && $tahun == 'all')
+            Semua Periode
+        @elseif($bulan == 'all')
+            {{ $tahun }}
+        @elseif($tahun == 'all' && $bulan != 'all')
+            Bulan {{ \Carbon\Carbon::create()->month((int)$bulan)->translatedFormat('F') }}
+        @else
+            {{ \Carbon\Carbon::create()->month((int)$bulan)->translatedFormat('F') }}
+            {{ $tahun }}
+        @endif
+        <br>
+        <strong>Dicetak :</strong>
+        {{ now()->translatedFormat('d F Y') }}
+    </div>
+
+    <div class="summary">
+        @if($jenis == 'all')
+            <p>
+                <strong>Total Pemasukan :</strong>
+                Rp {{ number_format($totalPemasukan,0,',','.') }}
+            </p>
+            <p>
+                <strong>Total Pengeluaran :</strong>
+                Rp {{ number_format($totalPengeluaran,0,',','.') }}
+            </p>
+            <p>
+                <strong>Saldo Akhir :</strong>
+                Rp {{ number_format($saldo,0,',','.') }}
+            </p>
+        @elseif($jenis == 'pengeluaran')
+            <p>
+                <strong>Total Pengeluaran :</strong>
+                Rp {{ number_format($totalPengeluaran,0,',','.') }}
+            </p>
+        @else
+            <p>
+                <strong>Total Pemasukan :</strong>
+                Rp {{ number_format($totalPemasukan,0,',','.') }}
+            </p>
+        @endif
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Tanggal</th>
+                @if($jenis == 'all')
+                    <th>Jenis</th>
+                @endif
+                <th>Keterangan</th>
+                @if($jenis != 'pengeluaran')
+                    <th>Masuk</th>
+                @endif
+                @if($jenis == 'all' || $jenis == 'pengeluaran')
+                    <th>Keluar</th>
+                @endif
+                @if($jenis == 'all')
+                    <th>Saldo</th>
+                @endif
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach ($transaksi as $t)
+            <tr>
                 <td>
-                    {{ $t['masuk'] ? 'Rp ' . number_format($t['masuk']) : '-' }}
+                    {{ \Carbon\Carbon::parse($t['tanggal'])->format('d-m-Y') }}
                 </td>
-            @endif
-
-            @if ($jenis != 'pemasukan' && $jenis != 'iuran')
+                @if($jenis == 'all')
+                    <td>
+                        {{ ucfirst($t['jenis']) }}
+                    </td>
+                @endif
                 <td>
-                    {{ $t['keluar'] ? 'Rp ' . number_format($t['keluar']) : '-' }}
+                    {{ $t['keterangan'] }}
                 </td>
-            @endif
+                @if($jenis != 'pengeluaran')
+                    <td class="text-right">
+                        {{ $t['masuk'] ? 'Rp ' . number_format($t['masuk'],0,',','.') : '-' }}
+                    </td>
+                @endif
+                @if($jenis == 'all' || $jenis == 'pengeluaran')
+                    <td class="text-right">
+                        {{ $t['keluar'] ? 'Rp ' . number_format($t['keluar'],0,',','.') : '-' }}
+                    </td>
+                @endif
+                @if($jenis == 'all')
+                    <td class="text-right">
+                        Rp {{ number_format($t['saldo'],0,',','.') }}
+                    </td>
+                @endif
+            </tr>
+            @endforeach
 
-            @if ($jenis == 'all')
-                <td>
-                    Rp {{ number_format($t['saldo']) }}
-                </td>
-            @endif
-        </tr>
-        @endforeach
-    </tbody>
-</table>
-
-@if ($jenis == 'pengeluaran')
-    <p>Total Pengeluaran: Rp {{ number_format($totalPengeluaran) }}</p>
-@elseif ($jenis != 'all')
-    <p>Total Pemasukan: Rp {{ number_format($totalPemasukan) }}</p>
-@endif
+        </tbody>
+    </table>
+    <div class="footer">
+        Total Data : {{ count($transaksi) }} transaksi
+    </div>
+</body>
+</html>

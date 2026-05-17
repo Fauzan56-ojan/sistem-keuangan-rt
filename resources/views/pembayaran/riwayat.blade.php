@@ -185,6 +185,11 @@
                 </table>
             </div>
 
+             <!-- PAGINATION -->
+            <div class="px-6 py-4 border-t bg-white">
+                {{ $data->links() }}
+            </div>
+            
         </div>
 
     </div>

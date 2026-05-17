@@ -77,7 +77,7 @@ $totalTunggakanNominal = $allTunggakan->sum('total');
         }
 
         //presentase yg sudah bayar
-        $summary = $service->getSummaryBulanIni();
+        $summary = $service->getSummaryBulanIni(); 
 
 
         // tunggakan warga

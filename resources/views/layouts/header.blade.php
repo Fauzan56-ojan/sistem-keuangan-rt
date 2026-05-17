@@ -42,11 +42,11 @@
         <!-- notif -->
         @if(Auth::user()->role === 'warga')
 
-        <div class="relative">
+        <div x-data="{ open: false }" class="relative">
 
             <!-- tombol notif -->
             <button
-                onclick="document.getElementById('notifDropdown').classList.toggle('hidden')"
+                @click="open = !open"
                 class="relative p-2 rounded-full bg-white border hover:bg-emerald-50 transition">
 
                 <span class="material-symbols-outlined">
@@ -62,8 +62,11 @@
             </button>
 
             <!-- dropdown -->
-            <div id="notifDropdown"
-                class="hidden absolute right-0 mt-3 w-72 bg-white border rounded-2xl shadow-xl overflow-hidden z-50">
+            <div
+                x-show="open"
+                @click.outside="open = false"
+                x-transition
+                class="absolute right-0 mt-3 w-72 bg-white border rounded-2xl shadow-xl overflow-hidden z-50">
 
                 <div class="px-4 py-3 border-b font-semibold text-sm text-slate-700">
                     Notifikasi
@@ -80,14 +83,24 @@
                 @if($notif['password'])
 
                     <a href="{{ route('settings.profile') }}"
-                        class="block px-4 py-3 hover:bg-slate-50 border-b">
+                        class="block px-4 py-3 hover:bg-slate-50 border-b transition">
 
-                        <div class="font-medium text-sm text-slate-800">
-                            Ganti Password
-                        </div>
+                        <div class="flex items-start justify-between">
 
-                        <div class="text-xs text-slate-500 mt-1">
-                            Segera ganti password akun Anda
+                            <div>
+                                <div class="font-bold text-sm text-slate-800">
+                                    Ganti Password
+                                </div>
+
+                                <div class="text-xs text-slate-500 mt-1">
+                                    Segera ganti password akun Anda
+                                </div>
+                            </div>
+
+                            <div class="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center">
+                                <span class="text-red-600 text-xs font-bold">!</span>
+                            </div>
+
                         </div>
 
                     </a>
@@ -97,14 +110,25 @@
                 @if($notif['tunggakan'])
 
                     <a href="/tunggakan/{{ Auth::user()->id }}"
-                        class="block px-4 py-3 hover:bg-slate-50">
+                        
+                        class="block px-4 py-3 hover:bg-slate-50 transition">
 
-                        <div class="font-medium text-sm text-slate-800">
-                            Tunggakan Iuran
-                        </div>
+                        <div class="flex items-start justify-between">
 
-                        <div class="text-xs text-slate-500 mt-1">
-                            Anda memiliki tunggakan pembayaran
+                            <div>
+                                <div class="font-bold text-sm text-slate-800">
+                                    Tunggakan Iuran
+                                </div>
+
+                                <div class="text-xs text-slate-500 mt-1">
+                                    Anda memiliki tunggakan pembayaran
+                                </div>
+                            </div>
+
+                            <div class="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center">
+                                <span class="text-red-600 text-xs font-bold">!</span>
+                            </div>
+
                         </div>
 
                     </a>

@@ -1,10 +1,19 @@
 <x-app-layout>
     <div class="p-6 max-w-7xl mx-auto space-y-8">
 
+        @if(session('error'))
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-r-xl shadow-sm">
+                <div class="flex items-center">
+                    <span class="material-symbols-outlined text-red-500 mr-3">error</span>
+                    <p class="text-sm text-red-700 font-medium">{{ session('error') }}</p>
+                </div>
+            </div>
+        @endif
+
         {{-- Title --}}
         <section class="flex items-center justify-between">
             <h3 class="text-xl font-bold text-gray-800">
-                Warga Belum Bayar ({{ now()->translatedFormat('F Y') }})
+                Daftar Tagihan Warga Bulan Ini
             </h3>
         </section>
 

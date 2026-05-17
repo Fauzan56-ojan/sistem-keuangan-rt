@@ -78,16 +78,15 @@
                                 <div class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 group-focus-within:text-indigo-600 transition-colors">Rp</div>
                                 <input 
                                     name="nominal" 
-                                    type="number" 
+                                    id="nominal"
+                                    type="text"
+                                    inputmode="numeric"
                                     class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400" 
-                                    placeholder="Contoh: 35000" 
+                                    placeholder="Contoh: 35.000" 
                                     required
                                 />
                             </div>
-                            <p class="text-[10px] text-slate-400 italic font-medium pl-1 flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[12px]">*</span>
-                                Masukkan angka saja tanpa pemisah ribuan
-                            </p>
+                            <div class="h-6"></div>
                         </div>
 
                         <div class="pt-2">
@@ -176,4 +175,19 @@
             </div>
         </section>
     </div>
+    <script>
+    const nominalInput = document.getElementById('nominal');
+
+    nominalInput.addEventListener('input', function(e) {
+
+        let value = e.target.value.replace(/\D/g, '');
+
+        e.target.value = new Intl.NumberFormat('id-ID').format(value);
+    });
+
+    document.querySelector('form').addEventListener('submit', function() {
+
+        nominalInput.value = nominalInput.value.replace(/\./g, '');
+    });
+</script>
 </x-app-layout>

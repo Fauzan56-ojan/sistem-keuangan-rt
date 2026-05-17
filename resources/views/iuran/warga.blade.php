@@ -142,9 +142,9 @@
                                 
                                 <!-- Header / Aksesori Visual -->
                                 <div class="bg-blue-600 p-4 text-white text-center">
-                                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    <div class="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-2 shadow-md ring-2 ring-green-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5" d="M5 13l4 4L19 7" />
                                         </svg>
                                     </div>
                                     <h2 class="font-bold text-lg uppercase tracking-wider">Bukti Pembayaran</h2>
@@ -162,28 +162,34 @@
                                     <!-- Detail List -->
                                     <div class="space-y-3 text-sm">
                                         <div class="flex justify-between">
+                                            <span class="text-slate-500">Kode Transaksi</span>
+                                            <span class="font-mono text-xs text-slate-700 text-right break-all max-w-[180px]">
+                                                {{ $row->pembayaran?->kode_transaksi ?? $row->pembayaran?->order_id ?? '-' }}
+                                            </span>
+                                        </div>
+                                        <div class="flex justify-between">
                                             <span class="text-slate-500">Nama Lengkap</span>
                                             <span class="font-semibold text-slate-700 text-right">{{ $warga->name }}</span>
                                         </div>
                                         <div class="flex justify-between">
-                                            <span class="text-slate-500">Periode</span>
-                                            <span class="font-semibold text-slate-700">{{ \Carbon\Carbon::create()->month($row->periode_bulan)->translatedFormat('F') }}</span>
+                                            <span class="text-slate-500">Alamat</span>
+                                            <span class="font-semibold text-slate-700 text-right">{{ $warga->nomor_rumah ?? '-' }}</span>
                                         </div>
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-slate-500">Status</span>
-                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $row->status == 'paid' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700' }}">
-                                                {{ strtoupper($row->status) }}
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-500">Tanggal Bayar</span>
+                                            <span class="font-semibold text-slate-700">
+                                                {{ $row->pembayaran?->paid_at 
+                                                    ? \Carbon\Carbon::parse($row->pembayaran->paid_at)->translatedFormat('d M Y • H:i')
+                                                    : '-' }}
                                             </span>
                                         </div>
                                         <div class="flex justify-between">
+                                            <span class="text-slate-500">Periode</span>
+                                            <span class="font-semibold text-slate-700">{{ \Carbon\Carbon::create()->month($row->periode_bulan)->translatedFormat('F') }}</span>
+                                        </div>                                        
+                                        <div class="flex justify-between">
                                             <span class="text-slate-500">Metode</span>
                                             <span class="font-semibold text-slate-700">{{ strtoupper($row->pembayaran?->metode ?? '-') }}</span>
-                                        </div>
-                                        <div class="pt-2 border-t border-slate-100">
-                                            <span class="text-slate-400 text-[10px] block uppercase mb-1">Kode Transaksi</span>
-                                            <span class="font-mono text-xs text-slate-600 break-all bg-slate-50 p-1 rounded block">
-                                                {{ $row->pembayaran?->kode_transaksi ?? $row->pembayaran?->order_id ?? '-' }}
-                                            </span>
                                         </div>
                                     </div>
                                 </div>

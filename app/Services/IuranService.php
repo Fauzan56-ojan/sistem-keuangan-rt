@@ -65,7 +65,7 @@ class IuranService
             ->exists();
 
         if ($cek) {
-            return ['error' => 'Iuran tahun ini sudah digenerate'];
+            return ['error' => 'Tagihan iuran tahun ini sudah dibuat'];
         }
 
         $cekNominal = DB::table('setnominal')
@@ -119,7 +119,7 @@ class IuranService
             }
         }
 
-        return ['success' => 'Iuran berhasil digenerate'];
+        return ['success' => 'Tagihan iuran berhasil dibuat'];
     }
 
     public function migrasi($tahun, $bulanAkhir)
@@ -161,7 +161,7 @@ class IuranService
             }
         }
 
-        return ['success' => 'Migrasi berhasil'];
+        return ['success' => 'Data tagihan periode sebelumnya berhasil dibuat'];
     }
 
     public function getDataWarga($id, $tahun)

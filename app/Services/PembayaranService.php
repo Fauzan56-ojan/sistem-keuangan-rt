@@ -10,7 +10,7 @@ use Midtrans\Notification;
 
 class PembayaranService
 {
-    public static function createTunaiPayment($id)
+    public static function createTunaiPayment($id, $tanggal = null)
     {
         $iuran = Iuran::findOrFail($id);
 
@@ -31,7 +31,9 @@ class PembayaranService
             'metode' => 'tunai',
             'kode_transaksi' => $iuran->id . time() . rand(10,99),
             'status' => 'success',
-            'paid_at' => now()
+            'paid_at' => $tanggal 
+                ? \Carbon\Carbon::parse($tanggal . ' ' . now()->format('H:i:s'))
+                : now()
         ]);
 
         $iuran->update([
@@ -72,7 +74,6 @@ class PembayaranService
         if ($iuran->status == 'paid') {
             return null;
         }
-
 
         Config::$serverKey = config('midtrans.server_key');
         Config::$isProduction = config('midtrans.is_production');
