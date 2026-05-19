@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Iuran;
 use App\Models\Pembayaran;
@@ -225,5 +227,102 @@ class IuranService
             : 0;
 
         return compact('totalWarga','sudahBayar','belumBayar','persen');
+    }
+
+    public static function getHistoriData()
+    {
+        $aktif = User::where('role', 'warga')
+            ->where('status_aktif', 1)
+            ->get();
+
+        $nonaktif = User::where('role', 'warga')
+            ->where('status_aktif', 0)
+            ->get();
+
+        return [
+            'aktif' => $aktif,
+            'nonaktif' => $nonaktif
+        ];
+    }
+    
+    public static function getHistoriDetail($id)
+    {
+        $warga = User::findOrFail($id);
+
+        if ($warga->status_aktif == 1) {
+            $defaultTahun = now()->year - 1;
+        } else {
+            $defaultTahun = Iuran::where('user_id', $id)
+                ->max('periode_tahun') ?? now()->year - 1;
+        }
+
+        $tahun = request('tahun', $defaultTahun);
+
+        $iuran = Iuran::with('pembayaran')
+            ->where('user_id', $id)
+            ->where('periode_tahun', $tahun)
+            ->orderBy('periode_bulan')
+            ->get();
+
+        $tahunList = [];
+
+        for ($i = now()->year - 1; $i >= 2021; $i--) {
+            $tahunList[] = $i;
+        }
+
+        return [
+            'warga' => $warga,
+            'iuran' => $iuran,
+            'tahun' => $tahun,
+            'tahunList' => $tahunList
+        ];
+    }
+
+    public static function storeHistori($request, $id)
+    {
+        foreach ($request->bulan as $bulan => $value) {
+
+            if (!$value) {
+                continue;
+            }
+
+            $sudahAda = Iuran::where('user_id', $id)
+                ->where('periode_bulan', $bulan)
+                ->where('periode_tahun', $request->tahun)
+                ->exists();
+
+            if ($sudahAda) {
+                continue;
+            }
+
+            $iuran = Iuran::create([
+                'user_id' => $id,
+                'periode_bulan' => $bulan,
+                'periode_tahun' => $request->tahun,
+                'nominal' => $request->nominal[$bulan],
+                'status' => 'paid'
+            ]);
+
+            Pembayaran::create([
+                'user_id' => $id,
+                'iuran_id' => $iuran->id,
+                'amount' => $request->nominal[$bulan],
+                'metode' => 'tunai',
+                'paid_at' => $request->tanggal[$bulan],
+                'status' => 'success'
+            ]);
+        }
+    }
+
+    public static function storeNonaktif($request)
+    {
+        User::create([
+            'name' => $request->name,
+            'nomor_rumah' => $request->nomor_rumah,
+            'role' => 'warga',
+            'status_aktif' => 0,
+            'username' => 'histori_' . time() . rand(10,99),
+            'password' => Hash::make(Str::random(10))
+        ]);
     }
 }

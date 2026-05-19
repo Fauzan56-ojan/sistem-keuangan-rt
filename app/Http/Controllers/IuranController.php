@@ -115,4 +115,40 @@ class IuranController extends Controller
         return view('tunggakan.detail', compact('iuran', 'warga'));
     }
 
+    public function histori()
+    {
+        $data = IuranService::getHistoriData();
+
+        return view('settings.histori.index', [
+            'aktif' => $data['aktif'],
+            'nonaktif' => $data['nonaktif']
+        ]);
+    }
+
+    public function historiDetail($id)
+    {
+        $data = IuranService::getHistoriDetail($id);
+
+        return view('settings.histori.detail', [
+            'warga' => $data['warga'],
+            'iuran' => $data['iuran'],
+            'tahun' => $data['tahun'],
+            'tahunList' => $data['tahunList']
+        ]);
+    }
+
+    public function storeHistori(Request $request, $id)
+    {
+        IuranService::storeHistori($request, $id);
+
+        return back()->with('success', 'Histori berhasil ditambahkan');
+    }
+
+    public function storeNonaktif(Request $request)
+    {
+        IuranService::storeNonaktif($request);
+
+        return back()->with('success', 'Warga nonaktif berhasil ditambahkan');
+    }
+
 }

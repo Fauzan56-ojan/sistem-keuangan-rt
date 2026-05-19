@@ -66,7 +66,15 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:admin')->name('iuran.generate');
     Route::get('/settings/migrasi', function () {return view('settings.migrasi');})
         ->middleware('role:admin')->name('settings.migrasi');
-    
+    Route::get('/settings/histori', [IuranController::class, 'histori'])
+        ->middleware('role:admin')->name('settings.histori');
+    Route::get('/settings/histori/{id}', [IuranController::class, 'historiDetail'])
+        ->middleware('role:admin')->name('settings.histori.detail');
+    Route::post('/settings/histori/nonaktif', [IuranController::class, 'storeNonaktif'])
+        ->middleware('role:admin')->name('settings.histori.nonaktif.store');
+    Route::post('/settings/histori/{id}', [IuranController::class, 'storeHistori'])
+        ->middleware('role:admin')->name('settings.histori.store');
+
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index')
         ->middleware('role:admin,bendahara,ketua_rt');
 
