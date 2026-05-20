@@ -231,12 +231,29 @@ class IuranService
 
     public static function getHistoriData()
     {
+        $searchAktif = request('search_aktif');
+        $searchNonaktif = request('search_nonaktif');
+
         $aktif = User::where('role', 'warga')
             ->where('status_aktif', 1)
+            ->when($searchAktif, function ($q) use ($searchAktif) {
+                $q->where(function ($q2) use ($searchAktif) {
+                    $q2->where('name', 'like', "%$searchAktif%")
+                        ->orWhere('nomor_rumah', 'like', "%$searchAktif%");
+
+                });
+
+            })
             ->get();
 
         $nonaktif = User::where('role', 'warga')
             ->where('status_aktif', 0)
+            ->when($searchNonaktif, function ($q) use ($searchNonaktif) {
+                $q->where(function ($q2) use ($searchNonaktif) {
+                    $q2->where('name', 'like', "%$searchNonaktif%")
+                        ->orWhere('nomor_rumah', 'like', "%$searchNonaktif%");
+                });
+            })
             ->get();
 
         return [
@@ -264,6 +281,11 @@ class IuranService
             ->orderBy('periode_bulan')
             ->get();
 
+        $lastPaid = $iuran
+            ->where('status', 'paid')
+            ->sortByDesc('periode_bulan')
+            ->first();
+
         $tahunList = [];
 
         for ($i = now()->year - 1; $i >= 2021; $i--) {
@@ -274,7 +296,8 @@ class IuranService
             'warga' => $warga,
             'iuran' => $iuran,
             'tahun' => $tahun,
-            'tahunList' => $tahunList
+            'tahunList' => $tahunList,
+            'lastPaid' => $lastPaid
         ];
     }
 

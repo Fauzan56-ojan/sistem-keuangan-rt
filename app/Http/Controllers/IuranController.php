@@ -133,7 +133,8 @@ class IuranController extends Controller
             'warga' => $data['warga'],
             'iuran' => $data['iuran'],
             'tahun' => $data['tahun'],
-            'tahunList' => $data['tahunList']
+            'tahunList' => $data['tahunList'],
+            'lastPaid' => $data['lastPaid']
         ]);
     }
 
