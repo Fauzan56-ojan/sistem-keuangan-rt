@@ -11,10 +11,20 @@
         @endif
 
         {{-- Title --}}
-        <section class="flex items-center justify-between">
-            <h3 class="text-xl font-bold text-gray-800">
-                Daftar Tagihan Warga Bulan Ini
-            </h3>
+       <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+            <div class="flex items-center gap-4">
+                <a href="{{ route('iuran.warga') }}" 
+                class="inline-flex items-center justify-center w-10 h-10 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 rounded-xl border border-gray-200 shadow-sm transition-all group shrink-0" 
+                title="Kembali">
+                    <span class="material-symbols-outlined text-xl group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+                </a>
+                
+                <h3 class="text-xl font-bold text-gray-800 tracking-tight leading-none">
+                    Daftar Tagihan Warga Bulan Ini
+                </h3>
+            </div>
+
+            {{-- Tempat kosong di kanan (Bisa diisi tombol aksi/cetak jika nanti butuh, otomatis rapi) --}}
         </section>
 
         {{-- Table --}}

@@ -62,109 +62,83 @@ class IuranService
 
     public function generate($tahun)
     {
-        $cek = DB::table('iuran')
-            ->where('periode_tahun', $tahun)
-            ->exists();
+        try {
 
-        if ($cek) {
-            return ['error' => 'Tagihan iuran tahun ini sudah dibuat'];
-        }
+            return DB::transaction(function () use ($tahun) {
 
-        $cekNominal = DB::table('setnominal')
-            ->where('tahun', $tahun)
-            ->exists();
+                $tahunSekarang = now()->year;
 
-        if (!$cekNominal) {
-
-            $nominalTerakhir = DB::table('setnominal')
-                ->orderBy('created_at', 'desc')
-                ->value('nominal');
-
-            if (!$nominalTerakhir) {
-                return ['error' => 'Nominal sebelumnya belum ada'];
-            }
-
-            DB::table('setnominal')->insert([
-                'tahun' => $tahun,
-                'bulan' => 1,
-                'nominal' => $nominalTerakhir,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-        }
-
-        $users = User::where('status_aktif', 1)
-            ->where('role', 'warga')
-            ->get();
-
-        foreach ($users as $user) {
-
-            for ($bulan = 1; $bulan <= 12; $bulan++) {
-
-                $nominal = DB::table('setnominal')
-                    ->where('tahun', $tahun)
-                    ->where('bulan', '<=', $bulan)
-                    ->orderBy('bulan', 'desc')
-                    ->value('nominal');
-
-                if (!$nominal) {
-                    return ['error' => "Nominal belum diset sampai bulan $bulan"];
+                if ($tahun != $tahunSekarang + 1) {
+                    throw new \Exception('Tahun tidak valid, Silakan pilih tahun setelah tahun saat ini');
                 }
-
-                Iuran::create([
-                    'user_id' => $user->id,
-                    'periode_bulan' => $bulan,
-                    'periode_tahun' => $tahun,
-                    'nominal' => $nominal,
-                    'status' => 'pending'
-                ]);
-            }
-        }
-
-        return ['success' => 'Tagihan iuran berhasil dibuat'];
-    }
-
-    public function migrasi($tahun, $bulanAkhir)
-    {
-        $users = User::where('status_aktif', 1)
-            ->where('role', 'warga')
-            ->get();
-
-        foreach ($users as $user) {
-
-            for ($i = 1; $i <= $bulanAkhir; $i++) {
-
-                $cek = Iuran::where('user_id', $user->id)
+                $cek = DB::table('iuran')
                     ->where('periode_tahun', $tahun)
-                    ->where('periode_bulan', $i)
                     ->exists();
 
                 if ($cek) {
-                    continue;
+                    throw new \Exception('Tagihan iuran tahun ini sudah dibuat');
                 }
 
-                $nominal = \DB::table('setnominal')
+                $cekNominal = DB::table('setnominal')
                     ->where('tahun', $tahun)
-                    ->where('bulan', '<=', $i)
-                    ->orderBy('bulan', 'desc')
-                    ->value('nominal');
+                    ->exists();
 
-                if (!$nominal) {
-                    return ['error' => "Nominal belum diset sampai bulan $i"];
+                if (!$cekNominal) {
+
+                    $nominalTerakhir = DB::table('setnominal')
+                        ->orderBy('created_at', 'desc')
+                        ->value('nominal');
+
+                    if (!$nominalTerakhir) {
+                        throw new \Exception('Nominal sebelumnya belum ada');
+                    }
+
+                    DB::table('setnominal')->insert([
+                        'tahun' => $tahun,
+                        'bulan' => 1,
+                        'nominal' => $nominalTerakhir,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
                 }
 
-                Iuran::create([
-                    'user_id' => $user->id,
-                    'periode_bulan' => $i,
-                    'periode_tahun' => $tahun,
-                    'nominal' => $nominal,
-                    'status' => 'pending'
-                ]);
-            }
-        }
+                $users = User::where('status_aktif', 1)
+                    ->where('role', 'warga')
+                    ->get();
 
-        return ['success' => 'Data tagihan periode sebelumnya berhasil dibuat'];
+                foreach ($users as $user) {
+
+                    for ($bulan = 1; $bulan <= 12; $bulan++) {
+
+                        $nominal = DB::table('setnominal')
+                            ->where('tahun', $tahun)
+                            ->where('bulan', '<=', $bulan)
+                            ->orderBy('bulan', 'desc')
+                            ->value('nominal');
+
+                        if (!$nominal) {
+                            throw new \Exception("Nominal belum diset sampai bulan $bulan");
+                        }
+
+                        Iuran::create([
+                            'user_id' => $user->id,
+                            'periode_bulan' => $bulan,
+                            'periode_tahun' => $tahun,
+                            'nominal' => $nominal,
+                            'status' => 'pending'
+                        ]);
+                    }
+                }
+
+                return ['success' => 'Tagihan iuran berhasil dibuat'];
+            });
+
+        } catch (\Exception $e) {
+
+            return ['error' => $e->getMessage()];
+        }
     }
+
 
     public function getDataWarga($id, $tahun)
     {
@@ -288,7 +262,7 @@ class IuranService
 
         $tahunList = [];
 
-        for ($i = now()->year - 1; $i >= 2021; $i--) {
+        for ($i = now()->year; $i >= 2021; $i--) {
             $tahunList[] = $i;
         }
 

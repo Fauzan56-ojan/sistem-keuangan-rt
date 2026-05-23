@@ -1,45 +1,74 @@
 <x-app-layout>
-    <div class="p-6 max-w-7xl mx-auto space-y-8">
+   <div class="p-6 max-w-7xl mx-auto space-y-6">
         
-        {{-- Header & Alert Section --}}
-        @if(session('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-r-xl shadow-sm">
-                <div class="flex items-center">
-                    <span class="material-symbols-outlined text-red-500 mr-3">error</span>
-                    <p class="text-sm text-red-700 font-medium">{{ session('error') }}</p>
+    {{-- Header & Alert Section --}}
+    @if(session('error'))
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-r-xl shadow-sm">
+            <div class="flex items-center">
+                <span class="material-symbols-outlined text-red-500 mr-3">error</span>
+                <p class="text-sm text-red-700 font-medium">{{ session('error') }}</p>
+            </div>
+        </div>
+    @endif
+
+    {{-- KONSISTEN: Judul Utama Halaman Berada Paling Atas --}}
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+        <div class="flex items-center gap-4">
+            <a href="{{ route('iuran.warga') }}" 
+                class="inline-flex items-center justify-center w-10 h-10 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 rounded-xl border border-gray-200 shadow-sm transition-all group" 
+                title="Kembali">
+                    <span class="material-symbols-outlined text-xl group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+                </a>
+            
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight leading-none">
+                Iuran Tahun {{ $tahun }}
+            </h1>
+        </div>
+
+        {{-- Dropdown Pilih Tahun --}}
+        <form method="GET" class="flex items-center gap-3 bg-white p-1.5 rounded-xl border border-gray-200 shadow-sm w-fit h-10">
+            <p class="text-xs font-bold text-gray-500 uppercase ml-2 tracking-wider whitespace-nowrap">Pilih Tahun:</p>
+            <div class="relative h-full flex items-center">
+                <select name="tahun" onchange="this.form.submit()" class="appearance-none bg-gray-50 border-none rounded-lg pl-3 pr-8 py-1 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 outline-none cursor-pointer transition-all h-full">
+                    @foreach ($tahunList as $th)
+                        <option value="{{ $th }}" {{ $tahun == $th ? 'selected' : '' }}>{{ $th }}</option>
+                    @endforeach
+                </select>
+                <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-sm">expand_more</span>
+            </div>
+        </form>
+    </section>
+
+    {{-- Profil Warga Card (Sekarang di bawah Judul Utama) --}}
+    <section class="space-y-4">
+        <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+            <div class="flex items-center gap-6 z-10">
+                <div class="w-16 h-16 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-blue-600 text-3xl">person</span>
+                </div>
+                <div class="space-y-1">
+                    <div class="flex items-center gap-3">
+                        <h3 class="text-xl font-bold text-gray-900">{{ $warga->name }}</h3>
+                        @if($warga->status_aktif)
+                            <span class="px-2.5 py-0.5 text-[11px] font-semibold rounded-full bg-green-100 text-green-700">Aktif</span>
+                        @else
+                            <span class="px-2.5 py-0.5 text-[11px] font-semibold rounded-full bg-red-100 text-red-700">Nonaktif</span>
+                        @endif
+                    </div>
+                    <div class="flex items-center gap-2 text-gray-500">
+                        <span class="material-symbols-outlined text-sm">location_on</span>
+                        <p class="text-sm font-medium">Alamat: {{ $warga->nomor_rumah ?? '-' }}</p>
+                    </div>
                 </div>
             </div>
-        @endif
 
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="md:col-span-2 bg-white rounded-2xl p-8 border border-gray-200 shadow-sm flex items-start justify-between relative overflow-hidden">
-                <div class="flex gap-6 z-10">
-                    <div class="w-20 h-20 rounded-2xl bg-blue-50 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-blue-600 text-4xl">person</span>
-                    </div>
-                    <div class="space-y-1">
-                        <h3 class="text-2xl font-bold text-gray-900">{{ $warga->name }}</h3>
-                        <div class="flex items-center gap-2 text-gray-500">
-                            <span class="material-symbols-outlined text-sm">location_on</span>
-                            <p class="text-sm font-medium">Alamat: {{ $warga->nomor_rumah ?? '-' }}</p>
-                        </div>
-                        <div class="pt-2">
-                            @if($warga->status_aktif)
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700">Aktif</span>
-                            @else
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Nonaktif</span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 z-10">
-                    <div class="w-12 h-12 rounded-xl bg-white text-blue-600 flex items-center justify-center shadow-sm">
-                        <span class="material-symbols-outlined">event_available</span>
-                    </div>
+            {{-- Status Terakhir di Sebelah Kanan Card --}}
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 z-10 w-full md:w-auto justify-end">
+                <div class="bg-gray-50 px-4 py-2 rounded-xl border border-gray-100 flex items-center gap-3 h-12 w-full sm:w-auto">
+                    <span class="material-symbols-outlined text-blue-600 text-xl">event_available</span>
                     <div>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Status Terakhir</p>
-                        <p class="text-lg font-bold text-gray-900">
+                        <p class="text-[9px] text-gray-400 font-bold uppercase tracking-wider leading-none">Status Terakhir</p>
+                        <p class="text-sm font-bold text-gray-900 mt-0.5">
                             @if($lastPaid)
                                 {{ \Carbon\Carbon::create()->month($lastPaid->periode_bulan)->translatedFormat('F') }} - Lunas
                             @else
@@ -48,25 +77,11 @@
                         </p>
                     </div>
                 </div>
-                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-50/50 rounded-full"></div>
             </div>
-        </section>
-
-        <section class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <h3 class="text-xl font-bold text-gray-800 tracking-tight">Iuran Tahun {{ $tahun }}</h3>
             
-            <form method="GET" class="flex items-center gap-3 bg-white p-2 rounded-xl border border-gray-200 shadow-sm">
-                <p class="text-xs font-bold text-gray-500 uppercase ml-2">Pilih Tahun:</p>
-                <div class="relative">
-                    <select name="tahun" onchange="this.form.submit()" class="appearance-none bg-gray-50 border-none rounded-lg px-4 py-1.5 pr-10 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 outline-none cursor-pointer transition-all">
-                        @foreach ($tahunList as $th)
-                            <option value="{{ $th }}" {{ $tahun == $th ? 'selected' : '' }}>{{ $th }}</option>
-                        @endforeach
-                    </select>
-                    <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-sm">expand_more</span>
-                </div>
-            </form>
-        </section>
+            <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-blue-50/30 rounded-full"></div>
+        </div>
+    </section>
 
         <section class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
             <div class="overflow-x-auto">

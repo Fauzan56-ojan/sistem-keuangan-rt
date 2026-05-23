@@ -36,20 +36,20 @@
                 </span>
             </a>
 
-            <!-- Migrasi -->
-            <a href="{{ route('settings.migrasi') }}"
-               class="group flex items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition hover:-translate-y-1">
+            <!-- Histori Pembayaran Lama -->
+            <a href="{{ route('settings.histori') }}"
+            class="group flex items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition hover:-translate-y-1">
 
                 <div class="w-14 h-14 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition">
-                    <span class="material-symbols-outlined text-2xl">sync_alt</span>
+                    <span class="material-symbols-outlined text-2xl">history</span>
                 </div>
 
                 <div class="ml-4 flex-1">
                     <h3 class="font-semibold text-lg text-gray-800 group-hover:text-emerald-600">
-                        Buat Tagihan Lama
+                        Histori Pembayaran Lama
                     </h3>
                     <p class="text-sm text-gray-500">
-                        Migrasi data iuran
+                        Pindahkan data pembayaran lama
                     </p>
                 </div>
 
@@ -94,28 +94,6 @@
                     </h3>
                     <p class="text-sm text-gray-500">
                         Tagihan Iuran 1 Tahun
-                    </p>
-                </div>
-
-                <span class="material-symbols-outlined text-gray-300 group-hover:translate-x-1 transition">
-                    chevron_right
-                </span>
-            </a>
-
-            <!-- Histori Pembayaran Lama -->
-            <a href="{{ route('settings.histori') }}"
-            class="group flex items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition hover:-translate-y-1">
-
-                <div class="w-14 h-14 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition">
-                    <span class="material-symbols-outlined text-2xl">history</span>
-                </div>
-
-                <div class="ml-4 flex-1">
-                    <h3 class="font-semibold text-lg text-gray-800 group-hover:text-emerald-600">
-                        Histori Pembayaran Lama
-                    </h3>
-                    <p class="text-sm text-gray-500">
-                        Pindahkan data pembayaran lama
                     </p>
                 </div>
 

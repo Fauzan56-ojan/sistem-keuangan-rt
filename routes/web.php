@@ -52,10 +52,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('pengeluaran', PengeluaranController::class);
 
     Route::get('/settings', function () {return view('settings.index');})
-        ->middleware('role:admin')->name('settings.index');
+    ->middleware('role:admin')->name('settings.index');
     Route::get('/settings/profile', [ProfileController::class, 'edit'])->name('settings.profile');
-    Route::post('/settings/migrasi', [IuranController::class, 'migrasi'])
-        ->middleware('role:admin')->name('settings.migrasi.proses');
     Route::get('/settings/nominal', [NominalController::class, 'index'])
         ->middleware('role:admin')->name('settings.nominal');
     Route::get('/settings/generate', function () {return view('settings.generate');})
@@ -64,8 +62,6 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:admin')->name('nominal.store');
     Route::post('/iuran/generate', [IuranController::class, 'generate'])
         ->middleware('role:admin')->name('iuran.generate');
-    Route::get('/settings/migrasi', function () {return view('settings.migrasi');})
-        ->middleware('role:admin')->name('settings.migrasi');
     Route::get('/settings/histori', [IuranController::class, 'histori'])
         ->middleware('role:admin')->name('settings.histori');
     Route::get('/settings/histori/{id}', [IuranController::class, 'historiDetail'])

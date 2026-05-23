@@ -81,17 +81,6 @@ class IuranController extends Controller
         return back()->with('success', $result['success']);
     }
 
-    public function migrasi(Request $request, IuranService $service)
-    {
-        $result = $service->migrasi($request->tahun, $request->bulan);
-
-        if (isset($result['error'])) {
-            return back()->with('error', $result['error']);
-        }
-
-        return back()->with('success', $result['success']);
-    }
-
     public function tunggakan(IuranService $service)
     {
         $data = collect($service->getTunggakan())->map(function ($item) use ($service) {

@@ -1,50 +1,76 @@
 <x-app-layout>
-    <!-- Google Material Symbols Link (Pastikan ini ada di layout utama atau panggil di sini) -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
-    <div class="p-6 max-w-7xl mx-auto space-y-8">
+    <div class="p-6 max-w-7xl mx-auto space-y-6">
         
-        {{-- Header & Alert Section --}}
-        @if(session('error'))
-            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-r-xl shadow-sm">
-                <div class="flex items-center">
-                    <span class="material-symbols-outlined text-red-500 mr-3">error</span>
-                    <p class="text-sm text-red-700 font-medium">{{ session('error') }}</p>
+    {{-- Header & Alert Section --}}
+    @if(session('error'))
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-r-xl shadow-sm">
+            <div class="flex items-center">
+                <span class="material-symbols-outlined text-red-500 mr-3">error</span>
+                <p class="text-sm text-red-700 font-medium">{{ session('error') }}</p>
+            </div>
+        </div>
+    @endif
+
+    {{-- BARU: Judul Utama Halaman Berada Paling Atas --}}
+    <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+        <div class="flex items-center gap-4">
+            <a href="{{ route('settings.histori') }}" 
+                class="inline-flex items-center justify-center w-10 h-10 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 rounded-xl border border-gray-200 shadow-sm transition-all group" 
+                title="Kembali">
+                    <span class="material-symbols-outlined text-xl group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+                </a>
+            
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight leading-none">
+                Histori Iuran Tahun {{ $tahun }}
+            </h1>
+        </div>
+
+        {{-- Dropdown Pilih Tahun --}}
+        <form method="GET" class="flex items-center gap-3 bg-white p-1.5 rounded-xl border border-gray-200 shadow-sm w-fit h-10">
+            <p class="text-xs font-bold text-gray-500 uppercase ml-2 tracking-wider whitespace-nowrap">Pilih Tahun:</p>
+            <div class="relative h-full flex items-center">
+                <select name="tahun" onchange="this.form.submit()" class="appearance-none bg-gray-50 border-none rounded-lg pl-3 pr-8 py-1 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 outline-none cursor-pointer transition-all h-full">
+                    @foreach ($tahunList as $th)
+                        <option value="{{ $th }}" {{ $tahun == $th ? 'selected' : '' }}>{{ $th }}</option>
+                    @endforeach
+                </select>
+                <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-sm">expand_more</span>
+            </div>
+        </form>
+    </section>
+
+    {{-- Profil Warga Card (Sekarang di bawah Judul Utama) & Tombol Tambah --}}
+    <section class="space-y-4">
+        <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+            <div class="flex items-center gap-6 z-10">
+                <div class="w-16 h-16 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-blue-600 text-3xl">person</span>
+                </div>
+                <div class="space-y-1">
+                    <div class="flex items-center gap-3">
+                        <h3 class="text-xl font-bold text-gray-900">{{ $warga->name }}</h3>
+                        @if($warga->status_aktif ?? true)
+                            <span class="px-2.5 py-0.5 text-[11px] font-semibold rounded-full bg-green-100 text-green-700">Aktif</span>
+                        @else
+                            <span class="px-2.5 py-0.5 text-[11px] font-semibold rounded-full bg-red-100 text-red-700">Nonaktif</span>
+                        @endif
+                    </div>
+                    <div class="flex items-center gap-2 text-gray-500">
+                        <span class="material-symbols-outlined text-sm">location_on</span>
+                        <p class="text-sm font-medium">Alamat: {{ $warga->nomor_rumah ?? '-' }}</p>
+                    </div>
                 </div>
             </div>
-        @endif
 
-        {{-- Profil Warga Card --}}
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="md:col-span-2 bg-white rounded-2xl p-8 border border-gray-200 shadow-sm flex items-start justify-between relative overflow-hidden">
-                <div class="flex gap-6 z-10">
-                    <div class="w-20 h-20 rounded-2xl bg-blue-50 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-blue-600 text-4xl">person</span>
-                    </div>
-                    <div class="space-y-1">
-                        <h3 class="text-2xl font-bold text-gray-900">{{ $warga->name }}</h3>
-                        <div class="flex items-center gap-2 text-gray-500">
-                            <span class="material-symbols-outlined text-sm">location_on</span>
-                            <p class="text-sm font-medium">Alamat: {{ $warga->nomor_rumah ?? '-' }}</p>
-                        </div>
-                        <div class="pt-2">
-                            @if($warga->status_aktif ?? true)
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700">Aktif</span>
-                            @else
-                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Nonaktif</span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Status Terakhir --}}
-                <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 z-10">
-                    <div class="w-12 h-12 rounded-xl bg-white text-blue-600 flex items-center justify-center shadow-sm">
-                        <span class="material-symbols-outlined">event_available</span>
-                    </div>
+            {{-- Status Terakhir & Tombol Aksi di Kanan Card --}}
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 z-10 w-full md:w-auto justify-end">
+                <div class="bg-gray-50 px-4 py-2 rounded-xl border border-gray-100 flex items-center gap-3 h-12 w-full sm:w-auto">
+                    <span class="material-symbols-outlined text-blue-600 text-xl">event_available</span>
                     <div>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Status Terakhir</p>
-                        <p class="text-lg font-bold text-gray-900">
+                        <p class="text-[9px] text-gray-400 font-bold uppercase tracking-wider leading-none">Status Terakhir</p>
+                        <p class="text-sm font-bold text-gray-900 mt-0.5">
                             @if(isset($lastPaid) && $lastPaid)
                                 {{ \Carbon\Carbon::create()->month($lastPaid->periode_bulan)->translatedFormat('F') }} - Lunas
                             @else
@@ -53,34 +79,18 @@
                         </p>
                     </div>
                 </div>
-                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-50/50 rounded-full"></div>
-            </div>
-        </section>
 
-        {{-- Filter Tahun & Tombol Tambah Histori --}}
-        <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-                <h3 class="text-xl font-bold text-gray-800 tracking-tight">Histori Iuran Tahun {{ $tahun }}</h3>
-                
+                {{-- Tombol Tambah Data Histori disandingkan di sini agar layout bersih --}}
                 <button onclick="document.getElementById('modalTambah').classList.remove('hidden')"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm shadow-emerald-100">
-                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                    class="inline-flex items-center justify-center gap-2 h-12 px-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm shadow-emerald-100 whitespace-nowrap w-full sm:w-auto">
+                    <span class="material-symbols-outlined text-lg">add_circle</span>
                     Tambah Data Histori
                 </button>
             </div>
             
-            <form method="GET" class="flex items-center gap-3 bg-white p-2 rounded-xl border border-gray-200 shadow-sm w-fit">
-                <p class="text-xs font-bold text-gray-500 uppercase ml-2">Pilih Tahun:</p>
-                <div class="relative">
-                    <select name="tahun" onchange="this.form.submit()" class="appearance-none bg-gray-50 border-none rounded-lg px-4 py-1.5 pr-10 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 outline-none cursor-pointer transition-all">
-                        @foreach ($tahunList as $th)
-                            <option value="{{ $th }}" {{ $tahun == $th ? 'selected' : '' }}>{{ $th }}</option>
-                        @endforeach
-                    </select>
-                    <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-sm">expand_more</span>
-                </div>
-            </form>
-        </section>
+            <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-blue-50/30 rounded-full-none"></div>
+        </div>
+    </section>
 
         {{-- Main Table Section --}}
         <section class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
@@ -137,20 +147,18 @@
                                             <span class="material-symbols-outlined">receipt_long</span>
                                         </button>
                                     @else
-                                        <span class="text-xs text-gray-400 italic">No Action</span>
+                                        <span class="text-xs text-black">-</span>
                                     @endif
                                 </div>
                             </td>
                         </tr>
 
-                        <!-- Modal Bukti Pembayaran / Struk (Hanya Render Jika Lunas) -->
+                        <!-- Modal Bukti Pembayaran -->
                         @if($row->status == 'paid')
                         <div id="modal{{ $row->id }}" 
                             class="hidden fixed inset-0 bg-slate-900/60 flex items-center justify-center z-50 p-4 animate-fade-in">
                             
-                            <!-- Card Kwitansi -->
                             <div id="bukti{{ $row->id }}" class="bg-white rounded-none shadow-2xl w-full max-w-sm overflow-hidden border border-slate-200">
-                                
                                 <div class="bg-blue-600 p-4 text-white text-center">
                                     <div class="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-2 shadow-md ring-2 ring-green-100">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -236,50 +244,73 @@
         </section>
     </div>
 
-    <!-- Modal Form Tambah Histori Masal (12 Bulan) -->
-    <div id="modalTambah" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <!-- Modal Form Tambah Histori Masal -->
+    <div id="modalTambah" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
         <form method="POST" action="{{ route('settings.histori.store', $warga->id) }}"
-              class="bg-white rounded-2xl w-full max-w-4xl p-6 shadow-2xl flex flex-col max-h-[90vh]">
+            class="bg-white rounded-2xl w-full max-w-4xl p-6 shadow-2xl flex flex-col max-h-[90vh]">
             @csrf
             <input type="hidden" name="tahun" value="{{ $tahun }}">
 
             <div class="flex items-center justify-between pb-4 border-b border-gray-100">
                 <div>
-                    <h2 class="text-xl font-bold text-gray-900">Tambah Histori Pembayaran Masal</h2>
-                    <p class="text-xs text-gray-500">Multi-input data transaksi iuran untuk Tahun <span class="font-bold text-blue-600">{{ $tahun }}</span></p>
+                    <h2 class="text-xl font-bold text-gray-900">Tambah Histori Pembayaran Iuran</h2>
+                    <p class="text-xs text-gray-500 mt-0.5">Multi-input data transaksi iuran <span class="font-bold text-blue-600">{{ $tahun }}</span></p>
                 </div>
-                <button type="button" onclick="document.getElementById('modalTambah').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-xl p-1">
+                <button type="button" onclick="document.getElementById('modalTambah').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-xl p-1 transition-colors">
                     ✕
                 </button>
             </div>
 
+            <!-- Panel Kontrol Atas -->
+            <div class="mt-4 p-4 bg-gray-50/70 border border-gray-100 rounded-xl flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <label class="inline-flex items-center gap-2 text-sm text-gray-700 font-medium cursor-pointer select-none">
+                        <input type="checkbox" id="checkAllBulan" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500/30">
+                        Pilih Semua Bulan
+                    </label>
+                </div>
+
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <div class="relative flex-1 sm:w-48">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 text-xs font-medium">Rp</span>
+                        <input type="number" id="globalNominal" placeholder="Isi semua nominal..." 
+                            class="w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-500/20 transition-all">
+                    </div>
+                    <button type="button" id="btnSamaNominal" 
+                        class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-semibold rounded-lg border border-blue-200 transition-colors whitespace-nowrap">
+                        Terapkan
+                    </button>
+                </div>
+            </div>
+
+            <!-- Area Tabel Dinamis -->
             <div class="overflow-y-auto my-4 pr-1 flex-1">
                 <table class="w-full border-collapse text-left text-sm">
                     <thead>
-                        <tr class="bg-gray-50 sticky top-0 border-b border-gray-200">
-                            <th class="p-3 font-semibold text-gray-600 w-1/4">Bulan</th>
-                            <th class="p-3 font-semibold text-gray-600 text-center w-1/6">Buat Data</th>
-                            <th class="p-3 font-semibold text-gray-600 w-1/3">Tanggal Bayar</th>
-                            <th class="p-3 font-semibold text-gray-600 w-1/3">Nominal (Rp)</th>
+                        <tr class="bg-gray-100/80 sticky top-0 border-b border-gray-200 z-10 text-xs text-gray-600 uppercase tracking-wider">
+                            <th class="p-3 font-semibold w-[15%] text-center">Pilih</th>
+                            <th class="p-3 font-semibold w-[25%]">Bulan</th>
+                            <th class="p-3 font-semibold w-[30%]">Tanggal Bayar</th>
+                            <th class="p-3 font-semibold w-[30%]">Nominal (Rp)</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         @for($i = 1; $i <= 12; $i++)
-                            <tr class="hover:bg-gray-50/50 transition-colors">
-                                <td class="p-3 font-medium text-gray-900">
-                                    {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
-                                </td>
+                            <tr class="hover:bg-gray-50/50 transition-colors row-bulan" id="row-{{ $i }}">
                                 <td class="p-3 text-center">
                                     <input type="checkbox" name="bulan[{{ $i }}]" value="1" 
-                                           class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500/30 cursor-pointer">
+                                        class="checkbox-bulan w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500/30 cursor-pointer">
+                                </td>
+                                <td class="p-3 font-medium text-gray-800">
+                                    {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
                                 </td>
                                 <td class="p-3">
-                                    <input type="date" name="tanggal[{{ $i }}]" 
-                                           class="border border-gray-300 rounded-lg px-3 py-1.5 text-xs w-full focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
+                                    <input type="date" name="tanggal[{{ $i }}]" id="tanggal-{{ $i }}"
+                                        class="input-tanggal bg-gray-50 text-gray-400 border border-gray-200 rounded-lg px-3 py-1.5 text-xs w-full focus:ring-2 focus:ring-blue-500/20 outline-none transition-all cursor-not-allowed" disabled>
                                 </td>
                                 <td class="p-3">
-                                    <input type="number" name="nominal[{{ $i }}]" placeholder="Contoh: 50000"
-                                           class="border border-gray-300 rounded-lg px-3 py-1.5 text-xs w-full focus:ring-2 focus:ring-blue-500/20 outline-none transition-all">
+                                    <input type="number" name="nominal[{{ $i }}]" id="nominal-{{ $i }}" placeholder="0"
+                                        class="input-nominal bg-gray-50 text-gray-400 border border-gray-200 rounded-lg px-3 py-1.5 text-xs w-full focus:ring-2 focus:ring-blue-500/20 outline-none transition-all cursor-not-allowed" disabled>
                                 </td>
                             </tr>
                         @endfor
@@ -336,6 +367,88 @@
             }
         });
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkAll = document.getElementById('checkAllBulan');
+        const checkboxes = document.querySelectorAll('.checkbox-bulan');
+        const btnSamaNominal = document.getElementById('btnSamaNominal');
+        const globalNominal = document.getElementById('globalNominal');
+        
+        // Ambil tahun aktif dari filter backend (Laravel)
+        const tahunAktif = "{{ $tahun }}"; 
+        // Ambil tanggal (hari) hari ini secara real-time (format: DD)
+        const hariIni = String(new Date().getDate()).padStart(2, '0');
+
+        // Toggle state input (aktif/nonaktif) berdasarkan checkbox
+        function toggleRowInputs(checkbox) {
+            const row = checkbox.closest('.row-bulan');
+            const inputTanggal = row.querySelector('.input-tanggal');
+            const inputNominal = row.querySelector('.input-nominal');
+
+            // Mengambil index bulan dari id row (misal: row-1 -> bulan 01)
+            const bulanIndex = row.id.split('-')[1].padStart(2, '0');
+
+            if (checkbox.checked) {
+                inputTanggal.disabled = false;
+                inputNominal.disabled = false;
+                inputTanggal.classList.remove('bg-gray-50', 'text-gray-400', 'border-gray-200', 'cursor-not-allowed');
+                inputNominal.classList.remove('bg-gray-50', 'text-gray-400', 'border-gray-200', 'cursor-not-allowed');
+                inputTanggal.classList.add('bg-white', 'text-gray-900', 'border-gray-300');
+                inputNominal.classList.add('bg-white', 'text-gray-900', 'border-gray-300');
+                
+                // Set tanggal: Tahun sesuai filter, Bulan sesuai baris, Hari sesuai hari ini
+                if (!inputTanggal.value) {
+                    inputTanggal.value = `${tahunAktif}-${bulanIndex}-${hariIni}`;
+                }
+            } else {
+                inputTanggal.disabled = true;
+                inputNominal.disabled = true;
+                inputTanggal.classList.add('bg-gray-50', 'text-gray-400', 'border-gray-200', 'cursor-not-allowed');
+                inputNominal.classList.add('bg-gray-50', 'text-gray-400', 'border-gray-200', 'cursor-not-allowed');
+                inputTanggal.classList.remove('bg-white', 'text-gray-900', 'border-gray-300');
+                inputNominal.classList.remove('bg-white', 'text-gray-900', 'border-gray-300');
+            }
+        }
+
+        // Event listener Master Checkbox (Pilih Semua)
+        if (checkAll) {
+            checkAll.addEventListener('change', function () {
+                checkboxes.forEach(cb => {
+                    cb.checked = this.checked;
+                    toggleRowInputs(cb);
+                });
+            });
+        }
+
+        // Event listener Checkbox Tunggal per baris bulan
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function() {
+                toggleRowInputs(this);
+                if (!this.checked && checkAll) checkAll.checked = false;
+            });
+        });
+
+        // Event listener pengisian nominal massal
+        if (btnSamaNominal && globalNominal) {
+            btnSamaNominal.addEventListener('click', function () {
+                const nominalValue = globalNominal.value;
+                
+                if (!nominalValue) {
+                    alert('Silakan isi nominal massal terlebih dahulu.');
+                    globalNominal.focus();
+                    return;
+                }
+
+                checkboxes.forEach(cb => {
+                    if (cb.checked) {
+                        const row = cb.closest('.row-bulan');
+                        const inputNominal = row.querySelector('.input-nominal');
+                        if (inputNominal) inputNominal.value = nominalValue;
+                    }
+                });
+            });
+        }
+    });
     </script>
 
     <style>

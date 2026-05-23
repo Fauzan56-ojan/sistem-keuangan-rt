@@ -32,27 +32,24 @@
                     @csrf
                     
                     <div class="grid grid-cols-1 gap-2">
-                        <label class="text-sm font-bold text-slate-700 dark:text-emerald-100 flex items-center gap-2" for="tahun">
+                        <label class="text-sm font-bold text-slate-700 dark:text-emerald-100 flex items-center gap-2">
                             <span class="material-symbols-outlined text-[18px]">calendar_today</span>
-                            Pilih Tahun Tagihan
+                            Tahun Tagihan
                         </label>
-                        
-                        <div class="relative group">
-                            <select 
-                                name="tahun" 
-                                id="tahun"
-                                class="w-full bg-slate-50 dark:bg-emerald-900/10 border border-slate-200 dark:border-emerald-800 rounded-xl py-3 px-4 text-slate-900 dark:text-white font-medium focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all appearance-none cursor-pointer outline-none"
-                            >
-                                @php
-                                    $currentYear = date('Y');
-                                    $nextYear = $currentYear + 1;
-                                @endphp
-                                <option value="{{ $currentYear }}">{{ $currentYear }}</option>
-                                <option value="{{ $nextYear }}" selected>{{ $nextYear }}</option>
-                                <option value="{{ $nextYear + 1 }}">{{ $nextYear + 1 }}</option>
-                            </select>                        
-                    
+
+                        @php
+                            $nextYear = date('Y') + 1;
+                        @endphp
+
+                        <div class="w-full bg-slate-50 dark:bg-emerald-900/10 border border-slate-200 dark:border-emerald-800 rounded-xl py-3 px-4 text-slate-900 dark:text-white font-medium">
+                            {{ $nextYear }}
                         </div>
+
+                        <input type="hidden" name="tahun" value="{{ $nextYear }}">
+
+                        <p class="text-xs text-slate-500 dark:text-emerald-300">
+                            Tagihan iuran hanya dapat dibuat untuk tahun berikutnya.
+                        </p>
                     </div>
 
                     <div class="pt-2">
