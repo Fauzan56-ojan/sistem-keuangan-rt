@@ -5,16 +5,26 @@
             <!-- Header Section -->
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10 border-b border-gray-100 pb-5">
                 <div class="flex items-start gap-4">
+
                     <a href="{{ url('/settings') }}" 
-                    class="inline-flex items-center justify-center w-10 h-10 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 rounded-xl border border-gray-200 shadow-sm transition-all group shrink-0 mt-0.5" 
-                    title="Kembali">
-                        <span class="material-symbols-outlined text-xl group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+                        class="inline-flex items-center justify-center w-10 h-10 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 rounded-xl border border-gray-200 shadow-sm transition-all group shrink-0 mt-0.5" 
+                        title="Kembali">
+
+                        <span class="material-symbols-outlined text-xl group-hover:-translate-x-0.5 transition-transform">
+                            arrow_back
+                        </span>
                     </a>
-                    
+
                     <div>
-                        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight leading-none">Histori Pembayaran Lama</h1>
-                        <p class="mt-2 text-sm text-gray-500">Manajemen data pembayaran lawas untuk warga aktif maupun nonaktif.</p>
+                        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
+                            Histori Pembayaran Lama
+                        </h1>
+
+                        <p class="mt-1 text-sm text-gray-500">
+                            Manajemen data pembayaran lawas untuk warga aktif maupun nonaktif.
+                        </p>
                     </div>
+
                 </div>
 
                 <div class="shrink-0">
@@ -247,7 +257,7 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nomor Rumah</label>
-                    <input type="text" name="nomor_rumah"
+                    <input type="text" name="nomor_rumah" required
                         class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white shadow-sm transition-all"
                         placeholder="Contoh: A-12">
                 </div>

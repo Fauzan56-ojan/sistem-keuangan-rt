@@ -1,4 +1,4 @@
-<aside class="glass-sidebar fixed left-0 top-0 h-screen w-64 z-50 flex flex-col shadow-xl">
+<aside id="sidebar" class="glass-sidebar sidebar-transition overflow-hidden fixed left-0 top-0 h-screen w-64 z-50 flex flex-col shadow-xl">
 
     <!-- LOGO -->
     <div class="pt-8 pb-5 px-6 border-b border-emerald-100/30">

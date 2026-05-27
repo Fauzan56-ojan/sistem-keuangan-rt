@@ -5,10 +5,17 @@
         $notif = \App\Services\NotificationService::getNotifData(Auth::user());
     }
 @endphp
-<header class="glass-header fixed top-0 left-64 right-0 z-40 flex items-center justify-between px-7 py-3.5">
+<header id="headerContent" class="glass-header fixed top-0 left-64 right-0 z-40 flex items-center justify-between px-7 py-3.5">
 
     <!-- kiri -->
     <div class="flex items-center gap-4">
+
+        <!-- toggle sidebar -->
+        <button id="toggleSidebar" class="p-2 rounded-md bg-white border hover:bg-emerald-50 transition">
+    <span class="material-symbols-outlined">
+        menu
+    </span>
+</button>
 
         {{-- <div>
             <p class="text-xs text-emerald-600">Selamat datang,</p>
@@ -153,24 +160,24 @@
             );
         @endphp
 
-        <div class="flex items-center gap-3 bg-white px-3 py-2 rounded-full border shadow-sm">
+        <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-slate-100 shadow-sm">
 
-            <!-- Avatar Inisial -->
-            <div class="w-9 h-9 flex items-center justify-center rounded-full bg-emerald-500 text-white font-semibold text-sm">
-                {{ $initials }}
-            </div>
-
-            <!-- Nama + Role -->
-            <div class="leading-tight">
-                <div class="text-sm font-semibold text-gray-800">
-                    {{ $name }}
-                </div>
-                <div class="text-xs text-gray-500">
-                    {{ Auth::user()->role ?? 'User' }}
-                </div>
-            </div>
-
+        <!-- Avatar Inisial (Agak Mengotak / Rounded-xl) -->
+        <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-emerald-100">
+            {{ $initials }}
         </div>
+
+        <!-- Nama + Role -->
+        <div class="text-left">
+            <p class="text-sm font-bold text-slate-800 leading-none">
+                {{ $name }}
+            </p>
+            <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 inline-block mt-1">
+                {{ Auth::user()->role ?? 'User' }}
+            </span>
+        </div>
+
+    </div>
 
     </div>
 </header>

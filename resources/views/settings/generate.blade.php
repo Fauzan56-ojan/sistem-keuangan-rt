@@ -9,9 +9,18 @@
     <div class="p-6 lg:p-10 max-w-2xl">
         
         <header class="mb-8">
-            <h1 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">
-                Tagihan Iuran Tahunan
-            </h1>
+            <div class="flex items-center gap-4 mb-2">
+                <a href="{{ url('/settings') }}" 
+                    class="inline-flex items-center justify-center w-10 h-10 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 rounded-xl border border-gray-200 shadow-sm transition-all group shrink-0 mt-0.5" 
+                    title="Kembali">
+                    <span class="material-symbols-outlined text-xl group-hover:-translate-x-0.5 transition-transform">
+                        arrow_back
+                    </span>
+                </a>
+                <h1 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+                    Tagihan Iuran Tahunan
+                </h1>
+            </div>
             <p class="text-slate-500 dark:text-emerald-400/80 text-sm leading-relaxed">
                 Sistem akan membuat tagihan iuran baru dari <strong>Januari hingga Desember</strong> untuk semua warga secara otomatis.
             </p>

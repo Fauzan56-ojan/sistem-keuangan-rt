@@ -7,9 +7,19 @@
     </x-slot>
 
     <div class="p-4 lg:p-8 max-w-7xl mx-auto space-y-8">
-        <header class="flex flex-col space-y-1 border-b border-slate-100 pb-6">
-            <h2 class="text-2xl font-extrabold tracking-tight text-slate-900">Konfigurasi Iuran</h2>
-            <p class="text-slate-500 text-sm font-medium">Atur nominal iuran bulanan dan pantau riwayat perubahan sistem.</p>
+        <header class="flex gap-4 items-start border-b border-slate-100 pb-6">
+            <!-- Tombol Back -->
+            <a href="{{ url('/settings') }}" 
+            class="inline-flex items-center justify-center w-10 h-10 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 rounded-xl border border-gray-200 shadow-sm transition-all group shrink-0" 
+            title="Kembali">
+                <span class="material-symbols-outlined text-xl group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+            </a>
+
+            <!-- Judul & Deskripsi -->
+            <div class="flex flex-col space-y-1">
+                <h2 class="text-2xl font-extrabold tracking-tight text-slate-900">Konfigurasi Iuran</h2>
+                <p class="text-slate-500 text-sm font-medium">Atur nominal iuran bulanan dan pantau riwayat perubahan sistem.</p>
+            </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -144,11 +154,11 @@
                                         <span class="font-bold text-slate-900 text-sm">
                                             Rp {{ number_format($item->nominal, 0, ',', '.') }}
                                         </span>
-                                        @if(isset($items[$index + 1]) && $item->nominal > $items[$index + 1]->nominal)
+                                        <!-- @if(isset($items[$index + 1]) && $item->nominal > $items[$index + 1]->nominal)
                                             <span class="material-symbols-outlined text-xs text-emerald-500 bg-emerald-50 p-0.5 rounded">trending_up</span>
                                         @elseif(isset($items[$index + 1]) && $item->nominal < $items[$index + 1]->nominal)
                                             <span class="material-symbols-outlined text-xs text-red-400 bg-red-50 p-0.5 rounded">trending_down</span>
-                                        @endif
+                                        @endif -->
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">

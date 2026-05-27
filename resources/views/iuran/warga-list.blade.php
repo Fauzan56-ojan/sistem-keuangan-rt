@@ -57,15 +57,21 @@
                 </div>
 
                 <a href="{{ route('belum.bayar') }}"
-                class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:bg-red-50 transition">
-
-                    <div class="p-3 bg-red-50 rounded-lg">
-                        <span class="material-symbols-outlined text-red-600">warning</span>
+                class="group bg-white p-6 rounded-2xl shadow-sm border border-red-100 flex items-center justify-between gap-4 cursor-pointer hover:bg-red-50/50 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                    
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-red-50 rounded-lg group-hover:bg-red-100 transition-colors duration-300">
+                            <span class="material-symbols-outlined text-red-600 animate-pulse">warning</span>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-gray-500 uppercase">Belum Bayar ({{ now()->translatedFormat('M') }})</p>
+                            <h3 class="text-2xl font-bold text-red-600">
+                                {{ $belumBayar }}
+                            </h3>
+                        </div>
                     </div>
-
-                    <div>
-                        <p class="text-xs text-gray-500 uppercase">Belum Bayar ({{ now()->translatedFormat('M') }})</p>
-                        <h3 class="text-2xl font-bold text-red-600">{{ $belumBayar }}</h3>
+                    <div class="text-red-400 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
+                        <span class="material-symbols-outlined text-xl">arrow_forward_ios</span>
                     </div>
                 </a>
             </div>

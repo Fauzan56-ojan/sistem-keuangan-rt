@@ -125,9 +125,60 @@
     @endif
 
     <!-- CONTENT -->
-    <main class="ml-64 pt-20 p-6">
+    <main id="mainContent" class="ml-64 pt-20 p-6 transition-all duration-300">
         {{ $slot }}
     </main>
+<script>
 
+    const toggleBtn = document.getElementById('toggleSidebar');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+    const headerContent = document.getElementById('headerContent');
+
+    // cek state sebelumnya
+    let collapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+
+    // apply saat load
+    applySidebarState();
+
+    toggleBtn.addEventListener('click', () => {
+
+        collapsed = !collapsed;
+
+        localStorage.setItem('sidebar-collapsed', collapsed);
+
+        applySidebarState();
+
+    });
+
+    function applySidebarState() {
+
+        if (collapsed) {
+
+            sidebar.classList.remove('w-64');
+            sidebar.classList.add('w-0');
+
+            mainContent.classList.remove('ml-64');
+            mainContent.classList.add('ml-0');
+
+            headerContent.classList.remove('left-64');
+            headerContent.classList.add('left-0');
+
+        } else {
+
+            sidebar.classList.remove('w-0');
+            sidebar.classList.add('w-64');
+
+            mainContent.classList.remove('ml-0');
+            mainContent.classList.add('ml-64');
+
+            headerContent.classList.remove('left-0');
+            headerContent.classList.add('left-64');
+
+        }
+
+    }
+
+</script>
 </body>
 </html>

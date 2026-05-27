@@ -14,11 +14,13 @@
     {{-- KONSISTEN: Judul Utama Halaman Berada Paling Atas --}}
     <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
         <div class="flex items-center gap-4">
+            @if (in_array(auth()->user()->role, ['admin', 'bendahara']))
             <a href="{{ route('iuran.warga') }}" 
                 class="inline-flex items-center justify-center w-10 h-10 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 rounded-xl border border-gray-200 shadow-sm transition-all group" 
                 title="Kembali">
                     <span class="material-symbols-outlined text-xl group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
                 </a>
+                @endif
             
             <h1 class="text-2xl font-bold text-gray-900 tracking-tight leading-none">
                 Iuran Tahun {{ $tahun }}

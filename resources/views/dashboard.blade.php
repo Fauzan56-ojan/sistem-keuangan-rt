@@ -22,7 +22,7 @@
                 </div>
 
                 <!-- Pemasukan -->
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <a href="{{ route('pemasukan.index') }}" class="block bg-white p-6 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md hover:-translate-y-1 transition duration-200">
                     <div class="flex justify-between items-start mb-4">
                         <div class="p-3 bg-blue-50 text-blue-600 rounded-2xl">
                             <span class="material-symbols-outlined">trending_up</span>
@@ -30,10 +30,10 @@
                     </div>
                     <p class="text-slate-500 text-sm font-medium">Pemasukan (Bulan Ini)</p>
                     <h3 class="text-2xl font-bold text-slate-900 mt-1">Rp {{ number_format($totalPemasukanBulan, 0, ',', '.') }}</h3>
-                </div>
+                </a>
 
                 <!-- Pengeluaran -->
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <a href="{{ route('pengeluaran.index') }}" class="block bg-white p-6 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md hover:-translate-y-1 transition duration-200">
                     <div class="flex justify-between items-start mb-4">
                         <div class="p-3 bg-rose-50 text-rose-600 rounded-2xl">
                             <span class="material-symbols-outlined">trending_down</span>
@@ -41,18 +41,32 @@
                     </div>
                     <p class="text-slate-500 text-sm font-medium">Pengeluaran (Bulan Ini)</p>
                     <h3 class="text-2xl font-bold text-slate-900 mt-1">Rp {{ number_format($totalPengeluaranBulan, 0, ',', '.') }}</h3>
-                </div>
+                </a>
 
                 <!-- Tunggakan -->
-                <div class="bg-white p-6 rounded-3xl shadow-sm border-l-4 border-l-rose-500 border-y border-r border-slate-100">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="p-3 bg-rose-50 text-rose-600 rounded-2xl">
-                            <span class="material-symbols-outlined">history_toggle_off</span>
+                @if(in_array(auth()->user()->role, ['admin', 'bendahara', 'ketua_rt']))
+                    
+                    <a href="{{ route('tunggakan.index') }}" class="block bg-white p-6 rounded-3xl shadow-sm border-l-4 border-l-rose-500 border-y border-r border-slate-100 hover:shadow-md hover:-translate-y-1 transition duration-200">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="p-3 bg-rose-50 text-rose-600 rounded-2xl">
+                                <span class="material-symbols-outlined">history_toggle_off</span>
+                            </div>
                         </div>
+                        <p class="text-slate-500 text-sm font-medium">Total Tunggakan</p>
+                        <h3 class="text-2xl font-bold text-rose-600 mt-1">Rp {{ number_format($totalTunggakanNominal, 0, ',', '.') }}</h3>
+                    </a>
+                @else
+                    
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border-l-4 border-l-rose-500 border-y border-r border-slate-100">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="p-3 bg-rose-50 text-rose-600 rounded-2xl">
+                                <span class="material-symbols-outlined">history_toggle_off</span>
+                            </div>
+                        </div>
+                        <p class="text-slate-500 text-sm font-medium">Total Tunggakan</p>
+                        <h3 class="text-2xl font-bold text-rose-600 mt-1">Rp {{ number_format($totalTunggakanNominal, 0, ',', '.') }}</h3>
                     </div>
-                    <p class="text-slate-500 text-sm font-medium">Total Tunggakan</p>
-                    <h3 class="text-2xl font-bold text-rose-600 mt-1">Rp {{ number_format($totalTunggakanNominal, 0, ',', '.') }}</h3>
-                </div>
+                @endif
             </section>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -129,9 +129,16 @@ class IuranController extends Controller
 
     public function storeHistori(Request $request, $id)
     {
-        IuranService::storeHistori($request, $id);
+        if (!$request->bulan || !is_array($request->bulan)) {
+            return back()->with('error', 'Pilih minimal satu bulan');
+        }
+        $berhasil = IuranService::storeHistori($request, $id);
 
-        return back()->with('success', 'Histori berhasil ditambahkan');
+            if ($berhasil > 0) {
+            return back()->with('success', 'Histori berhasil ditambahkan');
+        }
+
+        return back()->with('error', 'Tidak ada data yang berhasil disimpan');
     }
 
     public function storeNonaktif(Request $request)

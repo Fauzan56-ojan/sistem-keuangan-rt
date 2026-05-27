@@ -277,9 +277,21 @@ class IuranService
 
     public static function storeHistori($request, $id)
     {
+        $berhasil = 0;
         foreach ($request->bulan as $bulan => $value) {
 
             if (!$value) {
+                continue;
+            }
+
+            if (
+                !isset($request->nominal[$bulan]) ||
+                !isset($request->tanggal[$bulan]) ||
+                !$request->nominal[$bulan] ||
+                !$request->tanggal[$bulan] ||
+                !is_numeric($request->nominal[$bulan]) ||
+                $request->nominal[$bulan] <= 0
+            ) {
                 continue;
             }
 
@@ -305,10 +317,12 @@ class IuranService
                 'iuran_id' => $iuran->id,
                 'amount' => $request->nominal[$bulan],
                 'metode' => 'tunai',
-                'paid_at' => $request->tanggal[$bulan],
+                'paid_at' => $request->tanggal[$bulan] . ' ' . now()->format('H:i'),
                 'status' => 'success'
             ]);
+            $berhasil++;
         }
+            return $berhasil;
     }
 
     public static function storeNonaktif($request)

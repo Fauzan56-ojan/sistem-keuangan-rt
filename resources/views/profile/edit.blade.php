@@ -9,11 +9,24 @@
         <div class="w-full max-w-4xl space-y-8">
 
             <!-- HEADER -->
-            <div>
-                <h1 class="text-2xl font-bold text-on-surface">Pengaturan Profil</h1>
-                <p class="text-sm text-on-surface-variant mt-1">
-                    Perbarui detail identitas dan keamanan akun Anda
-                </p>
+            <div class="relative pl-0 md:pl-0">
+                <a href="{{ url('/settings') }}" 
+                class="absolute -left-14 top-0.5 hidden md:inline-flex items-center justify-center w-10 h-10 bg-white hover:bg-gray-50 text-gray-600 hover:text-gray-900 rounded-xl border border-gray-200 shadow-sm transition-all group shrink-0" 
+                title="Kembali">
+                    <span class="material-symbols-outlined text-xl group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+                </a>
+
+                <div class="flex flex-col space-y-1">
+                    <div class="flex items-center gap-3">
+                        <a href="{{ url('/settings') }}" class="inline-flex md:hidden items-center justify-center w-9 h-9 bg-white text-gray-600 rounded-lg border border-gray-200 shadow-sm">
+                            <span class="material-symbols-outlined text-lg">arrow_back</span>
+                        </a>
+                        <h1 class="text-2xl font-bold text-on-surface">Pengaturan Profil</h1>
+                    </div>
+                    <p class="text-sm text-on-surface-variant pl-12 md:pl-0">
+                        Perbarui detail identitas dan keamanan akun Anda
+                    </p>
+                </div>
             </div>
             <section class="bg-white rounded-2xl border border-outline-variant/30 shadow-sm">
                 <div class="p-6 border-b flex items-center gap-3">
