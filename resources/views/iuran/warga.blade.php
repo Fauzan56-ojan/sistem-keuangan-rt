@@ -172,8 +172,8 @@
                                 <div class="p-6 space-y-4">
                                     <!-- Info Utama (Nominal) -->
                                     <div class="text-center py-2 border-b border-dashed border-slate-200 mb-4">
-                                        <span class="text-slate-500 text-xs uppercase block mb-1">Total Nominal</span>
-                                        <span class="text-2xl font-bold text-slate-800">Rp {{ number_format($row->nominal,0,',','.') }}</span>
+                                        <span class="text-slate-500 text-xs uppercase block mb-1">Total Nominal Pembayaran</span>
+                                        <span class="text-2xl font-bold text-slate-800">Rp {{ number_format($row->pembayaran?->amount,0,',','.') }}</span>
                                     </div>
 
                                     <!-- Detail List -->
