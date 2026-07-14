@@ -6,7 +6,7 @@
 
     <title>{{ config('app.name') }}</title>
 
-    <!-- <link rel="icon" type="image/png" href="{{ asset('logo.png') }}"> -->
+    <link rel="icon" type="image/png" href="{{ asset('logo-hdr.png') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 </head>
 
-<body class="bg-gradient-to-br from-slate-50 via-white to-emerald-50/20 font-body">
+<body class="bg-gradient-to-br from-slate-100 via-slate-50 to-teal-50 font-body">
 
     <!-- SIDEBAR -->
     @include('layouts.sidebar')
@@ -125,7 +125,7 @@
     @endif
 
     <!-- CONTENT -->
-    <main id="mainContent" class="ml-64 pt-20 p-6 transition-all duration-300">
+    <main id="mainContent" class="ml-56 pt-20 p-6 transition-all duration-300">
         {{ $slot }}
     </main>
 <script>
@@ -155,25 +155,25 @@
 
         if (collapsed) {
 
-            sidebar.classList.remove('w-64');
+            sidebar.classList.remove('w-56'); 
             sidebar.classList.add('w-0');
 
-            mainContent.classList.remove('ml-64');
+            mainContent.classList.remove('ml-56');
             mainContent.classList.add('ml-0');
 
-            headerContent.classList.remove('left-64');
+            headerContent.classList.remove('left-56');
             headerContent.classList.add('left-0');
 
         } else {
 
             sidebar.classList.remove('w-0');
-            sidebar.classList.add('w-64');
+            sidebar.classList.add('w-56');
 
             mainContent.classList.remove('ml-0');
-            mainContent.classList.add('ml-64');
+            mainContent.classList.add('ml-56');
 
             headerContent.classList.remove('left-0');
-            headerContent.classList.add('left-64');
+            headerContent.classList.add('left-56');
 
         }
 

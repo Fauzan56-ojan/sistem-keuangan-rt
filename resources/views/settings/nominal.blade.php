@@ -29,13 +29,7 @@
                     <div class="absolute right-0 top-0 w-32 h-32 bg-emerald-50 rounded-bl-full -mr-10 -mt-10 transition-all group-hover:bg-emerald-100/50"></div>
                     
                     <div class="relative z-10 space-y-5">
-                        <div class="flex items-center justify-between">
-                            <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
-                                Status Aktif
-                            </span>
-                            
-                        </div>
+                        
                         
                         <div class="space-y-1">
                             <p class="text-slate-500 text-xs font-semibold uppercase tracking-wider">Nominal Saat Ini</p>
@@ -86,17 +80,28 @@
                             <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest pl-1">Input Nominal Baru</label>
                             <div class="relative group">
                                 <div class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 group-focus-within:text-indigo-600 transition-colors">Rp</div>
-                                <input 
-                                    name="nominal" 
-                                    id="nominal"
+                                <input
+                                    id="nominal_display"
                                     type="text"
                                     inputmode="numeric"
-                                    class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400" 
-                                    placeholder="Contoh: 35.000" 
+                                    class="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all font-bold text-slate-900 placeholder:font-normal placeholder:text-slate-400"
+                                    placeholder="Contoh: 35.000"
                                     required
                                 />
+                        
+                                <input
+                                    type="hidden"
+                                    name="nominal"
+                                    id="nominal"
+                                />
                             </div>
-                            <div class="h-6"></div>
+                            <div class="min-h-6 mt-2">
+                                @error('nominal')
+                                    <p class="text-sm text-red-600 font-medium">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
                         </div>
 
                         <div class="pt-2">
@@ -185,19 +190,14 @@
             </div>
         </section>
     </div>
-    <script>
-    const nominalInput = document.getElementById('nominal');
+   <script>
+    const displayInput = document.getElementById('nominal_display');
+    const hiddenInput = document.getElementById('nominal');
 
-    nominalInput.addEventListener('input', function(e) {
-
-        let value = e.target.value.replace(/\D/g, '');
-
-        e.target.value = new Intl.NumberFormat('id-ID').format(value);
-    });
-
-    document.querySelector('form').addEventListener('submit', function() {
-
-        nominalInput.value = nominalInput.value.replace(/\./g, '');
-    });
-</script>
+        displayInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            displayInput.value = new Intl.NumberFormat('id-ID').format(value);
+            hiddenInput.value = value;
+        });
+    </script>
 </x-app-layout>

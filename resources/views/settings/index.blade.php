@@ -3,8 +3,8 @@
         <h2 class="text-xl font-semibold">Setting</h2>
     </x-slot>
 
-    <div class="p-6">
-
+    <div class="p-6 min-h-screen">
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-8">
         <!-- Header -->
         <div class="mb-10">
             <h1 class="text-3xl font-bold text-gray-800">Settings</h1>
@@ -16,7 +16,7 @@
 
             <!-- Profile -->
             <a href="{{ route('settings.profile') }}"
-               class="group flex items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition hover:-translate-y-1">
+               class="group flex items-center p-6 bg-white border border-slate-200 rounded-xl hover:border-emerald-300 hover:shadow-md transition hover:-translate-y-1">
 
                 <div class="w-14 h-14 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition">
                     <span class="material-symbols-outlined text-2xl">person</span>
@@ -38,7 +38,7 @@
 
             <!-- Histori Pembayaran Lama -->
             <a href="{{ route('settings.histori') }}"
-            class="group flex items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition hover:-translate-y-1">
+            class="group flex items-center p-6 bg-white border border-slate-200 rounded-xl hover:border-emerald-300 hover:shadow-md transition hover:-translate-y-1">
 
                 <div class="w-14 h-14 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition">
                     <span class="material-symbols-outlined text-2xl">history</span>
@@ -60,7 +60,7 @@
 
             <!-- Kelola Iuran -->
             <a href="{{ route('settings.nominal') }}"
-               class="group flex items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition hover:-translate-y-1">
+               class="group flex items-center p-6 bg-white border border-slate-200 rounded-xl hover:border-emerald-300 hover:shadow-md transition hover:-translate-y-1">
 
                 <div class="w-14 h-14 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition">
                     <span class="material-symbols-outlined text-2xl">tune</span>
@@ -82,7 +82,7 @@
 
             
             <a href="{{ route('settings.generate') }}"
-               class="group flex items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition hover:-translate-y-1">
+                class="group flex items-center p-6 bg-white border border-slate-200 rounded-xl hover:border-emerald-300 hover:shadow-md transition hover:-translate-y-1">
 
                 <div class="w-14 h-14 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition">
                     <span class="material-symbols-outlined text-2xl">calendar_month</span>
@@ -104,5 +104,6 @@
 
         </div>
 
+    </div>
     </div>
 </x-app-layout>

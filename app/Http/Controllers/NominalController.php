@@ -20,9 +20,9 @@ class NominalController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nominal' => 'required|numeric|min:0'
-        ]);
+                $request->validate(
+            ['nominal' => 'required|integer|min:1'],
+            ['nominal.min'=> 'Nominal minimal Rp1.',]);
 
         $tahun = date('Y');
         $bulan = date('n');

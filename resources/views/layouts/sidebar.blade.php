@@ -1,7 +1,7 @@
-<aside id="sidebar" class="glass-sidebar sidebar-transition overflow-hidden fixed left-0 top-0 h-screen w-64 z-50 flex flex-col shadow-xl">
+<aside id="sidebar" class="glass-sidebar sidebar-transition overflow-hidden fixed left-0 top-0 h-screen w-56 z-50 flex flex-col shadow-xl">
 
     <!-- LOGO -->
-    <div class="pt-8 pb-5 px-6 border-b border-emerald-100/30">
+    <div class="h-20 px-5 border-b border-emerald-100/30 flex items-center">
         <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center">
                 <span class="material-symbols-outlined text-white text-xl">account_balance</span>

@@ -3,8 +3,8 @@
         <h2 class="text-xl font-semibold">Data User</h2>
     </x-slot>
 
-    <div class="p-6">
-
+    <div class="p-6 min-h-screen">
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-8">
         <!-- Header -->
         <div class="mb-6">
             <h1 class="text-3xl font-extrabold text-gray-800">Kelola User</h1>
@@ -385,5 +385,6 @@
 
         </div>
 
+    </div>
     </div>
 </x-app-layout>

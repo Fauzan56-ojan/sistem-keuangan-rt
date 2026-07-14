@@ -5,16 +5,20 @@
         $notif = \App\Services\NotificationService::getNotifData(Auth::user());
     }
 @endphp
-<header id="headerContent" class="glass-header fixed top-0 left-64 right-0 z-40 flex items-center justify-between px-7 py-3.5">
+<header id="headerContent" class="glass-header fixed top-0 left-56 right-0 z-40 flex items-center justify-between px-5 py-1.5">
 
     <!-- kiri -->
     <div class="flex items-center gap-4">
 
         <!-- toggle sidebar -->
-        <button id="toggleSidebar" class="p-2 rounded-md bg-white border hover:bg-emerald-50 transition">
-    <span class="material-symbols-outlined">
+        <button
+    id="toggleSidebar"
+    class="w-10 h-10 flex items-center justify-center rounded-md bg-white border hover:bg-emerald-50 transition">
+
+    <span class="material-symbols-outlined text-[20px] leading-none">
         menu
     </span>
+
 </button>
 
         {{-- <div>
@@ -160,10 +164,10 @@
             );
         @endphp
 
-        <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-100 shadow-sm">
 
         <!-- Avatar Inisial (Agak Mengotak / Rounded-xl) -->
-        <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-emerald-100">
+        <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-md shadow-emerald-100">
             {{ $initials }}
         </div>
 
