@@ -15,11 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('username')->unique();
-            $table->string('nomor_rumah')->nullable();
+            $table->string('nomor_rumah')->nullable()->unique();
+            $table->string('telp')->nullable();
             $table->enum('role', ['admin', 'bendahara', 'ketua_rt', 'warga'])->default('warga');
             $table->boolean('status_aktif')->default(true);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('password_changed')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('setnominal', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('bulan');
             $table->year('tahun');
             $table->integer('nominal');
+            $table->foreignId('created_by')->nullable()->constrained('users');
             $table->timestamps();
         });
     }

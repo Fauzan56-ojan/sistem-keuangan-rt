@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('metode');
             $table->string('order_id')->nullable();
+            $table->string('snap_token')->nullable();
+            $table->string('kode_transaksi')->nullable();
             $table->decimal('amount', 12, 0);
             $table->timestamp('paid_at')->nullable();
             $table->enum('status', ['pending', 'success', 'failed'])->default('pending');
