@@ -31,6 +31,14 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|regex:/[a-zA-Z]/|max:100',
+            'username' => 'required|string|regex:/[a-zA-Z]/|max:50|unique:users,username',
+            'nomor_rumah' => 'nullable|string|max:20|unique:users,nomor_rumah',
+            'telp' => 'required|string|min:8|max:20|regex:/^\+?[0-9]+$/',
+            'role' => 'required|in:warga,ketua_rt,bendahara,admin',
+            'password' => 'required',
+        ]);
         User::create([
             'name' => $request->name,
             'username' => $request->username,
