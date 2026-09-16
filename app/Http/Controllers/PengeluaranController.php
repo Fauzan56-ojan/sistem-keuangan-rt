@@ -63,6 +63,9 @@ class PengeluaranController extends Controller
             'nominal'     => 'required|numeric|min:1',
             'keterangan'  => 'required|string|max:255',
             'bukti_file'  => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ], [
+            'nominal.min'     => 'Nominal pengeluaran minimal Rp1.',
+            'bukti_file.max'  => 'Ukuran file maksimal 2 MB.',
         ]);
 
         $bukti = null;
@@ -97,6 +100,9 @@ class PengeluaranController extends Controller
             'nominal'     => 'required|numeric|min:1',
             'keterangan'  => 'required|string|max:255',
             'bukti_file'  => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ], [
+            'nominal.min'     => 'Nominal pengeluaran minimal Rp1.',
+            'bukti_file.max'  => 'Ukuran bukti pengeluaran maksimal 2 MB.',
         ]);
 
         $data = Pengeluaran::findOrFail($id);

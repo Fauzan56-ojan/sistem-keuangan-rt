@@ -171,7 +171,7 @@
                             );
                         @endphp
 
-                        <tr x-data="{ openEdit: false }" class="hover:bg-gray-50 transition">
+                        <tr x-data="{ openEdit: false, role: '{{ $u->role }}' }" class="hover:bg-gray-50 transition">
 
                             <!-- Nama + Avatar -->
                             <td class="px-6 py-4">
@@ -313,7 +313,7 @@
                                                     <label class="block text-[10px] font-bold text-black uppercase tracking-widest mb-1.5 ml-1">Nama Lengkap</label>
                                                     <div class="relative">
                                                         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg">person</span>
-                                                        <input name="name" type="text" value="{{ $u->name }}" required
+                                                        <input name="name" type="text" value="{{ $u->name }}" required pattern=".*[A-Za-z].*"
                                                             class="w-full pl-12 pr-4 py-2.5 bg-slate-50 border-none rounded-lg text-black focus:ring-2 focus:ring-emerald-500/20 transition-all placeholder:text-slate-300 text-sm" 
                                                             placeholder="Nama Lengkap" />
                                                     </div>
@@ -323,7 +323,7 @@
                                                     <label class="block text-[10px] font-bold text-black uppercase tracking-widest mb-1.5 ml-1">Username</label>
                                                     <div class="relative">
                                                         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg">alternate_email</span>
-                                                        <input name="username" type="text" value="{{ $u->username }}" required
+                                                        <input name="username" type="text" value="{{ $u->username }}" required pattern=".*[A-Za-z].*"
                                                             class="w-full pl-12 pr-4 py-2.5 bg-slate-50 border-none rounded-lg text-black focus:ring-2 focus:ring-emerald-500/20 transition-all placeholder:text-slate-300 text-sm" 
                                                             placeholder="Username" />
                                                     </div>
@@ -335,7 +335,11 @@
                                                         <div class="relative">
                                                             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg">home</span>
                                                             <input name="nomor_rumah" type="text" value="{{ $u->nomor_rumah }}" 
-                                                                class="w-full pl-11 pr-3 py-2.5 bg-slate-50 border-none rounded-lg text-black focus:ring-2 focus:ring-emerald-500/20 transition-all placeholder:text-slate-300 text-sm" 
+                                                                x-ref="inputNomorRumah"
+                                                                :required="role === 'warga'"
+                                                                :disabled="role !== 'warga'"
+                                                                x-effect="if (role !== 'warga') $refs.inputNomorRumah.value = ''"
+                                                                class="w-full pl-11 pr-3 py-2.5 bg-slate-50 border-none rounded-lg text-black focus:ring-2 focus:ring-emerald-500/20 transition-all placeholder:text-slate-300 text-sm disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed" 
                                                                 placeholder="A-12" />
                                                         </div>
                                                     </div>
@@ -344,6 +348,7 @@
                                                         <div class="relative">
                                                             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg">call</span>
                                                             <input name="telp" type="tel" value="{{ $u->telp }}" 
+                                                                required minlength="8" maxlength="20" pattern="\+?[0-9]+"
                                                                 class="w-full pl-11 pr-3 py-2.5 bg-slate-50 border-none rounded-lg text-black focus:ring-2 focus:ring-emerald-500/20 transition-all placeholder:text-slate-300 text-sm" 
                                                                 placeholder="0812..." />
                                                         </div>
@@ -354,7 +359,7 @@
                                                     <label class="block text-[10px] font-bold text-black uppercase tracking-widest mb-1.5 ml-1">Role</label>
                                                     <div class="relative">
                                                         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg pointer-events-none">badge</span>
-                                                        <select name="role" required
+                                                        <select name="role" required x-model="role"
                                                             class="w-full pl-12 pr-10 py-2.5 bg-slate-50 border-none rounded-lg text-black appearance-none focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm">
                                                             <option value="warga" {{ $u->role=='warga'?'selected':'' }}>Warga</option>
                                                             <option value="ketua_rt" {{ $u->role=='ketua_rt'?'selected':'' }}>Ketua RT</option>

@@ -62,12 +62,20 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
+        $request->validate([
+            'name'        => 'required|string|regex:/[a-zA-Z]/|max:100',
+            'username'    => 'required|string|regex:/[a-zA-Z]/|max:50|unique:users,username,' . $id,
+            'nomor_rumah' => 'required_if:role,warga|nullable|string|max:20|unique:users,nomor_rumah,' . $id . ',status_aktif,1',
+            'telp'        => 'required|string|min:8|max:20|regex:/^\+?[0-9]+$/',
+            'role'        => 'required|in:warga,ketua_rt,bendahara,admin',
+        ]);
+
         $user->update([
-            'name' => $request->name,
-            'username' => $request->username,
-            'telp' => $request->telp,
+            'name'        => $request->name,
+            'username'    => $request->username,
+            'telp'        => $request->telp,
             'nomor_rumah' => $request->nomor_rumah,
-            'role' => $request->role,
+            'role'        => $request->role,
         ]);
 
         return redirect('/users')->with('success', 'Data berhasil diperbarui');

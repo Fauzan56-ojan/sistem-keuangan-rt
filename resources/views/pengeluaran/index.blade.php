@@ -49,9 +49,14 @@
                                 placeholder="Keterangan"
                                 class="w-full border rounded px-3 py-2">
 
-                            <input type="file" name="bukti_file"
-                                accept=".jpg,.jpeg,.png,.pdf"
-                                class="w-full text-sm">
+                            <div>
+                                <label class="block text-xs font-bold uppercase mb-1">Bukti Pengeluaran</label>
+                                <p class="text-xs text-gray-400 mb-2">Opsional — upload jika ada</p>
+                                <input type="file" name="bukti_file"
+                                    accept=".jpg,.jpeg,.png,.pdf"
+                                    class="w-full text-sm border rounded-lg px-3 py-2 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200">
+                                <p class="text-[11px] text-gray-400 mt-1.5">JPG, JPEG, PNG, PDF &bull; Maks. 2 MB</p>
+                            </div>
 
                         </div>
 
@@ -227,9 +232,14 @@
                                                     value="{{ $item->keterangan }}"
                                                     class="w-full border rounded px-3 py-2">
 
-                                                <input type="file" name="bukti_file"
-                                                    accept=".jpg,.jpeg,.png,.pdf"
-                                                    class="w-full text-sm">
+                                                <div>
+                                                    <label class="block text-xs font-bold uppercase mb-1">Bukti Pengeluaran</label>
+                                                    <p class="text-xs text-gray-400 mb-2">Opsional —  upload jika ada</p>
+                                                    <input type="file" name="bukti_file"
+                                                        accept=".jpg,.jpeg,.png,.pdf"
+                                                        class="w-full text-sm border rounded-lg px-3 py-2 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200">
+                                                    <p class="text-[11px] text-gray-400 mt-1.5">JPG, JPEG, PNG, PDF &bull; Maks. 2 MB</p>
+                                                </div>
 
                                             </div>
 

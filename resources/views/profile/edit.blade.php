@@ -45,6 +45,7 @@
                             <label class="text-xs font-bold uppercase">Nama</label>
                             <input name="name" type="text"
                                 value="{{ old('name', auth()->user()->name) }}"
+                                required pattern=".*[A-Za-z].*" maxlength="100"
                                 class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 focus:bg-white border border-transparent focus:border-primary text-sm">
                         </div>
 
@@ -52,14 +53,14 @@
                         <div>
                             <label class="text-xs font-bold uppercase">Username</label>
                             <input type="text" value="{{ auth()->user()->username ?? '-' }}"
-                                class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 text-gray-400 text-sm" readonly>
+                                class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 text-gray-400 text-sm cursor-not-allowed" readonly>
                         </div>
 
                         <!-- Alamat -->
                         <div>
                             <label class="text-xs font-bold uppercase">Alamat</label>
                             <input type="text" value="{{ auth()->user()->nomor_rumah ?? '-' }}"
-                                class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 text-gray-400 text-sm" readonly>
+                                class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 text-gray-400 text-sm cursor-not-allowed" readonly>
                         </div>
 
                         <!-- Telepon -->
@@ -67,6 +68,7 @@
                             <label class="text-xs font-bold uppercase">Nomor Telepon</label>
                             <input name="telp" type="text"
                                 value="{{ old('telp', auth()->user()->telp) }}"
+                                required minlength="8" maxlength="20" pattern="\+?[0-9]+"
                                 class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 focus:bg-white border border-transparent focus:border-primary text-sm">
                         </div>
 
