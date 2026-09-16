@@ -20,7 +20,7 @@ class UserController extends Controller
                 ->orWhere('nomor_rumah', 'like', "%$search%");
             });
         }
-        $users = $query->get();
+        $users = $query->paginate(10)->withQueryString();
         return view('users.index', compact('users'));
     }
 
@@ -34,7 +34,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|regex:/[a-zA-Z]/|max:100',
             'username' => 'required|string|regex:/[a-zA-Z]/|max:50|unique:users,username',
-            'nomor_rumah' => 'nullable|string|max:20|unique:users,nomor_rumah',
+            'nomor_rumah' => 'required_if:role,warga|nullable|string|max:20|unique:users,nomor_rumah,status_aktif,1',
             'telp' => 'required|string|min:8|max:20|regex:/^\+?[0-9]+$/',
             'role' => 'required|in:warga,ketua_rt,bendahara,admin',
             'password' => 'required',

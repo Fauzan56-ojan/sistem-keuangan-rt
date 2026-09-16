@@ -21,8 +21,8 @@
         @endif
 
         @php
-            $totalWarga = count($data);
-            $totalNominal = collect($data)->sum('total');
+            $totalWarga = $data->total();
+            $totalNominal = $data->getCollection()->sum('total');
         @endphp
 
         <!-- SUMMARY -->
@@ -228,6 +228,12 @@
             </div>
 
         </div>
+
+        @if($data->hasPages())
+            <div class="mt-6">
+                {{ $data->links() }}
+            </div>
+        @endif
 
     </div>
 </x-app-layout>

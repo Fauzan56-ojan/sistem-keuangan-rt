@@ -15,7 +15,7 @@
         <div class="bg-white border rounded-xl shadow-sm overflow-hidden">
 
             <!-- Actions -->
-            <div x-data="{ open: false }" class="p-5 flex flex-col sm:flex-row justify-between gap-4">
+            <div x-data="{ open: false, role: 'warga' }" class="p-5 flex flex-col sm:flex-row justify-between gap-4">
 
                 <!-- Search -->
                 <form method="GET">
@@ -83,8 +83,11 @@
                                             <label class="block text-[10px] font-bold text-black uppercase tracking-widest mb-1.5 ml-1">Nomor Rumah</label>
                                             <div class="relative">
                                                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg">home</span>
-                                                <input name="nomor_rumah" type="text" 
-                                                    class="w-full pl-11 pr-3 py-2.5 bg-slate-50 border-none rounded-lg text-black focus:ring-2 focus:ring-emerald-500/20 transition-all placeholder:text-slate-300 text-sm" 
+                                                <input name="nomor_rumah" type="text" x-ref="inputNomorRumah"
+                                                    :required="role === 'warga'"
+                                                    :disabled="role !== 'warga'"
+                                                    x-effect="if (role !== 'warga') $refs.inputNomorRumah.value = ''"
+                                                    class="w-full pl-11 pr-3 py-2.5 bg-slate-50 border-none rounded-lg text-black focus:ring-2 focus:ring-emerald-500/20 transition-all placeholder:text-slate-300 text-sm disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed" 
                                                     placeholder="ET-5" />
                                             </div>
                                         </div>
@@ -103,7 +106,7 @@
                                         <label class="block text-[10px] font-bold text-black uppercase tracking-widest mb-1.5 ml-1">Role</label>
                                         <div class="relative">
                                             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg pointer-events-none">badge</span>
-                                            <select name="role" required
+                                            <select name="role" required x-model="role"
                                                 class="w-full pl-12 pr-10 py-2.5 bg-slate-50 border-none rounded-lg text-black appearance-none focus:ring-2 focus:ring-emerald-500/20 transition-all text-sm">
                                                 <option value="warga">Warga</option>
                                                 <option value="ketua_rt">Ketua RT</option>
@@ -385,6 +388,12 @@
             </div>
 
         </div>
+
+        @if($users->hasPages())
+            <div class="mt-6">
+                {{ $users->links() }}
+            </div>
+        @endif
 
     </div>
     </div>

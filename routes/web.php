@@ -68,6 +68,8 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:admin')->name('settings.histori.detail');
     Route::post('/settings/histori/nonaktif', [IuranController::class, 'storeNonaktif'])
         ->middleware('role:admin')->name('settings.histori.nonaktif.store');
+    Route::put('/settings/histori/nonaktif/{id}', [IuranController::class, 'updateNonaktif'])
+        ->middleware('role:admin')->name('settings.histori.nonaktif.update');
     Route::post('/settings/histori/{id}', [IuranController::class, 'storeHistori'])
         ->middleware('role:admin')->name('settings.histori.store');
 

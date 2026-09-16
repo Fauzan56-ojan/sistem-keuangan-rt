@@ -29,7 +29,7 @@
 
                 <div class="shrink-0">
                     <button
-                        onclick="document.getElementById('modalNonaktif').classList.remove('hidden')"
+                        onclick="openModal()"
                         class="inline-flex items-center gap-2 h-11 px-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold shadow-sm hover:shadow transition-all duration-200 whitespace-nowrap">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -180,7 +180,7 @@
                                         @php
                                             $words = explode(' ', $user->name);
                                             $initials = strtoupper(substr($words[0],0,1) . (isset($words[1]) ? substr($words[1],0,1) : ''));
-                                        @endphp <!-- Perbaikan di baris ini -->
+                                        @endphp
                                         <tr class="hover:bg-gray-50/50 transition-colors group/row">
                                             <td class="px-6 py-4">
                                                 <div class="flex items-center gap-4">
@@ -199,13 +199,19 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 text-right">
-                                                <a href="{{ route('settings.histori.detail', $user->id) }}"
-                                                   class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-lg text-xs font-bold hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all duration-200 shadow-sm">
-                                                    <span>Detail Histori</span>
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                                    </svg>
-                                                </a>
+                                                <div class="inline-flex items-center gap-2">
+                                                    <button onclick="openModal('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ addslashes($user->nomor_rumah ?? '') }}')"
+                                                        class="p-2 text-gray-400 hover:text-emerald-600 transition-colors rounded-lg hover:bg-emerald-50">
+                                                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                                                    </button>
+                                                    <a href="{{ route('settings.histori.detail', $user->id) }}"
+                                                       class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-lg text-xs font-bold hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all duration-200 shadow-sm">
+                                                        <span>Detail Histori</span>
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                                        </svg>
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                     @empty
@@ -225,13 +231,14 @@
         </div>
     </div>
 
-    <!-- MODAL TAMBAH WARGA NONAKTIF -->
+    <!-- MODAL TAMBAH / EDIT WARGA NONAKTIF -->
     <div id="modalNonaktif" class="hidden fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center p-4 transition-all animate-fade-in">
-        <form method="POST" action="{{ route('settings.histori.nonaktif.store') }}" class="bg-white rounded-2xl w-full max-w-lg shadow-xl border border-gray-100 overflow-hidden transform transition-all">
+        <form id="formNonaktif" method="POST" action="{{ route('settings.histori.nonaktif.store') }}" class="bg-white rounded-2xl w-full max-w-lg shadow-xl border border-gray-100 overflow-hidden transform transition-all">
             @csrf
+            <div id="methodField"></div>
             
             <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <h2 id="modalTitle" class="text-lg font-bold text-gray-900 flex items-center gap-2">
                     <span class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -239,7 +246,7 @@
                     </span>
                     Tambah Warga Nonaktif
                 </h2>
-                <button type="button" onclick="document.getElementById('modalNonaktif').classList.add('hidden')"
+                <button type="button" onclick="closeModal()"
                     class="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -250,21 +257,21 @@
             <div class="p-6 space-y-5">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Warga</label>
-                    <input type="text" name="name" required
+                    <input type="text" id="inputName" name="name" required
                         class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white shadow-sm transition-all"
                         placeholder="Masukkan nama lengkap">
                 </div>
 
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nomor Rumah</label>
-                    <input type="text" name="nomor_rumah" required
+                    <input type="text" id="inputNomorRumah" name="nomor_rumah" required
                         class="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white shadow-sm transition-all"
                         placeholder="Contoh: A-12">
                 </div>
             </div>
 
             <div class="px-6 py-4 bg-gray-50/50 border-t border-gray-100 flex justify-end gap-3">
-                <button type="button" onclick="document.getElementById('modalNonaktif').classList.add('hidden')"
+                <button type="button" onclick="closeModal()"
                     class="px-4 py-2.5 border border-gray-200 hover:bg-gray-100 rounded-xl text-xs font-bold text-gray-700 transition-colors shadow-sm">
                     Batal
                 </button>
@@ -275,4 +282,33 @@
             </div>
         </form>
     </div>
+
+    <script>
+        function openModal(id, name, nomorRumah) {
+            const modal = document.getElementById('modalNonaktif');
+            const form = document.getElementById('formNonaktif');
+            const title = document.getElementById('modalTitle');
+            const methodField = document.getElementById('methodField');
+
+            if (id) {
+                form.action = '{{ url("/settings/histori/nonaktif") }}/' + id;
+                methodField.innerHTML = '<input type="hidden" name="_method" value="PUT">';
+                title.textContent = 'Edit Warga Nonaktif';
+                document.getElementById('inputName').value = name || '';
+                document.getElementById('inputNomorRumah').value = nomorRumah || '';
+            } else {
+                form.action = '{{ route("settings.histori.nonaktif.store") }}';
+                methodField.innerHTML = '';
+                title.textContent = 'Tambah Warga Nonaktif';
+                document.getElementById('inputName').value = '';
+                document.getElementById('inputNomorRumah').value = '';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modalNonaktif').classList.add('hidden');
+        }
+    </script>
 </x-app-layout>

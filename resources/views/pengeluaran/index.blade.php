@@ -50,6 +50,7 @@
                                 class="w-full border rounded px-3 py-2">
 
                             <input type="file" name="bukti_file"
+                                accept=".jpg,.jpeg,.png,.pdf"
                                 class="w-full text-sm">
 
                         </div>
@@ -227,6 +228,7 @@
                                                     class="w-full border rounded px-3 py-2">
 
                                                 <input type="file" name="bukti_file"
+                                                    accept=".jpg,.jpeg,.png,.pdf"
                                                     class="w-full text-sm">
 
                                             </div>
@@ -259,6 +261,12 @@
 
             </div>
         </div>
+
+        @if($data->hasPages())
+            <div class="mt-6">
+                {{ $data->links() }}
+            </div>
+        @endif
 
     </div>
     <x-filter-modal :tahunList="$tahunList" />

@@ -38,7 +38,7 @@ class PemasukanController extends Controller
             $query->where('keterangan', 'like', '%' . request('search') . '%');
         }
 
-        $data = $query->orderBy($sortBy, $order)->get();
+        $data = $query->orderBy($sortBy, $order)->paginate(10)->withQueryString();
 
         $tahunList = Pemasukan::selectRaw('YEAR(tanggal) as tahun')
             ->distinct()
@@ -59,20 +59,23 @@ class PemasukanController extends Controller
         $this->authorizeAdminBendahara();
 
         $request->validate([
-            'tanggal' => 'required|date',
-            'nominal' => 'required|numeric|min:1',
-            'keterangan' => 'required|string|max:255',
+            'tanggal'     => 'required|date',
+            'nominal'     => 'required|numeric|min:1',
+            'keterangan'  => 'required|string|max:255',
+            'bukti_file'  => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
+
         $bukti = null;
         if ($request->hasFile('bukti_file')) {
             $bukti = $request->file('bukti_file')->store('bukti', 'public');
         }
+
         Pemasukan::create([
-            'tanggal' => $request->tanggal,
-            'nominal' => $request->nominal,
-            'keterangan' => $request->keterangan,
-            'created_by' => auth()->id(),
-            'bukti_file' => $bukti
+            'tanggal'     => $request->tanggal,
+            'nominal'     => $request->nominal,
+            'keterangan'  => $request->keterangan,
+            'created_by'  => auth()->id(),
+            'bukti_file'  => $bukti,
         ]);
 
         return redirect('/pemasukan')->with('success', 'Data berhasil ditambahkan');
@@ -88,17 +91,26 @@ class PemasukanController extends Controller
     public function update(Request $request, $id)
     {
         $this->authorizeAdminBendahara();
+
+        $request->validate([
+            'tanggal'     => 'required|date',
+            'nominal'     => 'required|numeric|min:1',
+            'keterangan'  => 'required|string|max:255',
+            'bukti_file'  => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
         $data = Pemasukan::findOrFail($id);
-        $bukti = $data->bukti_file; 
+        $bukti = $data->bukti_file;
+
         if ($request->hasFile('bukti_file')) {
             $bukti = $request->file('bukti_file')->store('bukti', 'public');
         }
 
         $data->update([
-            'tanggal' => $request->tanggal,
-            'nominal' => $request->nominal,
-            'keterangan' => $request->keterangan,
-            'bukti_file' => $bukti
+            'tanggal'     => $request->tanggal,
+            'nominal'     => $request->nominal,
+            'keterangan'  => $request->keterangan,
+            'bukti_file'  => $bukti,
         ]);
 
         return redirect('/pemasukan')->with('success', 'Data berhasil diperbarui');

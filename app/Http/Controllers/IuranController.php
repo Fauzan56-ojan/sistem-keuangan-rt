@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Models\Pembayaran;
 use App\Services\IuranService;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+
 class IuranController extends Controller
 {
     public function index() //tidak kepakai
@@ -31,7 +33,7 @@ class IuranController extends Controller
             });
         }
 
-        $users = $query->orderBy('name')->get();
+        $users = $query->orderBy('name')->paginate(10)->withQueryString();
         $summary = $service->getSummaryBulanIni();
 
         return view('iuran.warga-list', compact('users') + $summary);
@@ -83,10 +85,22 @@ class IuranController extends Controller
 
     public function tunggakan(IuranService $service)
     {
-        $data = collect($service->getTunggakan())->map(function ($item) use ($service) {
+        $allData = collect($service->getTunggakan())->map(function ($item) use ($service) {
             $item['detail'] = $service->getTunggakanDetail($item['user_id']);
             return $item;
         });
+
+        $page = request('page', 1);
+        $perPage = 10;
+        $currentPageData = $allData->slice(($page - 1) * $perPage, $perPage)->values();
+
+        $data = new LengthAwarePaginator(
+            $currentPageData,
+            $allData->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
 
         return view('tunggakan.index', compact('data'));
     } 
@@ -146,6 +160,18 @@ class IuranController extends Controller
         IuranService::storeNonaktif($request);
 
         return back()->with('success', 'Warga nonaktif berhasil ditambahkan');
+    }
+
+    public function updateNonaktif(Request $request, $id)
+    {
+        $user = User::where('role', 'warga')->where('status_aktif', 0)->findOrFail($id);
+
+        $user->update([
+            'name' => $request->name,
+            'nomor_rumah' => $request->nomor_rumah,
+        ]);
+
+        return back()->with('success', 'Data warga nonaktif berhasil diperbarui');
     }
 
 }

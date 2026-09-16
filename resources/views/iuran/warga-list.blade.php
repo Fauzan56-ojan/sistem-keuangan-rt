@@ -30,7 +30,7 @@
                     </div>
                     <div>
                         <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Warga</p>
-                        <h3 class="text-2xl font-bold text-gray-900 leading-none">{{ count($users) }}</h3>
+                        <h3 class="text-2xl font-bold text-gray-900 leading-none">{{ $users->total() }}</h3>
                     </div>
                 </div>
 
@@ -42,7 +42,7 @@
                     </div>
                     <div>
                         <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Data Ditemukan</p>
-                        <h3 class="text-2xl font-bold text-gray-900 leading-none">{{ count($users) }}</h3>
+                        <h3 class="text-2xl font-bold text-gray-900 leading-none">{{ $users->total() }}</h3>
                     </div>
                 </div>
 
@@ -138,6 +138,12 @@
                     </table>
                 </div>
             </div>
+
+            @if($users->hasPages())
+                <div class="mt-6">
+                    {{ $users->links() }}
+                </div>
+            @endif
 
         </div>
     </div>
