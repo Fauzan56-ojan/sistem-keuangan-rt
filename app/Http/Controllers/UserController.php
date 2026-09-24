@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -34,7 +35,14 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|regex:/[a-zA-Z]/|max:100',
             'username' => 'required|string|regex:/[a-zA-Z]/|max:50|unique:users,username',
-            'nomor_rumah' => 'required_if:role,warga|nullable|string|max:20|unique:users,nomor_rumah,status_aktif,1',
+            'nomor_rumah' => [
+                'required_if:role,warga',
+                'nullable',
+                'string',
+                'max:20',
+                Rule::unique('users', 'nomor_rumah')
+                    ->where(fn ($query) => $query->where('status_aktif', 1)),
+            ],
             'telp' => 'required|string|min:8|max:20|regex:/^\+?[0-9]+$/',
             'role' => 'required|in:warga,ketua_rt,bendahara,admin',
             'password' => 'required',
@@ -65,7 +73,15 @@ class UserController extends Controller
         $request->validate([
             'name'        => 'required|string|regex:/[a-zA-Z]/|max:100',
             'username'    => 'required|string|regex:/[a-zA-Z]/|max:50|unique:users,username,' . $id,
-            'nomor_rumah' => 'required_if:role,warga|nullable|string|max:20|unique:users,nomor_rumah,' . $id . ',status_aktif,1',
+            'nomor_rumah' => [
+                                'required_if:role,warga',
+                                'nullable',
+                                'string',
+                                'max:20',
+                                Rule::unique('users', 'nomor_rumah')
+                                    ->ignore($id)
+                                    ->where(fn ($query) => $query->where('status_aktif', 1)),
+                            ],
             'telp'        => 'required|string|min:8|max:20|regex:/^\+?[0-9]+$/',
             'role'        => 'required|in:warga,ketua_rt,bendahara,admin',
         ]);

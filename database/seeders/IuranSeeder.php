@@ -16,9 +16,8 @@ class IuranSeeder extends Seeder
         $semuaWarga = User::where('role', 'warga')->get();
 
         // Tunggakan 2026: username => lunas s/d bulan keberapa
-        // Max 2 bulan tunggakan, max Rp60.000 per orang
         $tunggakan2026 = [
-            // Tunggakan 1 bulan (Sep belum bayar) — Rp30.000
+            // Tunggakan 1 bulan (Sep belum bayar)
             'budi'     => 8,
             'andi'     => 8,
             'dani'     => 8,
@@ -26,7 +25,7 @@ class IuranSeeder extends Seeder
             'fajar'    => 8,
             'gilang'   => 8,
 
-            // Tunggakan 2 bulan (Aug-Sep belum bayar) — Rp60.000
+            // Tunggakan 2 bulan (Agst-Sep belum bayar)
             'hadi'     => 7,
             'indra'    => 7,
             'joko'     => 7,
@@ -35,7 +34,7 @@ class IuranSeeder extends Seeder
 
         foreach ($semuaWarga as $user) {
             if ($user->status_aktif) {
-                // === 2025: semua lunas ===
+                // === 2025: Jan-Des, semua lunas ===
                 for ($bulan = 1; $bulan <= 12; $bulan++) {
                     Iuran::create([
                         'user_id'       => $user->id,
@@ -46,16 +45,26 @@ class IuranSeeder extends Seeder
                     ]);
                 }
 
-                // === 2026 Jan-Sep ===
+                // === 2026: Jan-Des ===
                 $lunasSampai = $tunggakan2026[$user->username] ?? 9;
 
-                for ($bulan = 1; $bulan <= 9; $bulan++) {
+                for ($bulan = 1; $bulan <= 12; $bulan++) {
+                    if ($bulan <= $lunasSampai) {
+                        $status = 'paid';
+                    } elseif ($bulan <= 9) {
+                        // Agst/Sep: belum bayar (tunggakan)
+                        $status = 'pending';
+                    } else {
+                        // Okt-Des: semua belum bayar
+                        $status = 'pending';
+                    }
+
                     Iuran::create([
                         'user_id'       => $user->id,
                         'periode_bulan' => $bulan,
                         'periode_tahun' => 2026,
                         'nominal'       => $nominal2026,
-                        'status'        => $bulan <= $lunasSampai ? 'paid' : 'pending',
+                        'status'        => $status,
                     ]);
                 }
             } else {
