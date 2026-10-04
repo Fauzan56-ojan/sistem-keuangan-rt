@@ -1,9 +1,5 @@
 @php
-    $notif = null;
-
-    if (Auth::user()->role === 'warga') {
-        $notif = \App\Services\NotificationService::getNotifData(Auth::user());
-    }
+    $notif = \App\Services\NotificationService::getNotifData(Auth::user());
 @endphp
 <header id="headerContent" class="glass-header fixed top-0 left-56 right-0 z-40 flex items-center justify-between px-5 py-1.5">
 
@@ -51,8 +47,6 @@
         </div> --}}
 
         <!-- notif -->
-        @if(Auth::user()->role === 'warga')
-
         <div x-data="{ open: false }" class="relative">
 
             <!-- tombol notif -->
@@ -121,7 +115,7 @@
                 @if($notif['tunggakan'])
 
                     <a href="/tunggakan/{{ Auth::user()->id }}"
-                        
+
                         class="block px-4 py-3 hover:bg-slate-50 transition">
 
                         <div class="flex items-start justify-between">
@@ -146,11 +140,36 @@
 
                 @endif
 
+                @foreach($notif['notifications'] as $notification)
+                    <a href="/notifications/{{ $notification->id }}/read"
+                        class="block px-4 py-3 hover:bg-slate-50 border-b transition">
+
+                        <div class="flex items-start justify-between gap-2">
+
+                            <div>
+                                <div class="font-bold text-sm text-slate-800">
+                                    {{ $notification->data['title'] ?? 'Notifikasi' }}
+                                </div>
+
+                                <div class="text-xs text-slate-500 mt-1">
+                                    {{ $notification->data['message'] ?? '' }}
+                                </div>
+                            </div>
+
+                            <div class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-emerald-600 text-sm">
+                                    {{ $notification->data['icon'] ?? 'notifications' }}
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </a>
+                @endforeach
+
             </div>
 
         </div>
-
-        @endif
 
         <!-- profile -->
                 @php

@@ -106,7 +106,7 @@
                                 {{ \Carbon\Carbon::create()->month($row->periode_bulan)->translatedFormat('F') }}
                             </td>
                             <td class="px-6 py-5 text-gray-600 font-medium">{{ $row->periode_tahun }}</td>
-                            <td class="px-6 py-5 font-bold text-gray-900">
+                            <td class="px-6 py-5 font-bold text-gray-900 whitespace-nowrap">
                                 Rp {{ number_format($row->nominal, 0, ',', '.') }}
                             </td>
                             <td class="px-6 py-5">
@@ -115,7 +115,7 @@
                                         Lunas
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold ring-1 ring-inset ring-red-600/20">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold ring-1 ring-inset ring-red-600/20 whitespace-nowrap">
                                         Belum Lunas
                                     </span>
                                 @endif
@@ -130,13 +130,13 @@
                                 <div class="flex items-center justify-center gap-2">
                                     @if($row->status == 'pending')
                                         @if(in_array(auth()->user()->role, ['admin','bendahara']))
-                                            <a href="/checkout/{{ $row->id }}/tunai" class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-gray-200 transition-all border border-gray-200">
+                                            <a href="/checkout/{{ $row->id }}/tunai" class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-gray-200 transition-all border border-gray-200  whitespace-nowrap">
                                                 Tunai
                                             </a>
                                         @endif
 
                                         @if(in_array(auth()->user()->role, ['admin','bendahara','warga']))
-                                            <a href="/checkout/{{ $row->id }}/online" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-700 shadow-sm shadow-blue-200 transition-all">
+                                            <a href="/checkout/{{ $row->id }}/online" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-700 shadow-sm shadow-blue-200 transition-all whitespace-nowrap">
                                                 Bayar Online
                                             </a>
                                         @endif

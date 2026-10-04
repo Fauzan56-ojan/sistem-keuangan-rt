@@ -3,6 +3,44 @@
         <h2 class="text-xl font-semibold">Data User</h2>
     </x-slot>
 
+    <!-- MODAL GAGAL HAPUS: ADA TUNGGAKAN -->
+    <div x-data="{ openTunggakan: {{ session('has_tunggakan') ? 'true' : 'false' }} }"
+         class="relative">
+
+        <div x-cloak x-show="openTunggakan" x-transition
+             class="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
+
+            <div @click.away="openTunggakan = false"
+                 class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
+                        <span class="material-symbols-outlined">payments</span>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-gray-800">
+                            User Memiliki Tunggakan
+                        </h3>
+
+                        <p class="text-sm text-gray-500">
+                            User tidak dapat dinonaktifkan karena masih memiliki tunggakan.
+                            Selesaikan / lunasi tunggakan terlebih dahulu.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button @click="openTunggakan = false"
+                            class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-semibold">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
     <div class="p-6 min-h-screen">
         <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-8">
         <!-- Header -->
@@ -26,6 +64,7 @@
 
                         <input type="text"
                             name="search"
+                            data-live-search
                             value="{{ request('search') }}"
                             placeholder="Cari nama atau alamat..."
                             class="w-full pl-10 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-200">
@@ -69,12 +108,12 @@
                                     </div>
 
                                     <div>
-                                        <label class="block text-[10px] font-bold text-black uppercase tracking-widest mb-1.5 ml-1">Username</label>
+                                        <label class="block text-[10px] font-bold text-black uppercase tracking-widest mb-1.5 ml-1">Email</label>
                                         <div class="relative">
                                             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg">alternate_email</span>
-                                            <input name="username" type="text" required pattern=".*[A-Za-z].*"
+                                            <input name="email" type="email" required
                                                 class="w-full pl-12 pr-4 py-2.5 bg-slate-50 border-none rounded-lg text-black focus:ring-2 focus:ring-emerald-500/20 transition-all placeholder:text-slate-300 text-sm" 
-                                                placeholder="budi" />
+                                                placeholder="budi@example.com" />
                                         </div>
                                     </div>
 
@@ -146,13 +185,13 @@
             </div>
 
             <!-- Table -->
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto" data-live-target="users-table">
                 <table class="w-full text-sm">
 
                     <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
                         <tr>
                             <th class="px-6 py-3 text-left">Nama</th>
-                            <th class="px-6 py-3">Username</th>
+                            <th class="px-6 py-3">Email</th>
                             <th class="px-6 py-3">Rumah</th>
                             <th class="px-6 py-3">Telepon</th>
                             <th class="px-6 py-3">Role</th>
@@ -186,7 +225,7 @@
                             </td>
 
                             <td class="px-6 py-4 text-gray-600">
-                                {{ $u->username }}
+                                {{ $u->email }}
                             </td>
 
                             <td class="px-6 py-4 text-gray-600 font-medium">
@@ -287,7 +326,7 @@
                                     </div>
 
                                     <!-- Delete -->
-                                    <x-delete-modal action="/users/{{ $u->id }}" />
+                                    <x-delete-modal action="/users/{{ $u->id }}" note="Pastikan tidak ada tunggakan." />
 
                                 </div>
                                 <!-- MODAL EDIT USER -->
@@ -320,12 +359,12 @@
                                                 </div>
 
                                                 <div>
-                                                    <label class="block text-[10px] font-bold text-black uppercase tracking-widest mb-1.5 ml-1">Username</label>
+                                                    <label class="block text-[10px] font-bold text-black uppercase tracking-widest mb-1.5 ml-1">Email</label>
                                                     <div class="relative">
                                                         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-black text-lg">alternate_email</span>
-                                                        <input name="username" type="text" value="{{ $u->username }}" required pattern=".*[A-Za-z].*"
+                                                        <input name="email" type="email" value="{{ $u->email }}" required
                                                             class="w-full pl-12 pr-4 py-2.5 bg-slate-50 border-none rounded-lg text-black focus:ring-2 focus:ring-emerald-500/20 transition-all placeholder:text-slate-300 text-sm" 
-                                                            placeholder="Username" />
+                                                            placeholder="Email" />
                                                     </div>
                                                 </div>
 
@@ -394,12 +433,11 @@
 
         </div>
 
-        @if($users->hasPages())
-            <div class="mt-6">
-                {{ $users->links() }}
-            </div>
-        @endif
+        <div data-live-target="users-pagination" class="{{ $users->hasPages() ? 'mt-6' : '' }}">
+            {{ $users->links() }}
+        </div>
 
     </div>
     </div>
+    @include('partials.live-search')
 </x-app-layout>

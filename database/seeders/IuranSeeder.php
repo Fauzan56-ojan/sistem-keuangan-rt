@@ -15,21 +15,21 @@ class IuranSeeder extends Seeder
 
         $semuaWarga = User::where('role', 'warga')->get();
 
-        // Tunggakan 2026: username => lunas s/d bulan keberapa
+        // Tunggakan 2026: email => lunas s/d bulan keberapa
         $tunggakan2026 = [
             // Tunggakan 1 bulan (Sep belum bayar)
-            'budi'     => 8,
-            'andi'     => 8,
-            'dani'     => 8,
-            'ekow'     => 8,
-            'fajar'    => 8,
-            'gilang'   => 8,
+            'budi@example.com' => 8,
+            'andi@example.com' => 8,
+            'dani@example.com' => 8,
+            'ekow@example.com' => 8,
+            'fajar@example.com' => 8,
+            'gilang@example.com' => 8,
 
             // Tunggakan 2 bulan (Agst-Sep belum bayar)
-            'hadi'     => 7,
-            'indra'    => 7,
-            'joko'     => 7,
-            'kurniawan'=> 7,
+            'hadi@example.com' => 7,
+            'indra@example.com' => 7,
+            'joko@example.com' => 7,
+            'kurniawan@example.com' => 7,
         ];
 
         foreach ($semuaWarga as $user) {
@@ -37,16 +37,16 @@ class IuranSeeder extends Seeder
                 // === 2025: Jan-Des, semua lunas ===
                 for ($bulan = 1; $bulan <= 12; $bulan++) {
                     Iuran::create([
-                        'user_id'       => $user->id,
+                        'user_id' => $user->id,
                         'periode_bulan' => $bulan,
                         'periode_tahun' => 2025,
-                        'nominal'       => $nominal2025,
-                        'status'        => 'paid',
+                        'nominal' => $nominal2025,
+                        'status' => 'paid',
                     ]);
                 }
 
                 // === 2026: Jan-Des ===
-                $lunasSampai = $tunggakan2026[$user->username] ?? 9;
+                $lunasSampai = $tunggakan2026[$user->email] ?? 9;
 
                 for ($bulan = 1; $bulan <= 12; $bulan++) {
                     if ($bulan <= $lunasSampai) {
@@ -60,22 +60,22 @@ class IuranSeeder extends Seeder
                     }
 
                     Iuran::create([
-                        'user_id'       => $user->id,
+                        'user_id' => $user->id,
                         'periode_bulan' => $bulan,
                         'periode_tahun' => 2026,
-                        'nominal'       => $nominal2026,
-                        'status'        => $status,
+                        'nominal' => $nominal2026,
+                        'status' => $status,
                     ]);
                 }
             } else {
                 // Warga nonaktif: 2025 lunas Jan-Jun, Jul-Dec pending
                 for ($bulan = 1; $bulan <= 12; $bulan++) {
                     Iuran::create([
-                        'user_id'       => $user->id,
+                        'user_id' => $user->id,
                         'periode_bulan' => $bulan,
                         'periode_tahun' => 2025,
-                        'nominal'       => $nominal2025,
-                        'status'        => $bulan <= 6 ? 'paid' : 'pending',
+                        'nominal' => $nominal2025,
+                        'status' => $bulan <= 6 ? 'paid' : 'pending',
                     ]);
                 }
             }

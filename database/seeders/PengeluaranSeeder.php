@@ -10,7 +10,7 @@ class PengeluaranSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin = User::where('username', 'admin')->first();
+        $admin = User::where('email', 'admin@example.com')->first();
 
         $pengeluaran = [];
 
@@ -37,7 +37,7 @@ class PengeluaranSeeder extends Seeder
                     $nominal = rand($min, $max);
                     // Bulatkan ke ribuan
                     $nominal = round($nominal / 1000) * 1000;
-                    $pengeluaran[] = ["{$tgl}-" . str_pad(rand(1, 28), 2, '0', STR_PAD_LEFT), $nominal, $ket];
+                    $pengeluaran[] = ["{$tgl}-".str_pad(rand(1, 28), 2, '0', STR_PAD_LEFT), $nominal, $ket];
                 }
             }
         }
@@ -74,13 +74,13 @@ class PengeluaranSeeder extends Seeder
 
         foreach ($pengeluaran as [$tanggal, $nominal, $keterangan]) {
             DB::table('pengeluaran')->insert([
-                'tanggal'     => $tanggal,
-                'nominal'     => $nominal,
-                'keterangan'  => $keterangan,
-                'bukti_file'  => null,
-                'created_by'  => $admin->id,
-                'created_at'  => now(),
-                'updated_at'  => now(),
+                'tanggal' => $tanggal,
+                'nominal' => $nominal,
+                'keterangan' => $keterangan,
+                'bukti_file' => null,
+                'created_by' => $admin->id,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
     }

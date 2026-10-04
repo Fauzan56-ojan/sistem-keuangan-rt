@@ -15,6 +15,10 @@ Schedule::call(function () {
     app(IuranService::class)->generate($tahunDepan);
 })->yearlyOn(12, 25, '00:00');
 
+Schedule::command('tunggakan:reminder')
+    ->weeklyOn(1, '07:00')
+    ->withoutOverlapping();
+
 // Schedule::call(function () {
 //     $tahunDepan = now()->year + 1;
 //     app(IuranService::class)->generate($tahunDepan);

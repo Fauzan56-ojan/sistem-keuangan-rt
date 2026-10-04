@@ -5,12 +5,13 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\HasDatabaseNotifications;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasDatabaseNotifications;
 
     /**
      * The attributes that are mass assignable.
@@ -19,7 +20,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'username',
+        'email',
         'telp',
         'nomor_rumah',
         'role',
@@ -52,34 +53,34 @@ class User extends Authenticatable
     {
         static::created(function ($user) {
 
-        if ($user->role !== 'warga') {
-            return;
-        }
-
-        $tahun = date('Y');
-        $bulanSekarang = date('n');
-
-        for ($i = $bulanSekarang; $i <= 12; $i++) {
-
-            $nominal = \DB::table('setnominal')
-                ->where('tahun', $tahun)
-                ->where('bulan', '<=', $i)
-                ->orderBy('bulan', 'desc')
-                ->value('nominal');
-
-            if (!$nominal) {
-                throw new \Exception("Nominal belum diset dari awal tahun");
+            if ($user->role !== 'warga') {
+                return;
             }
 
-            \App\Models\Iuran::create([
-                'user_id' => $user->id,
-                'periode_bulan' => $i,
-                'periode_tahun' => $tahun,
-                'nominal' => $nominal,
-                'status' => 'pending'
-            ]);
-        }
-    });
+            $tahun = date('Y');
+            $bulanSekarang = date('n');
+
+            for ($i = $bulanSekarang; $i <= 12; $i++) {
+
+                $nominal = \DB::table('setnominal')
+                    ->where('tahun', $tahun)
+                    ->where('bulan', '<=', $i)
+                    ->orderBy('bulan', 'desc')
+                    ->value('nominal');
+
+                if (! $nominal) {
+                    throw new \Exception('Nominal belum diset dari awal tahun');
+                }
+
+                \App\Models\Iuran::create([
+                    'user_id' => $user->id,
+                    'periode_bulan' => $i,
+                    'periode_tahun' => $tahun,
+                    'nominal' => $nominal,
+                    'status' => 'pending',
+                ]);
+            }
+        });
     }
 
     /**

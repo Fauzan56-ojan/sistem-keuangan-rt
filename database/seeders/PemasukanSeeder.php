@@ -10,7 +10,7 @@ class PemasukanSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin = User::where('username', 'admin')->first();
+        $admin = User::where('email', 'admin@example.com')->first();
 
         $pemasukan = [];
 
@@ -162,13 +162,13 @@ class PemasukanSeeder extends Seeder
 
         foreach ($pemasukan as [$tanggal, $nominal, $keterangan]) {
             DB::table('pemasukan')->insert([
-                'tanggal'     => $tanggal,
-                'nominal'     => $nominal,
-                'keterangan'  => $keterangan,
-                'bukti_file'  => null,
-                'created_by'  => $admin->id,
-                'created_at'  => now(),
-                'updated_at'  => now(),
+                'tanggal' => $tanggal,
+                'nominal' => $nominal,
+                'keterangan' => $keterangan,
+                'bukti_file' => null,
+                'created_by' => $admin->id,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
     }

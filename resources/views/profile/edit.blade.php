@@ -49,10 +49,10 @@
                                 class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 focus:bg-white border border-transparent focus:border-primary text-sm">
                         </div>
 
-                        <!-- Username (readonly) -->
+                        <!-- Email (readonly) -->
                         <div>
-                            <label class="text-xs font-bold uppercase">Username</label>
-                            <input type="text" value="{{ auth()->user()->username ?? '-' }}"
+                            <label class="text-xs font-bold uppercase">Email</label>
+                            <input type="text" value="{{ auth()->user()->email ?? '-' }}"
                                 class="w-full mt-1 px-4 py-3 rounded-xl bg-gray-100 text-gray-400 text-sm cursor-not-allowed" readonly>
                         </div>
 

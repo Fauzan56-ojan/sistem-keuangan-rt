@@ -24,10 +24,10 @@
         </div>
 
         <div>
-            <x-input-label value="Username" />
+            <x-input-label value="Email" />
             <x-text-input type="text"
                         class="mt-1 block w-full bg-gray-100"
-                        :value="$user->username"
+                        :value="$user->email"
                         readonly />
         </div>
 

@@ -8,21 +8,26 @@ class NotificationService
 {
     public static function getNotifData($user)
     {
-        $notifPassword = !$user->password_changed;
+        $notifPassword = false;
+        $notifTunggakan = false;
 
-        $notifTunggakan = Iuran::where('user_id', $user->id)
-            ->where('status', 'pending')
-            ->where(function ($q) {
+        if ($user->role === 'warga') {
+            $notifPassword = ! $user->password_changed;
 
-                $q->where('periode_tahun', '<', now()->year)
+            $notifTunggakan = Iuran::where('user_id', $user->id)
+                ->where('status', 'pending')
+                ->where(function ($q) {
 
-                ->orWhere(function ($q2) {
-                    $q2->where('periode_tahun', now()->year)
-                        ->where('periode_bulan', '<', now()->month);
-                });
+                    $q->where('periode_tahun', '<', now()->year)
 
-            })
-            ->exists();
+                        ->orWhere(function ($q2) {
+                            $q2->where('periode_tahun', now()->year)
+                                ->where('periode_bulan', '<', now()->month);
+                        });
+
+                })
+                ->exists();
+        }
 
         $count = 0;
 
@@ -34,10 +39,13 @@ class NotificationService
             $count++;
         }
 
+        $notifications = $user->unreadNotifications()->get();
+
         return [
-            'count' => $count,
+            'count' => $count + $notifications->count(),
             'password' => $notifPassword,
             'tunggakan' => $notifTunggakan,
+            'notifications' => $notifications,
         ];
     }
 }

@@ -93,6 +93,7 @@
                     search
                 </span>
                 <input type="text" name="search" value="{{ request('search') }}"
+                    data-live-search
                     placeholder="Cari keterangan..."
                     class="pl-10 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-200">
             </div>
@@ -117,6 +118,7 @@
         
 
         <!-- TABLE -->
+        <div data-live-target="pemasukan-results">
         <div class="bg-white rounded-xl shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
 
@@ -125,7 +127,7 @@
                     <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
                         <tr>
                             <th class="px-6 py-4">
-                                <a href="?bulan={{ request('bulan') }}&tahun={{ request('tahun') }}&sort_by=tanggal&order={{ request('order') == 'asc' ? 'desc' : 'asc' }}">
+                                <a href="?bulan={{ request('bulan') }}&tahun={{ request('tahun') }}&search={{ request('search') }}&sort_by=tanggal&order={{ request('order') == 'asc' ? 'desc' : 'asc' }}">
                                     Tanggal
                                 </a>
                             </th>
@@ -133,7 +135,7 @@
                             <th class="px-6 py-4">Keterangan</th>
 
                             <th class="px-6 py-4">
-                                <a href="?bulan={{ request('bulan') }}&tahun={{ request('tahun') }}&sort_by=nominal&order={{ request('order') == 'asc' ? 'desc' : 'asc' }}">
+                                <a href="?bulan={{ request('bulan') }}&tahun={{ request('tahun') }}&search={{ request('search') }}&sort_by=nominal&order={{ request('order') == 'asc' ? 'desc' : 'asc' }}">
                                     Nominal
                                 </a>
                             </th>
@@ -287,23 +289,35 @@
                 {{ $data->links() }}
             </div>
         @endif
+        </div>
 
     </div>
     <x-filter-modal :tahunList="$tahunList" />
 <script>
-    document.querySelectorAll('input[name="nominal"]').forEach(input => {
-        input.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            e.target.value = new Intl.NumberFormat('id-ID').format(value);
-        });
-    });
+    window.afterLiveSearch = function () {
+        document.querySelectorAll('input[name="nominal"]').forEach(input => {
+            if (input.dataset.nominalFormat) return;
+            input.dataset.nominalFormat = '1';
 
-    document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', function() {
-            form.querySelectorAll('input[name="nominal"]').forEach(input => {
-                input.value = input.value.replace(/\./g, '');
+            input.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                e.target.value = new Intl.NumberFormat('id-ID').format(value);
             });
-        }); 
-    });
+        });
+
+        document.querySelectorAll('form').forEach(form => {
+            if (form.dataset.nominalSubmit) return;
+            form.dataset.nominalSubmit = '1';
+
+            form.addEventListener('submit', function() {
+                form.querySelectorAll('input[name="nominal"]').forEach(input => {
+                    input.value = input.value.replace(/\./g, '');
+                });
+            });
+        });
+    };
+
+    window.afterLiveSearch();
 </script>
+    @include('partials.live-search')
 </x-app-layout>

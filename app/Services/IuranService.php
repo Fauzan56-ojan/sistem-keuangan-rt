@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
+use App\Models\Iuran;
+use App\Models\Pembayaran;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use App\Models\User;
-use App\Models\Iuran;
-use App\Models\Pembayaran;
 
 class IuranService
 {
@@ -31,11 +31,11 @@ class IuranService
                 'nomor_rumah' => $items->first()->user->nomor_rumah,
                 'jumlah_bulan' => $items->count(),
                 'total' => $items->sum('nominal'),
-                'user_id' => $items->first()->user_id
+                'user_id' => $items->first()->user_id,
             ];
         })
-        ->sortByDesc('jumlah_bulan')
-        ->values();
+            ->sortByDesc('jumlah_bulan')
+            ->values();
     }
 
     public function getTunggakanDetail($id)
@@ -48,16 +48,32 @@ class IuranService
             ->where(function ($q) use ($nowYear, $nowMonth) {
 
                 $q->where('periode_tahun', '<', $nowYear)
-
-                ->orWhere(function ($q2) use ($nowYear, $nowMonth) {
-                    $q2->where('periode_tahun', $nowYear)
-                        ->where('periode_bulan', '<', $nowMonth);
-                });
+                    ->orWhere(function ($q2) use ($nowYear, $nowMonth) {
+                        $q2->where('periode_tahun', $nowYear)
+                            ->where('periode_bulan', '<', $nowMonth);
+                    });
 
             })
             ->orderBy('periode_tahun')
             ->orderBy('periode_bulan')
             ->get();
+    }
+
+    public function punyaTunggakan($userId): bool
+    {
+        $nowYear = now()->year;
+        $nowMonth = now()->month;
+
+        return Iuran::where('user_id', $userId)
+            ->where('status', 'pending')
+            ->where(function ($q) use ($nowYear, $nowMonth) {
+                $q->where('periode_tahun', '<', $nowYear)
+                    ->orWhere(function ($q2) use ($nowYear, $nowMonth) {
+                        $q2->where('periode_tahun', $nowYear)
+                            ->where('periode_bulan', '<', $nowMonth);
+                    });
+            })
+            ->exists();
     }
 
     public function generate($tahun)
@@ -83,13 +99,13 @@ class IuranService
                     ->where('tahun', $tahun)
                     ->exists();
 
-                if (!$cekNominal) {
+                if (! $cekNominal) {
 
                     $nominalTerakhir = DB::table('setnominal')
                         ->orderBy('created_at', 'desc')
                         ->value('nominal');
 
-                    if (!$nominalTerakhir) {
+                    if (! $nominalTerakhir) {
                         throw new \Exception('Nominal sebelumnya belum ada');
                     }
 
@@ -98,7 +114,7 @@ class IuranService
                         'bulan' => 1,
                         'nominal' => $nominalTerakhir,
                         'created_at' => now(),
-                        'updated_at' => now()
+                        'updated_at' => now(),
                     ]);
                 }
 
@@ -116,7 +132,7 @@ class IuranService
                             ->orderBy('bulan', 'desc')
                             ->value('nominal');
 
-                        if (!$nominal) {
+                        if (! $nominal) {
                             throw new \Exception("Nominal belum diset sampai bulan $bulan");
                         }
 
@@ -125,7 +141,7 @@ class IuranService
                             'periode_bulan' => $bulan,
                             'periode_tahun' => $tahun,
                             'nominal' => $nominal,
-                            'status' => 'pending'
+                            'status' => 'pending',
                         ]);
                     }
                 }
@@ -139,7 +155,6 @@ class IuranService
         }
     }
 
-
     public function getDataWarga($id, $tahun)
     {
         $iuran = Iuran::where('user_id', $id)
@@ -152,8 +167,9 @@ class IuranService
             ->get()
             ->keyBy('iuran_id');
 
-        $iuran = $iuran->map(function($item) use ($pembayaran) {
+        $iuran = $iuran->map(function ($item) use ($pembayaran) {
             $item->pembayaran = $pembayaran[$item->id] ?? null;
+
             return $item;
         });
 
@@ -168,7 +184,7 @@ class IuranService
             ->sortByDesc('periode_bulan')
             ->first();
 
-        return ['iuran' => $iuran, 'tahunList' => $tahunList, 'lastPaid' => $lastPaid
+        return ['iuran' => $iuran, 'tahunList' => $tahunList, 'lastPaid' => $lastPaid,
         ];
     }
 
@@ -180,17 +196,17 @@ class IuranService
             ->where('status_aktif', 1)
             ->count();
 
-       $sudahBayar = Iuran::whereHas('user', function ($q) {
-             $q->where('status_aktif', 1);
-            })
+        $sudahBayar = Iuran::whereHas('user', function ($q) {
+            $q->where('status_aktif', 1);
+        })
             ->where('periode_bulan', now()->month)
             ->where('periode_tahun', now()->year)
             ->where('status', 'paid')
             ->count();
 
         $belumBayar = Iuran::whereHas('user', function ($q) {
-                $q->where('status_aktif', 1);
-            })
+            $q->where('status_aktif', 1);
+        })
             ->where('periode_bulan', now()->month)
             ->where('periode_tahun', now()->year)
             ->where('status', 'pending')
@@ -200,7 +216,7 @@ class IuranService
             ? round(($sudahBayar / $totalWarga) * 100)
             : 0;
 
-        return compact('totalWarga','sudahBayar','belumBayar','persen');
+        return compact('totalWarga', 'sudahBayar', 'belumBayar', 'persen');
     }
 
     public static function getHistoriData()
@@ -232,10 +248,10 @@ class IuranService
 
         return [
             'aktif' => $aktif,
-            'nonaktif' => $nonaktif
+            'nonaktif' => $nonaktif,
         ];
     }
-    
+
     public static function getHistoriDetail($id)
     {
         $warga = User::findOrFail($id);
@@ -271,7 +287,7 @@ class IuranService
             'iuran' => $iuran,
             'tahun' => $tahun,
             'tahunList' => $tahunList,
-            'lastPaid' => $lastPaid
+            'lastPaid' => $lastPaid,
         ];
     }
 
@@ -280,16 +296,16 @@ class IuranService
         $berhasil = 0;
         foreach ($request->bulan as $bulan => $value) {
 
-            if (!$value) {
+            if (! $value) {
                 continue;
             }
 
             if (
-                !isset($request->nominal[$bulan]) ||
-                !isset($request->tanggal[$bulan]) ||
-                !$request->nominal[$bulan] ||
-                !$request->tanggal[$bulan] ||
-                !is_numeric($request->nominal[$bulan]) ||
+                ! isset($request->nominal[$bulan]) ||
+                ! isset($request->tanggal[$bulan]) ||
+                ! $request->nominal[$bulan] ||
+                ! $request->tanggal[$bulan] ||
+                ! is_numeric($request->nominal[$bulan]) ||
                 $request->nominal[$bulan] <= 0
             ) {
                 continue;
@@ -309,7 +325,7 @@ class IuranService
                 'periode_bulan' => $bulan,
                 'periode_tahun' => $request->tahun,
                 'nominal' => $request->nominal[$bulan],
-                'status' => 'paid'
+                'status' => 'paid',
             ]);
 
             Pembayaran::create([
@@ -317,12 +333,13 @@ class IuranService
                 'iuran_id' => $iuran->id,
                 'amount' => $request->nominal[$bulan],
                 'metode' => 'tunai',
-                'paid_at' => $request->tanggal[$bulan] . ' ' . now()->format('H:i'),
-                'status' => 'success'
+                'paid_at' => $request->tanggal[$bulan].' '.now()->format('H:i'),
+                'status' => 'success',
             ]);
             $berhasil++;
         }
-            return $berhasil;
+
+        return $berhasil;
     }
 
     public static function storeNonaktif($request)
@@ -332,8 +349,8 @@ class IuranService
             'nomor_rumah' => $request->nomor_rumah,
             'role' => 'warga',
             'status_aktif' => 0,
-            'username' => 'histori_' . time() . rand(10,99),
-            'password' => Hash::make(Str::random(10))
+            'email' => 'histori_'.time().rand(10, 99).'@histori.local',
+            'password' => Hash::make(Str::random(10)),
         ]);
     }
 }

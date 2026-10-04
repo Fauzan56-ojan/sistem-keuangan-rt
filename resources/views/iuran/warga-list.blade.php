@@ -15,12 +15,14 @@
                         </svg>
                     </div>
                     <input type="text" name="search"
+                        data-live-search
                         value="{{ request('search') }}"
                         placeholder="Cari nama atau nomor rumah..."
                         class="block w-full md:w-80 pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all shadow-sm text-sm">
                 </form>
             </div>
 
+            <div data-live-target="iuran-warga-results">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
                     <div class="p-3 bg-emerald-50 rounded-lg">
@@ -144,7 +146,9 @@
                     {{ $users->links() }}
                 </div>
             @endif
+            </div>
 
         </div>
     </div>
+    @include('partials.live-search')
 </x-app-layout>

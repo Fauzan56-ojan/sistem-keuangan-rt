@@ -1,5 +1,6 @@
 @props([
-    'action'
+    'action',
+    'note' => null,
 ])
 
 <div x-data="{ openDelete: false }" class="flex items-center">
@@ -41,6 +42,12 @@
                     <p class="text-sm text-gray-500">
                         Data yang dihapus tidak dapat dikembalikan.
                     </p>
+
+                    @if($note)
+                        <p class="text-sm text-amber-600 font-medium mt-1">
+                            {{ $note }}
+                        </p>
+                    @endif
                 </div>
 
             </div>

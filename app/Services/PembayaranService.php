@@ -40,6 +40,14 @@ class PembayaranService
             'status' => 'paid'
         ]);
 
+        $iuran->user->notify(new \App\Notifications\PembayaranTunaiNotification($iuran));
+
+        try {
+            $iuran->user->notify(new \App\Notifications\PembayaranTunaiEmailNotification($iuran, $pembayaran));
+        } catch (\Throwable $e) {
+            \Log::error('Gagal men-queue email pembayaran tunai: ' . $e->getMessage());
+        }
+
         return $pembayaran;
     }
 
@@ -163,7 +171,9 @@ class PembayaranService
 
             if ($status == 'settlement' || $status == 'capture') {
 
-                $metode = 'online'; 
+                $sudahDibayar = $pembayaran->status === 'success';
+
+                $metode = 'online';
 
                 if ($paymentType == 'bank_transfer') {
                     $va = $notification->va_numbers[0] ?? null;
@@ -187,6 +197,19 @@ class PembayaranService
                 $iuran->update([
                     'status' => 'paid'
                 ]);
+
+                if (! $sudahDibayar) {
+                    \App\Models\User::where('role', 'bendahara')->get()
+                        ->each(fn ($bendahara) => $bendahara->notify(new \App\Notifications\PembayaranOnlineNotification($iuran)));
+
+                    $iuran->user->notify(new \App\Notifications\PembayaranOnlineNotification($iuran, 'warga'));
+
+                    try {
+                        $iuran->user->notify(new \App\Notifications\PembayaranOnlineEmailNotification($iuran, $pembayaran));
+                    } catch (\Throwable $e) {
+                        \Log::error('Gagal men-queue email pembayaran online: ' . $e->getMessage());
+                    }
+                }
             }
 
             if ($status == 'expire') {

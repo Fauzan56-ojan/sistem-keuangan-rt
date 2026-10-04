@@ -27,6 +27,7 @@
                 search
             </span>
             <input type="text" name="search"
+                data-live-search
                 value="{{ request('search') }}"
                 placeholder="Cari nama atau alamat..."
                 class="pl-10 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-200">
@@ -55,7 +56,7 @@
     </form>
 
         <!-- TABLE -->
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden" data-live-target="riwayat-results">
 
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
@@ -194,4 +195,5 @@
 
     </div>
     <x-filter-modal :tahunList="$tahunList" :showNominal="false" />
+    @include('partials.live-search')
 </x-app-layout>

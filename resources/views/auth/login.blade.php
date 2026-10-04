@@ -37,15 +37,15 @@
             @csrf
 
             <div class="space-y-2">
-                <label class="block text-sm font-semibold text-slate-700 ml-1" for="username">Username</label>
+                <label class="block text-sm font-semibold text-slate-700 ml-1" for="email">Email</label>
                 <div class="relative group">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <span class="material-symbols-outlined text-slate-400 group-focus-within:text-primary-rt transition-colors">person</span>
+                        <span class="material-symbols-outlined text-slate-400 group-focus-within:text-primary-rt transition-colors">alternate_email</span>
                     </div>
-                    <input class="block w-full pl-12 pr-4 py-4 bg-input-bg-rt border border-slate-100 rounded-2xl focus:ring-2 focus:ring-emerald-200 focus:bg-white focus:border-emerald-300 transition-all placeholder:text-slate-400 text-slate-900 @error('username') ring-2 ring-red-300 border-red-400 @enderror" 
-                        id="username" name="username" value="{{ old('username') }}" placeholder="Masukkan username" type="text" required autofocus />
+                    <input class="block w-full pl-12 pr-4 py-4 bg-input-bg-rt border border-slate-100 rounded-2xl focus:ring-2 focus:ring-emerald-200 focus:bg-white focus:border-emerald-300 transition-all placeholder:text-slate-400 text-slate-900 @error('email') ring-2 ring-red-300 border-red-400 @enderror" 
+                        id="email" name="email" value="{{ old('email') }}" placeholder="Masukkan email" type="email" required autofocus />
                 </div>
-                @error('username')
+                @error('email')
                     <p class="text-red-500 text-xs mt-1 ml-1">{{ $message }}</p>
                 @enderror
             </div>

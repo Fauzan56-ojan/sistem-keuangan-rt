@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use App\Models\User;
+use App\Notifications\AkunDibuatNotification;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -18,10 +19,11 @@ class UserController extends Controller
 
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%$search%")
-                ->orWhere('nomor_rumah', 'like', "%$search%");
+                    ->orWhere('nomor_rumah', 'like', "%$search%");
             });
         }
         $users = $query->paginate(10)->withQueryString();
+
         return view('users.index', compact('users'));
     }
 
@@ -34,7 +36,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|regex:/[a-zA-Z]/|max:100',
-            'username' => 'required|string|regex:/[a-zA-Z]/|max:50|unique:users,username',
+            'email' => 'required|email|max:100|unique:users,email',
             'nomor_rumah' => [
                 'required_if:role,warga',
                 'nullable',
@@ -47,9 +49,9 @@ class UserController extends Controller
             'role' => 'required|in:warga,ketua_rt,bendahara,admin',
             'password' => 'required',
         ]);
-        User::create([
+        $user = User::create([
             'name' => $request->name,
-            'username' => $request->username,
+            'email' => $request->email,
             'telp' => $request->telp,
             'nomor_rumah' => $request->nomor_rumah,
             'role' => $request->role,
@@ -57,12 +59,17 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        if ($request->role === 'warga') {
+            $user->notify(new AkunDibuatNotification($request->password));
+        }
+
         return redirect('/users')->with('success', 'User berhasil ditambahkan');
     }
 
     public function edit($id)
     {
         $user = User::findOrFail($id);
+
         return view('users.edit', compact('user'));
     }
 
@@ -71,27 +78,27 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'name'        => 'required|string|regex:/[a-zA-Z]/|max:100',
-            'username'    => 'required|string|regex:/[a-zA-Z]/|max:50|unique:users,username,' . $id,
+            'name' => 'required|string|regex:/[a-zA-Z]/|max:100',
+            'email' => 'required|email|max:100|unique:users,email,'.$id,
             'nomor_rumah' => [
-                                'required_if:role,warga',
-                                'nullable',
-                                'string',
-                                'max:20',
-                                Rule::unique('users', 'nomor_rumah')
-                                    ->ignore($id)
-                                    ->where(fn ($query) => $query->where('status_aktif', 1)),
-                            ],
-            'telp'        => 'required|string|min:8|max:20|regex:/^\+?[0-9]+$/',
-            'role'        => 'required|in:warga,ketua_rt,bendahara,admin',
+                'required_if:role,warga',
+                'nullable',
+                'string',
+                'max:20',
+                Rule::unique('users', 'nomor_rumah')
+                    ->ignore($id)
+                    ->where(fn ($query) => $query->where('status_aktif', 1)),
+            ],
+            'telp' => 'required|string|min:8|max:20|regex:/^\+?[0-9]+$/',
+            'role' => 'required|in:warga,ketua_rt,bendahara,admin',
         ]);
 
         $user->update([
-            'name'        => $request->name,
-            'username'    => $request->username,
-            'telp'        => $request->telp,
+            'name' => $request->name,
+            'email' => $request->email,
+            'telp' => $request->telp,
             'nomor_rumah' => $request->nomor_rumah,
-            'role'        => $request->role,
+            'role' => $request->role,
         ]);
 
         return redirect('/users')->with('success', 'Data berhasil diperbarui');
@@ -100,6 +107,11 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
+
+        if ($user->role === 'warga' && app(\App\Services\IuranService::class)->punyaTunggakan($user->id)) {
+            return redirect('/users')->with('has_tunggakan', true);
+        }
+
         $user->status_aktif = 0;
         $user->save();
 

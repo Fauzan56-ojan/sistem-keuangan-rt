@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
         // Admin
         User::create([
             'name' => 'Administrator',
-            'username' => 'admin',
+            'email' => 'admin@example.com',
             'nomor_rumah' => 'Kantor RT',
             'telp' => '081200000001',
             'role' => 'admin',
@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
         // Bendahara
         User::create([
             'name' => 'Siti Aminah',
-            'username' => 'bendahara',
+            'email' => 'bendahara@example.com',
             'nomor_rumah' => 'Kantor RT',
             'telp' => '081200000002',
             'role' => 'bendahara',
@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
         // Ketua RT
         User::create([
             'name' => 'H. Drs. Sutrisno',
-            'username' => 'ketua_rt',
+            'email' => 'ketua_rt@example.com',
             'nomor_rumah' => 'Kantor RT',
             'telp' => '081200000003',
             'role' => 'ketua_rt',
@@ -116,10 +116,10 @@ class UserSeeder extends Seeder
             ['Naura Syakira',       'naura',       'H-020', '085623412345'],
         ];
 
-        foreach ($wargaAktif as [$name, $username, $noRumah, $telp]) {
+        foreach ($wargaAktif as [$name, $email, $noRumah, $telp]) {
             User::create([
                 'name' => $name,
-                'username' => $username,
+                'email' => $email.'@example.com',
                 'nomor_rumah' => $noRumah,
                 'telp' => $telp,
                 'role' => 'warga',
@@ -129,10 +129,10 @@ class UserSeeder extends Seeder
             ]);
         }
 
-        foreach ($wargaNonaktif as [$name, $username, $noRumah, $telp]) {
+        foreach ($wargaNonaktif as [$name, $email, $noRumah, $telp]) {
             User::create([
                 'name' => $name,
-                'username' => $username,
+                'email' => $email.'@example.com',
                 'nomor_rumah' => $noRumah,
                 'telp' => $telp,
                 'role' => 'warga',
