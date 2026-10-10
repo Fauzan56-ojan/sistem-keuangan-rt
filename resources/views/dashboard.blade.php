@@ -17,7 +17,7 @@
                             <span class="material-symbols-outlined">savings</span>
                         </div>
                     </div>
-                    <p class="text-slate-500 text-sm font-medium">Total Saldo Kas</p>
+                    <p class="text-slate-500 text-sm font-medium">Total Saldo Kas RT</p>
                     <h3 class="text-2xl font-bold text-slate-900 mt-1">Rp {{ number_format($saldo, 0, ',', '.') }}</h3>
                 </div>
 
@@ -63,7 +63,7 @@
                                 <span class="material-symbols-outlined">history_toggle_off</span>
                             </div>
                         </div>
-                        <p class="text-slate-500 text-sm font-medium">Total Tunggakan</p>
+                        <p class="text-slate-500 text-sm font-medium">Tunggakan Anda</p>
                         <h3 class="text-2xl font-bold text-rose-600 mt-1">Rp {{ number_format($totalTunggakanNominal, 0, ',', '.') }}</h3>
                     </div>
                 @endif
@@ -281,7 +281,7 @@
                             </div>
                         @else
                             <p class="text-center text-emerald-600 font-bold text-sm">
-                                Tidak ada tunggakan 🎉
+                                Tidak ada tunggakan
                             </p>
                         @endif
                     </div>

@@ -73,11 +73,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/settings/histori/{id}', [IuranController::class, 'storeHistori'])
         ->middleware('role:admin')->name('settings.histori.store');
 
-    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index')
-        ->middleware('role:admin,bendahara,ketua_rt,warga');
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 
-    Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf')
-        ->middleware('role:admin,bendahara,ketua_rt,warga');
+    Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
 
     Route::get('/tunggakan/{id}', [IuranController::class, 'tunggakanDetail']);
     Route::get('/tunggakan', [IuranController::class, 'tunggakan'])

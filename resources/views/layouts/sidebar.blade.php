@@ -1,7 +1,7 @@
 <aside id="sidebar" class="glass-sidebar sidebar-transition overflow-hidden fixed left-0 top-0 h-screen w-56 z-50 flex flex-col shadow-xl">
 
     <!-- LOGO -->
-    <div class="h-20 px-5 border-b border-emerald-100/30 flex items-center">
+    <a href="{{ route('dashboard') }}" class="h-20 px-5 border-b border-emerald-100/30 flex items-center">
         <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center">
                 <span class="material-symbols-outlined text-white text-xl">account_balance</span>
@@ -11,7 +11,7 @@
                 <p class="text-xs text-slate-800">RT 01</p>
             </div>
         </div>
-    </div>
+    </a>
 
     <!-- MENU -->
     <nav class="flex-1 px-3 py-5 space-y-1.5 text-sm">
@@ -65,14 +65,12 @@
         </a>
 
         {{-- Laporan --}}
-        @if(in_array(auth()->user()->role, ['admin','bendahara','ketua_rt']))
         <a href="{{ url('/laporan') }}"
            class="nav-item {{ request()->is('laporan') ? 'nav-active' : 'text-slate-600' }}">
             <span class="material-symbols-outlined">bar_chart</span>
             Laporan
         </a>
-        @endif
-
+        
         {{-- Users --}}
         @if(auth()->user()->role == 'admin')
         <a href="{{ url('/users') }}"

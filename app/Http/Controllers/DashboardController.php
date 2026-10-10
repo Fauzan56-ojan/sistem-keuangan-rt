@@ -39,10 +39,6 @@ class DashboardController extends Controller
             ->whereMonth('tanggal', $bulan)
             ->whereYear('tanggal', $tahun)
             ->sum('nominal');
-        $allTunggakan = $service->getTunggakan();
-
-$totalTunggakanNominal = $allTunggakan->sum('total'); 
-
         //stats cashflow 6 bulan terakhir
         $cashflow = [];
         $now = now()->startOfMonth(); 
@@ -87,6 +83,7 @@ $totalTunggakanNominal = $allTunggakan->sum('total');
         $detailTunggakan = collect();
         $dataTunggakan = collect();
         $totalTunggakanOrang = 0;
+        $totalTunggakanNominal = 0;
 
         if (auth()->user()->role === 'warga') {
 
@@ -95,6 +92,7 @@ $totalTunggakanNominal = $allTunggakan->sum('total');
             // tunggakan (bulan sebelumnya)
             $detailTunggakan = $service->getTunggakanDetail($userId);
             $jumlahTunggakan = $detailTunggakan->count();
+            $totalTunggakanNominal = $detailTunggakan->sum('nominal');
 
             // status bulan ini
             $iuranBulanIni = Iuran::where('user_id', $userId)
@@ -111,6 +109,7 @@ $totalTunggakanNominal = $allTunggakan->sum('total');
 
             $dataTunggakan = $allTunggakan->take(5);
             $totalTunggakanOrang = $allTunggakan->count();
+            $totalTunggakanNominal = $allTunggakan->sum('total');
         }
 
         // transaksi terakhir
